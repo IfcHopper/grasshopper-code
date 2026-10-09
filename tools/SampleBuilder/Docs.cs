@@ -20,7 +20,7 @@ namespace SampleBuilder
         public static int Write(string docsDir, string iconDir, string iconUrl)
         {
             var proxies = Instances.ComponentServer.ObjectProxies.Where(p => p.Desc.Category == "IfcHopper" && !p.Obsolete).ToList();
-            if (Directory.Exists(docsDir)) Directory.Delete(docsDir, true);
+            foreach (var dir in new[] { docsDir, iconDir }) if (Directory.Exists(dir)) Directory.Delete(dir, true);
             Directory.CreateDirectory(docsDir);
             Directory.CreateDirectory(iconDir);
             WriteCategory(docsDir, "Components", 3, "Every IfcHopper component with its inputs and outputs, by toolbar panel.");
@@ -38,7 +38,8 @@ namespace SampleBuilder
                 for (var i = 0; i < components.Count; i++)
                 {
                     var (proxy, component) = components[i];
-                    var slug = Slug(proxy.Desc.Name);
+                    // A page named like its folder would become the panel overview (Docusaurus category index), e.g. Object in Object.
+                    var slug = Slug(proxy.Desc.Name) == Slug(label) ? Slug(proxy.Desc.Name) + "-component" : Slug(proxy.Desc.Name);
                     proxy.Icon?.Save(Path.Combine(iconDir, slug + ".png"), ImageFormat.Png);
                     File.WriteAllText(Path.Combine(dir, slug + ".md"), Page(component, label, i + 1, proxy.Icon == null ? null : $"{iconUrl}/{slug}.png"));
                     pages++;
