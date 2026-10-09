@@ -1,0 +1,19 @@
+IfcHopper includes the following third-party components, each under its own licence.
+
+xBIM Essentials (Xbim.Common, Xbim.Ifc, Xbim.Ifc2x3, Xbim.Ifc4, Xbim.Ifc4x3, Xbim.IO.Esent, Xbim.IO.MemoryModel)
+  Licence: Common Development and Distribution License 1.0 (CDDL-1.0)
+  Source code: https://github.com/xBimTeam/XbimEssentials
+  Licence text: https://raw.githubusercontent.com/xBimTeam/XbimEssentials/master/LICENCE.md
+  The DLLs are distributed unmodified.
+
+ManagedEsent (Esent.Interop)
+  Licence: MIT. Source code: https://github.com/microsoft/ManagedEsent
+
+.NET libraries by Microsoft (Microsoft.Extensions.DependencyInjection, Microsoft.Extensions.DependencyInjection.Abstractions,
+Microsoft.Extensions.Logging.Abstractions, Microsoft.Extensions.Options, Microsoft.Extensions.Primitives, Microsoft.Win32.SystemEvents,
+System.Collections.Immutable, System.Drawing.Common, System.Formats.Nrbf, System.Private.Windows.Core, System.Private.Windows.GdiPlus,
+System.Reflection.Metadata, System.Resources.Extensions)
+  Licence: MIT. Source code: https://github.com/dotnet/runtime and https://github.com/dotnet/winforms
+
+IFC 4.3 property and quantity set templates (Annex A), embedded unchanged in IfcHopper.Core.dll
+  By buildingSMART International: https://standards.buildingsmart.org/IFC/DEV/IFC4_3/HTML/annex-a-psd.zip

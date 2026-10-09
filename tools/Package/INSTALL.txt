@@ -1,0 +1,19 @@
+IfcHopper {version}
+Grasshopper plugin for openBIM: create, read, update and delete data in native IFC files.
+
+Requirements: Rhino 8.20 or later.
+
+Install
+1. On Windows, unblock the zip before unzipping it: right-click the zip > Properties > tick Unblock.
+2. In Grasshopper, choose File > Special Folders > Components Folder.
+3. Copy this IfcHopper folder into that folder. Keep all the files together.
+4. Restart Rhino. The components are in the IfcHopper tab.
+
+Update: close Rhino and replace the folder. Uninstall: delete the folder.
+
+Breaking change: IfcHopper 1.0 is not compatible with IfcHopperShell 0.1. Definitions made with 0.1 do not work
+with 1.0 and have to be rebuilt with the 1.0 components.
+
+Documentation: https://ifchopper.github.io/grasshopper-documentation/
+Code and issues: https://github.com/IfcHopper/grasshopper-code
+Licence: GNU LGPL-3.0 (LICENSE.txt). Third-party components: THIRD-PARTY-NOTICES.txt.

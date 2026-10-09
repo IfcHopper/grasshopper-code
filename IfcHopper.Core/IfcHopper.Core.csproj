@@ -11,14 +11,14 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <PsdDir>$(MSBuildThisFileDirectory)..\Bible\annex-a-psd\</PsdDir>
+    <PsdDir>$(MSBuildThisFileDirectory)obj\annex-a-psd\</PsdDir>
     <PsdUrl>https://standards.buildingsmart.org/IFC/DEV/IFC4_3/HTML/annex-a-psd.zip</PsdUrl>
   </PropertyGroup>
 
   <!--
-    IFC 4.3 property and quantity set templates (Annex A), read by PropertyTemplates. Bible/ is not in the repository
-    (buildingSMART owns it), so the templates are downloaded from buildingSMART when missing. Items are added in the
-    target so files downloaded in the same build are embedded.
+    IFC 4.3 property and quantity set templates (Annex A), read by PropertyTemplates. They are owned by buildingSMART and
+    not in the repository: the build downloads them into obj/ when missing. Items are added in the target so files
+    downloaded in the same build are embedded.
   -->
   <!-- DownloadFile sends no User-Agent, which buildingSMART refuses (403). -->
   <UsingTask TaskName="DownloadPsd" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">

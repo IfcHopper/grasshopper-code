@@ -31,5 +31,5 @@ Thumbs.db
 # Local sample IFC models (reference/tests only, not published)
 SampleModels/
 
-# IFC 4.3 specification from buildingSMART (reference only, not ours to publish; the build downloads annex-a-psd when missing)
-Bible/
+# Release packages (tools/Package/Package.ps1)
+artifacts/

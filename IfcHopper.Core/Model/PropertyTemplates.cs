@@ -7,7 +7,7 @@ using System.Xml.Linq;
 namespace IfcHopper.Core.Model
 {
     /// <summary>
-    /// Standard property and quantity set templates of IFC 4.3 (Annex A, Bible/annex-a-psd), embedded in the library and read on first use.
+    /// Standard property and quantity set templates of IFC 4.3 (Annex A, downloaded from buildingSMART by the build), embedded in the library and read on first use.
     /// </summary>
     public static class PropertyTemplates
     {
