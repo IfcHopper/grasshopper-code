@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <!-- Material: a hatched block of material. -->
+  <defs>
+    <linearGradient id="teal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#5CC4D2"/>
+      <stop offset="1" stop-color="#2A9DAE"/>
+    </linearGradient>
+    <linearGradient id="tealLight" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#E8F7F9"/>
+      <stop offset="1" stop-color="#A6E0E8"/>
+    </linearGradient>
+  </defs>
+  <g>
+    <rect x="3.5" y="3.5" width="17" height="17" fill="url(#teal)" stroke="#124A52"/>
+    <rect x="4" y="4" width="16" height="1" fill="#A6E0E8"/>
+    <path d="M4.5,10.5 L10.5,4.5 M4.5,16.5 L16.5,4.5 M7.5,19.5 L19.5,7.5 M13.5,19.5 L19.5,13.5" stroke="#1C6C79"/>
+  </g>
+</svg>

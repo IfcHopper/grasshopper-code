@@ -1,2 +1,35 @@
-/build
-**/__pycache__/
+# Agent instructions
+AGENTS.md
+
+# Build output
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+*.gha
+*.rhp
+*.pdb
+
+# Visual Studio / Rider
+.vs/
+.idea/
+*.user
+*.suo
+*.userprefs
+*.DotSettings.user
+
+# NuGet
+*.nupkg
+packages/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Local sample IFC models (reference/tests only, not published)
+SampleModels/
+
+# IFC 4.3 specification from buildingSMART (reference only, not ours to publish; the build downloads annex-a-psd when missing)
+Bible/

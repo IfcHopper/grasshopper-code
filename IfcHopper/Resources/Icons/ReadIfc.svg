@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <!-- Read IFC: document with body lines in the IFC colours and an arrow leaving it. -->
+  <defs>
+    <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#C5C5C5"/>
+    </linearGradient>
+    <linearGradient id="fold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#E0E0E0"/>
+      <stop offset="1" stop-color="#9A9A9A"/>
+    </linearGradient>
+    <linearGradient id="amber" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3D7FD0"/>
+      <stop offset="1" stop-color="#0E519C"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Document -->
+  <path d="M3.5,2.5 H11.5 L15.5,6.5 V21.5 H3.5 Z" fill="url(#paper)" stroke="#454545" stroke-linejoin="round"/>
+  <path d="M11.5,2.5 V6.5 H15.5 Z" fill="url(#fold)" stroke="#454545" stroke-linejoin="round"/>
+
+  <!-- Body text lines -->
+  <rect x="5" y="5" width="5" height="1" fill="#0E519C"/>
+  <rect x="5" y="8" width="8" height="1" fill="#0E519C"/>
+  <rect x="5" y="17" width="9" height="1" fill="#9A3B89"/>
+  <rect x="5" y="19" width="6" height="1" fill="#2A9DAE"/>
+
+  <!-- Arrow out of the body -->
+  <path d="M7.5,11.5 H15.5 V9.5 L19.5,13.5 L15.5,17.5 V15.5 H7.5 Z" fill="url(#amber)" stroke="#072D57" stroke-linejoin="round"/>
+  <rect x="8" y="13" width="1" height="1" fill="#FFFFFF"/>
+</svg>

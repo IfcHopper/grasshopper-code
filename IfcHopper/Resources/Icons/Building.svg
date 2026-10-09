@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <!-- Building: grey facade with window grid and teal door. -->
+  <defs>
+    <linearGradient id="facade" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#E8E8E8"/>
+      <stop offset="1" stop-color="#A5A5A5"/>
+    </linearGradient>
+    <linearGradient id="amber" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5CC4D2"/>
+      <stop offset="1" stop-color="#2A9DAE"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="4.5" y="3.5" width="15" height="18" fill="url(#facade)" stroke="#454545" stroke-linejoin="round"/>
+  <rect x="5" y="4" width="14" height="1" fill="#FFFFFF"/>
+
+  <!-- Windows -->
+  <g fill="#5A5A5A">
+    <rect x="7" y="6" width="2" height="2"/>
+    <rect x="11" y="6" width="2" height="2"/>
+    <rect x="15" y="6" width="2" height="2"/>
+    <rect x="7" y="10" width="2" height="2"/>
+    <rect x="11" y="10" width="2" height="2"/>
+    <rect x="15" y="10" width="2" height="2"/>
+    <rect x="7" y="14" width="2" height="2"/>
+    <rect x="11" y="14" width="2" height="2"/>
+    <rect x="15" y="14" width="2" height="2"/>
+  </g>
+
+  <!-- Door -->
+  <rect x="10.5" y="17.5" width="3" height="4" fill="url(#amber)" stroke="#124A52"/>
+</svg>

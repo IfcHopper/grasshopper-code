@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <!-- Layer Set: three layers of material, the middle one (insulation) light and hatched. -->
+  <defs>
+    <linearGradient id="teal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#5CC4D2"/>
+      <stop offset="1" stop-color="#2A9DAE"/>
+    </linearGradient>
+    <linearGradient id="tealLight" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#E8F7F9"/>
+      <stop offset="1" stop-color="#A6E0E8"/>
+    </linearGradient>
+  </defs>
+  <rect x="3.5" y="3.5" width="17" height="5" fill="url(#teal)" stroke="#124A52"/>
+  <rect x="4" y="4" width="16" height="1" fill="#A6E0E8"/>
+  <rect x="3.5" y="8.5" width="17" height="7" fill="url(#tealLight)" stroke="#124A52"/>
+  <path d="M4.5,14.5 L9.5,9.5 M9.5,14.5 L14.5,9.5 M14.5,14.5 L19.5,9.5" stroke="#2A9DAE"/>
+  <rect x="3.5" y="15.5" width="17" height="5" fill="url(#teal)" stroke="#124A52"/>
+</svg>

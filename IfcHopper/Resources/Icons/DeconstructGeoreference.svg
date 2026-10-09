@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <!-- Deconstruct Georeference: Georeference icon scaled down above, parts below. -->
+  <g transform="translate(4.8,1) scale(0.6)">
+    <defs>
+      <linearGradient id="map" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#E8E8E8"/>
+        <stop offset="1" stop-color="#A5A5A5"/>
+      </linearGradient>
+      <linearGradient id="red" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#F2626B"/>
+        <stop offset="1" stop-color="#DE2633"/>
+      </linearGradient>
+    </defs>
+  
+    <rect x="2.5" y="10.5" width="19" height="11" fill="url(#map)" stroke="#454545"/>
+    <path d="M7.5,11 V21 M12.5,11 V21 M17.5,11 V21 M3,15.5 H21" fill="none" stroke="#5A5A5A"/>
+    <g fill="#FFFFFF">
+      <rect x="7" y="15" width="1" height="1"/>
+      <rect x="17" y="15" width="1" height="1"/>
+    </g>
+  
+    <path d="M12.5,16.5 L8.5,10 A4.6,4.6 0 1 1 16.5,10 Z" fill="url(#red)" stroke="#6E0A12" stroke-linejoin="round"/>
+    <rect x="11" y="6" width="3" height="3" fill="#FFFFFF"/>
+  </g>
+
+  <!-- Parts below, linked by pixel dashes -->
+  <defs>
+    <linearGradient id="partAmber" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F2626B"/>
+      <stop offset="1" stop-color="#DE2633"/>
+    </linearGradient>
+  </defs>
+  <g fill="#454545">
+    <rect x="6" y="15" width="1" height="1"/>
+    <rect x="8" y="15" width="1" height="1"/>
+    <rect x="10" y="15" width="1" height="1"/>
+    <rect x="12" y="15" width="1" height="1"/>
+    <rect x="14" y="15" width="1" height="1"/>
+    <rect x="16" y="15" width="1" height="1"/>
+    <rect x="18" y="15" width="1" height="1"/>
+  </g>
+  <g fill="url(#partAmber)" stroke="#6E0A12">
+    <rect x="4.5" y="17.5" width="4" height="4"/>
+    <rect x="10.5" y="17.5" width="4" height="4"/>
+    <rect x="16.5" y="17.5" width="4" height="4"/>
+  </g>
+</svg>

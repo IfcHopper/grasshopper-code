@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <!-- Qto: IFC purple balance, a set of weighed quantities. -->
+  <defs>
+    <linearGradient id="purple" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#C468B3"/>
+      <stop offset="1" stop-color="#9A3B89"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Post and base -->
+  <rect x="10.5" y="4.5" width="3" height="15" fill="url(#purple)" stroke="#4D1C44"/>
+  <path d="M6.5,21.5 H17.5 L15.5,19.5 H8.5 Z" fill="url(#purple)" stroke="#4D1C44" stroke-linejoin="round"/>
+
+  <!-- Strings and pans -->
+  <path d="M5.5,9 V13 M18.5,9 V13" stroke="#4D1C44"/>
+  <g fill="url(#purple)" stroke="#4D1C44" stroke-linejoin="round">
+    <path d="M2.5,13.5 H8.5 L6.5,15.5 H4.5 Z"/>
+    <path d="M15.5,13.5 H21.5 L19.5,15.5 H17.5 Z"/>
+  </g>
+
+  <!-- Beam with pivot -->
+  <rect x="3.5" y="6.5" width="17" height="2" fill="url(#purple)" stroke="#4D1C44"/>
+  <rect x="4" y="7" width="16" height="1" fill="#E3A6D6"/>
+  <rect x="11" y="7" width="2" height="1" fill="#FFFFFF"/>
+</svg>

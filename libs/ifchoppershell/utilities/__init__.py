@@ -1,3 +1,0 @@
-from .ifc_get_id_by_type_component import ifc_get_id_by_type_component
-from .ifc_get_info_by_id_component import ifc_get_info_by_id_component
-from .ifc_get_info_by_guid_component import ifc_get_info_by_guid_component

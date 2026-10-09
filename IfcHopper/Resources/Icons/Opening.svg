@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <!-- Opening: red wall with a door-shaped hole cut through it, its edges dashed in white. -->
+  <defs>
+    <linearGradient id="red" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F2626B"/>
+      <stop offset="1" stop-color="#DE2633"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Wall with the hole (even-odd) -->
+  <path d="M2.5,3.5 H21.5 V20.5 H2.5 Z M8.5,8.5 V20.5 H15.5 V8.5 Z" fill="url(#red)" fill-rule="evenodd" stroke="#6E0A12" stroke-linejoin="round"/>
+  <rect x="3" y="4" width="18" height="1" fill="#F7A3A8"/>
+
+  <!-- Reveal inside the hole -->
+  <rect x="9" y="9" width="6" height="1" fill="#C01E2A"/>
+  <rect x="9" y="10" width="1" height="10" fill="#C01E2A"/>
+</svg>

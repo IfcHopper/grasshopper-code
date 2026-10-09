@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <!-- Modify Element Type: Element Type icon scaled down, with a pencil. -->
+  <defs>
+    <linearGradient id="red" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F2626B"/>
+      <stop offset="1" stop-color="#DE2633"/>
+    </linearGradient>
+    <linearGradient id="redDark" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#DE2633"/>
+      <stop offset="1" stop-color="#C01E2A"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(1.5,1.5) scale(0.6)">
+    <path d="M9.5,2.5 H20.5 V5.5 H16.5 V13.5 H20.5 V16.5 H9.5 V13.5 H13.5 V5.5 H9.5 Z" fill="url(#redDark)" stroke="#6E0A12" stroke-linejoin="round"/>
+    <path d="M3.5,7.5 H14.5 V10.5 H10.5 V18.5 H14.5 V21.5 H3.5 V18.5 H7.5 V10.5 H3.5 Z" fill="url(#red)" stroke="#6E0A12" stroke-linejoin="round"/>
+    <rect x="4" y="8" width="10" height="1" fill="#F7A3A8"/>
+    <rect x="8" y="11" width="1" height="7" fill="#F7A3A8"/>
+  </g>
+
+  <!-- Pencil: edit -->
+  <path d="M19.5,10.5 L21.5,12.5 L14.5,19.5 L12.5,17.5 Z" fill="url(#red)" stroke="#6E0A12" stroke-linejoin="round"/>
+  <path d="M12.5,17.5 L14.5,19.5 L11.5,20.5 Z" fill="#F0D8A8" stroke="#6E0A12" stroke-linejoin="round"/>
+  <rect x="11" y="20" width="1" height="1" fill="#191919"/>
+</svg>

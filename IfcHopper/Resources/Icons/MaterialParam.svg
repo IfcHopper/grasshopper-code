@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <!-- Material parameter: Grasshopper hexagon with a light Material glyph (three layers, the middle one hatched). -->
+  <!-- Grasshopper parameter hexagon (from grasshopper-icons parameters/mesh-face.svg), scaled from its 100-unit grid. -->
+  <defs>
+    <radialGradient id="hexFill" gradientUnits="userSpaceOnUse" cx="1431.25" cy="-868.77" r="73.89">
+      <stop offset="0" stop-color="#454545"/>
+      <stop offset="1" stop-color="#000000"/>
+    </radialGradient>
+    <linearGradient id="hexLow" gradientUnits="userSpaceOnUse" x1="1418.75" y1="-833.35" x2="1439.58" y2="-797.94">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0.318"/>
+    </linearGradient>
+    <radialGradient id="hexHigh" gradientUnits="userSpaceOnUse" cx="1429.18" cy="-889.59" r="60.43">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.718"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <g transform="scale(0.24) translate(-1400,900)">
+    <path d="M1426.04 -893.77 L1402.08 -852.11 L1426.04 -810.44 L1473.96 -810.44 L1497.92 -852.11 L1473.96 -893.77 Z" fill="url(#hexFill)" stroke="#000000" stroke-width="4.2" stroke-linejoin="round"/>
+    <path d="M1428.13 -812.51 C1427.38 -812.51 1426.69 -812.9 1426.31 -813.55 L1415.62 -831.87 L1419.25 -833.99 L1429.33 -816.71 L1470.67 -816.71 L1491.32 -852.11 L1479.4 -872.54 L1483.03 -874.65 L1495.56 -853.16 C1495.95 -852.51 1495.95 -851.7 1495.56 -851.05 L1473.69 -813.55 C1473.31 -812.9 1472.62 -812.51 1471.87 -812.51 Z" fill="url(#hexLow)"/>
+    <path d="M1471.89 -891.69 C1472.64 -891.69 1473.33 -891.29 1473.71 -890.65 L1484.39 -872.32 L1480.77 -870.21 L1470.69 -887.49 L1429.35 -887.49 L1408.7 -852.09 L1420.62 -831.65 L1416.99 -829.54 L1404.45 -851.03 C1404.07 -851.68 1404.07 -852.49 1404.45 -853.15 L1426.33 -890.65 C1426.7 -891.29 1427.39 -891.69 1428.14 -891.69 Z" fill="url(#hexHigh)"/>
+  </g>
+  <g transform="translate(5.4,5.4) scale(0.55)">
+    <rect x="3.5" y="3.5" width="17" height="17" fill="#b4b4b4" stroke="#ffffff"/>
+    <path d="M4,8.5 H20 M4,15.5 H20" stroke="#ffffff"/>
+    <path d="M4.5,14.5 L9.5,9.5 M9.5,14.5 L14.5,9.5 M14.5,14.5 L19.5,9.5" stroke="#ffffff"/>
+  </g>
+</svg>

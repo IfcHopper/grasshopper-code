@@ -1,0 +1,61 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- Grasshopper- and Rhino-independent: IFC model, IO contracts and backends. -->
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>IfcHopper.Core</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Xbim.Essentials" Version="6.1.605" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <PsdDir>$(MSBuildThisFileDirectory)..\Bible\annex-a-psd\</PsdDir>
+    <PsdUrl>https://standards.buildingsmart.org/IFC/DEV/IFC4_3/HTML/annex-a-psd.zip</PsdUrl>
+  </PropertyGroup>
+
+  <!--
+    IFC 4.3 property and quantity set templates (Annex A), read by PropertyTemplates. Bible/ is not in the repository
+    (buildingSMART owns it), so the templates are downloaded from buildingSMART when missing. Items are added in the
+    target so files downloaded in the same build are embedded.
+  -->
+  <!-- DownloadFile sends no User-Agent, which buildingSMART refuses (403). -->
+  <UsingTask TaskName="DownloadPsd" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <Url ParameterType="System.String" Required="true" />
+      <File ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System.Net.Http" />
+      <Code Type="Fragment" Language="cs"><![CDATA[
+        using (var client = new HttpClient())
+        {
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("IfcHopper-build");
+            System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(File));
+            System.IO.File.WriteAllBytes(File, client.GetByteArrayAsync(Url).GetAwaiter().GetResult());
+        }
+      ]]></Code>
+    </Task>
+  </UsingTask>
+
+  <Target Name="EmbedPropertySetTemplates" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <PsdZip>$(IntermediateOutputPath)annex-a-psd.zip</PsdZip>
+      <PsdMissing Condition="!Exists('$(PsdDir)Pset_WallCommon.xml')">true</PsdMissing>
+    </PropertyGroup>
+    <Message Condition="'$(PsdMissing)' == 'true'" Importance="high" Text="Downloading the IFC 4.3 property set templates from $(PsdUrl)" />
+    <DownloadPsd Condition="'$(PsdMissing)' == 'true'" Url="$(PsdUrl)" File="$(PsdZip)" />
+    <Unzip Condition="'$(PsdMissing)' == 'true'" SourceFiles="$(PsdZip)" DestinationFolder="$(PsdDir)" />
+    <ItemGroup>
+      <_Psd Include="$(PsdDir)*.xml" />
+      <EmbeddedResource Include="@(_Psd)" LogicalName="IfcHopper.Core.Psd.%(_Psd.Filename)%(_Psd.Extension)" />
+    </ItemGroup>
+    <Error Condition="'@(_Psd)' == ''" Text="No property set templates in $(PsdDir)." />
+  </Target>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="IfcHopper.Tests" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,466 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="IfcHopper" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\IfcHopper.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="IfcHopper_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\IfcHopper.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="ReadIfcHeader" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ReadIfcHeader.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ReadIfcHeader_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ReadIfcHeader.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="WriteIfc" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\WriteIfc.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WriteIfc_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\WriteIfc.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Project" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Project.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Project_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Project.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Model" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Model.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Model_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Model.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Site" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Site.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Site_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Site.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Building" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Building.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Building_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Building.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Storey" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Storey.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Storey_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Storey.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Facility" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Facility.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Facility_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Facility.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Road" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Road.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Road_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Road.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Bridge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Bridge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Bridge_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Bridge.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Railway" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Railway.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Railway_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Railway.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="MarineFacility" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\MarineFacility.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MarineFacility_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\MarineFacility.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="FacilityPart" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\FacilityPart.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="FacilityPart_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\FacilityPart.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="RoadPart" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\RoadPart.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="RoadPart_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\RoadPart.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="BridgePart" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\BridgePart.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BridgePart_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\BridgePart.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="RailwayPart" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\RailwayPart.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="RailwayPart_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\RailwayPart.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="MarinePart" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\MarinePart.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MarinePart_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\MarinePart.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="ReadIfc" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ReadIfc.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ReadIfc_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ReadIfc.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="DeconstructModel" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\DeconstructModel.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DeconstructModel_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\DeconstructModel.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="DeconstructProject" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\DeconstructProject.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DeconstructProject_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\DeconstructProject.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="DeconstructSite" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\DeconstructSite.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DeconstructSite_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\DeconstructSite.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="DeconstructFacility" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\DeconstructFacility.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DeconstructFacility_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\DeconstructFacility.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="DeconstructStorey" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\DeconstructStorey.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DeconstructStorey_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\DeconstructStorey.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="DeconstructFacilityPart" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\DeconstructFacilityPart.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DeconstructFacilityPart_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\DeconstructFacilityPart.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Context" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Context.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Context_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Context.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="DeconstructContext" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\DeconstructContext.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DeconstructContext_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\DeconstructContext.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Units" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Units.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Units_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Units.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="DeconstructUnits" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\DeconstructUnits.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DeconstructUnits_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\DeconstructUnits.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Element" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Element.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Element_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Element.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="ModelParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ModelParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ModelParam_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ModelParam.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="ProjectParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ProjectParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ProjectParam_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ProjectParam.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="SiteParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\SiteParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SiteParam_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\SiteParam.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="FacilityParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\FacilityParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="FacilityParam_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\FacilityParam.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="FacilityPartParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\FacilityPartParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="FacilityPartParam_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\FacilityPartParam.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="StoreyParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\StoreyParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="StoreyParam_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\StoreyParam.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="ContextParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ContextParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ContextParam_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ContextParam.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="UnitsParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\UnitsParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="UnitsParam_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\UnitsParam.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="ElementParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ElementParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ElementParam_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ElementParam.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Georeference" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Georeference.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Georeference_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Georeference.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="DeconstructGeoreference" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\DeconstructGeoreference.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DeconstructGeoreference_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\DeconstructGeoreference.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="GeoreferenceParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\GeoreferenceParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GeoreferenceParam_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\GeoreferenceParam.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="DeconstructObject" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\DeconstructObject.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DeconstructObject_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\DeconstructObject.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="ModifyProject" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ModifyProject.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ModifyProject_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ModifyProject.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="ModifySite" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ModifySite.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ModifySite_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ModifySite.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="ModifyFacility" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ModifyFacility.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ModifyFacility_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ModifyFacility.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="ModifyStorey" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ModifyStorey.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ModifyStorey_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ModifyStorey.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="ModifyFacilityPart" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ModifyFacilityPart.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ModifyFacilityPart_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ModifyFacilityPart.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="ModifyObject" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ModifyObject.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ModifyObject_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ModifyObject.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="ApplyEdits" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ApplyEdits.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ApplyEdits_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ApplyEdits.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Space" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Space.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Space_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Space.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="DeconstructSpace" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\DeconstructSpace.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DeconstructSpace_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\DeconstructSpace.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="ModifySpace" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ModifySpace.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ModifySpace_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ModifySpace.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="SpaceParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\SpaceParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SpaceParam_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\SpaceParam.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="DeconstructMaterial" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\DeconstructMaterial.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DeconstructMaterial_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\DeconstructMaterial.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="MaterialParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\MaterialParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MaterialParam_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\MaterialParam.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Pset" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Pset.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Pset_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Pset.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Qto" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Qto.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Qto_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Qto.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="DeconstructPset" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\DeconstructPset.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DeconstructPset_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\DeconstructPset.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="PropertySetParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\PropertySetParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PropertySetParam_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\PropertySetParam.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="DeconstructQto" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\DeconstructQto.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DeconstructQto_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\DeconstructQto.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="DeconstructElementType" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\DeconstructElementType.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DeconstructElementType_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\DeconstructElementType.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="ModifyElementType" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ModifyElementType.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ModifyElementType_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ModifyElementType.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="ElementType" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ElementType.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ElementType_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ElementType.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="ElementTypeParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ElementTypeParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ElementTypeParam_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ElementTypeParam.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Material" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Material.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Material_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Material.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="LayerSet" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\LayerSet.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="LayerSet_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\LayerSet.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="ConstituentSet" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ConstituentSet.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ConstituentSet_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ConstituentSet.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="ModifyMaterial" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ModifyMaterial.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ModifyMaterial_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ModifyMaterial.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Classification" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Classification.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Classification_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Classification.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="DeconstructClassification" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\DeconstructClassification.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DeconstructClassification_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\DeconstructClassification.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="ClassificationParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ClassificationParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ClassificationParam_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ClassificationParam.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Opening" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Opening.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Opening_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Opening.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="FindObjects" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\FindObjects.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="FindObjects_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\FindObjects.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="ModelInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ModelInfo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ModelInfo_svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\ModelInfo.svg;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+</root>

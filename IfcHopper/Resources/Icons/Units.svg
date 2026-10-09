@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <!-- Units: purple ruler with ticks placed pixel by pixel. -->
+  <defs>
+    <linearGradient id="amber" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#C468B3"/>
+      <stop offset="1" stop-color="#9A3B89"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="2.5" y="8.5" width="19" height="7" fill="url(#amber)" stroke="#4D1C44"/>
+  <rect x="3" y="9" width="18" height="1" fill="#E3A6D6"/>
+
+  <!-- Ticks: long every 4px, short in between -->
+  <g fill="#4D1C44">
+    <rect x="4" y="9" width="1" height="4"/>
+    <rect x="6" y="9" width="1" height="2"/>
+    <rect x="8" y="9" width="1" height="3"/>
+    <rect x="10" y="9" width="1" height="2"/>
+    <rect x="12" y="9" width="1" height="4"/>
+    <rect x="14" y="9" width="1" height="2"/>
+    <rect x="16" y="9" width="1" height="3"/>
+    <rect x="18" y="9" width="1" height="2"/>
+    <rect x="20" y="9" width="1" height="4"/>
+  </g>
+</svg>

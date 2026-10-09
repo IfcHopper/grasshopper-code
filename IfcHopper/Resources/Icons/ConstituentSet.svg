@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <!-- Constituent Set: a frame of one material around a pane of another, like the constituents of a window. -->
+  <defs>
+    <linearGradient id="teal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#5CC4D2"/>
+      <stop offset="1" stop-color="#2A9DAE"/>
+    </linearGradient>
+    <linearGradient id="tealLight" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#E8F7F9"/>
+      <stop offset="1" stop-color="#A6E0E8"/>
+    </linearGradient>
+  </defs>
+  <rect x="3.5" y="3.5" width="17" height="17" fill="url(#teal)" stroke="#124A52"/>
+  <rect x="4" y="4" width="16" height="1" fill="#A6E0E8"/>
+  <rect x="7.5" y="7.5" width="9" height="9" fill="url(#tealLight)" stroke="#124A52"/>
+  <path d="M8.5,12.5 L12.5,8.5 M11.5,15.5 L15.5,11.5" stroke="#2A9DAE"/>
+</svg>

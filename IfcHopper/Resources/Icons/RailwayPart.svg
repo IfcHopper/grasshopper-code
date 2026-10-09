@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <!-- Railway part: grey track with one section highlighted. -->
+  <defs>
+    <linearGradient id="grey" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#E8E8E8"/>
+      <stop offset="1" stop-color="#9A9A9A"/>
+    </linearGradient>
+    <linearGradient id="amber" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5CC4D2"/>
+      <stop offset="1" stop-color="#2A9DAE"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Highlighted section -->
+  <rect x="3.5" y="7.5" width="17" height="9" fill="url(#amber)" stroke="#124A52"/>
+
+  <!-- Sleepers -->
+  <g fill="url(#grey)" stroke="#454545">
+    <rect x="4.5" y="3.5" width="15" height="2"/>
+    <rect x="4.5" y="18.5" width="15" height="2"/>
+  </g>
+  <g fill="#A6E0E8" stroke="#124A52">
+    <rect x="4.5" y="8.5" width="15" height="2"/>
+    <rect x="4.5" y="13.5" width="15" height="2"/>
+  </g>
+
+  <!-- Rails -->
+  <g fill="url(#grey)" stroke="#454545">
+    <rect x="7.5" y="2.5" width="2" height="19"/>
+    <rect x="14.5" y="2.5" width="2" height="19"/>
+  </g>
+</svg>

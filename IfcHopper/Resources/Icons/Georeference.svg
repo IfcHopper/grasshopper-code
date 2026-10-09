@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <!-- Georeference: map grid (light patch, dark lattice, white nodes) with an IFC red location pin. -->
+  <defs>
+    <linearGradient id="map" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#E8E8E8"/>
+      <stop offset="1" stop-color="#A5A5A5"/>
+    </linearGradient>
+    <linearGradient id="red" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F2626B"/>
+      <stop offset="1" stop-color="#DE2633"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Map patch with lattice -->
+  <rect x="2.5" y="10.5" width="19" height="11" fill="url(#map)" stroke="#454545"/>
+  <path d="M7.5,11 V21 M12.5,11 V21 M17.5,11 V21 M3,15.5 H21" fill="none" stroke="#5A5A5A"/>
+  <g fill="#FFFFFF">
+    <rect x="7" y="15" width="1" height="1"/>
+    <rect x="17" y="15" width="1" height="1"/>
+  </g>
+
+  <!-- Location pin -->
+  <path d="M12.5,16.5 L8.5,10 A4.6,4.6 0 1 1 16.5,10 Z" fill="url(#red)" stroke="#6E0A12" stroke-linejoin="round"/>
+  <rect x="11" y="6" width="3" height="3" fill="#FFFFFF"/>
+</svg>

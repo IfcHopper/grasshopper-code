@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Builds the sample Grasshopper definitions in samples/ with Rhino 8 running headless (Rhino.Inside); needs a licensed Rhino 8. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <PlatformTarget>x64</PlatformTarget>
+    <Nullable>disable</Nullable>
+    <NoWarn>NU1701</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Compile only: RhinoCommon and Grasshopper are loaded from the Rhino 8 installation at run time. -->
+    <PackageReference Include="Grasshopper" Version="8.27.26019.16021" ExcludeAssets="runtime" />
+  </ItemGroup>
+
+</Project>

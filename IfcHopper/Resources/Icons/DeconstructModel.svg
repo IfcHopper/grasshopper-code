@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <!-- Deconstruct Model: Model icon scaled down above, parts below. -->
+  <g transform="translate(4.8,1) scale(0.6)">
+    <defs>
+      <linearGradient id="top" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#A6C6EC"/>
+        <stop offset="1" stop-color="#5A93D6"/>
+      </linearGradient>
+      <linearGradient id="left" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#3D7FD0"/>
+        <stop offset="1" stop-color="#2668B8"/>
+      </linearGradient>
+      <linearGradient id="right" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#0E519C"/>
+        <stop offset="1" stop-color="#0B4483"/>
+      </linearGradient>
+    </defs>
+  
+    <path d="M11.5,10.5 L3.5,6.5 V15.5 L11.5,19.5 Z" fill="url(#left)"/>
+    <path d="M11.5,10.5 L19.5,6.5 V15.5 L11.5,19.5 Z" fill="url(#right)"/>
+    <path d="M11.5,2.5 L19.5,6.5 L11.5,10.5 L3.5,6.5 Z" fill="url(#top)"/>
+  
+    <path d="M3.5,9.5 L11.5,13.5 L19.5,9.5 M3.5,12.5 L11.5,16.5 L19.5,12.5" fill="none" stroke="#08325F"/>
+  
+    <path d="M11.5,2.5 L19.5,6.5 V15.5 L11.5,19.5 L3.5,15.5 V6.5 Z M3.5,6.5 L11.5,10.5 L19.5,6.5 M11.5,10.5 V19.5" fill="none" stroke="#072D57" stroke-linejoin="round"/>
+  </g>
+
+  <!-- Parts below, linked by pixel dashes -->
+  <defs>
+    <linearGradient id="partAmber" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3D7FD0"/>
+      <stop offset="1" stop-color="#0E519C"/>
+    </linearGradient>
+  </defs>
+  <g fill="#454545">
+    <rect x="6" y="15" width="1" height="1"/>
+    <rect x="8" y="15" width="1" height="1"/>
+    <rect x="10" y="15" width="1" height="1"/>
+    <rect x="12" y="15" width="1" height="1"/>
+    <rect x="14" y="15" width="1" height="1"/>
+    <rect x="16" y="15" width="1" height="1"/>
+    <rect x="18" y="15" width="1" height="1"/>
+  </g>
+  <g fill="url(#partAmber)" stroke="#072D57">
+    <rect x="4.5" y="17.5" width="4" height="4"/>
+    <rect x="10.5" y="17.5" width="4" height="4"/>
+    <rect x="16.5" y="17.5" width="4" height="4"/>
+  </g>
+</svg>
