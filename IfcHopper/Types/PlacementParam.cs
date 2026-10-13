@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using Grasshopper.Kernel;
 using IfcHopper.Components;
 using Rhino.Geometry;
@@ -7,7 +8,7 @@ using Rhino.Input;
 
 namespace IfcHopper.Types
 {
-    /// <summary>Placement parameter of the Placement inputs; takes planes. Hidden: only used as a component input.</summary>
+    /// <summary>Persistent placement holder and component input; accepts world planes in document units.</summary>
     public class PlacementParam : GH_PersistentParam<PlacementGoo>, IGH_PreviewObject
     {
         public PlacementParam()
@@ -15,7 +16,7 @@ namespace IfcHopper.Types
         {
         }
 
-        public override GH_Exposure Exposure => GH_Exposure.hidden;
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
 
         protected override GH_GetterResult Prompt_Singular(ref PlacementGoo value)
         {
@@ -41,6 +42,8 @@ namespace IfcHopper.Types
         public void DrawViewportWires(IGH_PreviewArgs args) => Preview_DrawWires(args);
 
         public void DrawViewportMeshes(IGH_PreviewArgs args) { }
+
+        protected override Bitmap Icon => Properties.Resources.PlacementParam;
 
         public override Guid ComponentGuid => new Guid("4e9a7c21-b3d8-4f56-9e1a-6c2d8b5f0a93");
     }
