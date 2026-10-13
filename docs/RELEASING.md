@@ -10,20 +10,21 @@ How an IfcHopper release is made. What each release contains is in the README [R
 
 ## Steps
 
-1. **Version.** Set `<Version>` in `IfcHopper/IfcHopper.csproj`. Grasshopper shows it in full (`IfcHopperInfo.AssemblyVersion`).
+1. **Scope and version.** Merge accepted issue fixes into `main` through PRs. Keep individual fixes independent of the release version bump; set `<Version>` in `IfcHopper/IfcHopper.csproj` only when preparing the release candidate. Grasshopper shows it in full (`IfcHopperInfo.AssemblyVersion`). Track remaining work in [BETA2.md](BETA2.md).
 2. **Check.** All must pass:
 
    ```sh
    dotnet build IfcHopper.sln -c Release
-   dotnet test IfcHopper.sln
+   powershell -File tools/FetchTestFixtures.ps1
+   dotnet test IfcHopper.sln -c Release --no-build
    dotnet run --project tools/SampleBuilder        # regenerates and solves the samples
    ```
 
-   Commit the regenerated samples.
-3. **Tag and push:** `git tag v1.0.0-beta.2`, `git push origin main v1.0.0-beta.2`.
-4. **Package:** `powershell -File tools/Package/Package.ps1` builds in Release and writes `artifacts/IfcHopper-<version>.zip`: an `IfcHopper` folder with the plugin and its DLLs (no `.pdb`), `LICENSE.txt`, `INSTALL.txt` and `THIRD-PARTY-NOTICES.txt` (from `tools/Package/`). Update the notices when dependencies change.
-5. **GitHub Release** for the tag: title `IfcHopper <version>`, release notes (highlights, install steps, breaking changes, known issues, how to report bugs), the zip attached, pre-release for betas.
-6. **Docs** (below).
+   Commit intentional regenerated sample changes. External fixtures come only from the pinned public buildingSMART specification-models repository; never require private manual-testing models. Record skipped tests; do not describe them as passed. For blocked template downloads, use the README's offline procedure and record source/version. Check a fresh build cache as well as an incremental build.
+3. **Prepare docs and notes** using the workflow below, including changed parameter icons/visibility, samples downloads, highlights, installation, compatibility/migrations, known issues and bug reporting. Validate the docs build before release; publish in coordination with the release.
+4. **Package and validate:** `powershell -File tools/Package/Package.ps1` builds in Release and writes `artifacts/IfcHopper-<version>.zip`: an `IfcHopper` folder with the plugin and its DLLs (no `.pdb`), `LICENSE.txt`, `INSTALL.txt` and `THIRD-PARTY-NOTICES.txt` (from `tools/Package/`). Update notices for dependency changes. Inspect archive contents and embedded version; exclude host assemblies and stale outputs. Test the ZIP in a clean installation on supported Windows/macOS and minimum Rhino release: loading, solving, preview, bake, save/reopen, undo, update/uninstall. Record actual coverage and outstanding limits. Close Rhino before rebuilding loaded DLLs.
+5. **Freeze and tag only after validation.** Commit all intended release changes, merge into `main`, confirm a clean working tree, and build the final ZIP from that exact commit. If the commit changes, repeat affected checks and packaging. Then tag and push: `git tag v1.0.0-beta.2`, `git push origin main v1.0.0-beta.2`. Never move an already published tag to repair a release.
+6. **Publish** a GitHub Release for that tag: title `IfcHopper <version>`, prepared notes and the validated ZIP attached; mark betas as pre-release. Publish coordinated docs. Tagging/publication require explicit release authorization, not merely successful local checks.
 
 ## Docs
 

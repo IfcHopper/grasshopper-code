@@ -134,21 +134,6 @@ namespace IfcHopper.Tests
             Assert.Null(IfcSchemas.Parse("IFC5"));
         }
 
-        [SampleModelFact("IFC Schependomlaan.ifc")]
-        public void SchependomlaanSample_PropertySetIsAddedInPlace()
-        {
-            var model = IfcBackend.Reader.Read(TestFiles.Sample("IFC Schependomlaan.ifc"));
-            var wall = Descendants(model.Project).OfType<Element>().First(e => e.IfcClass == "IfcWallStandardCase" || e.IfcClass == "IfcWall");
-            var set = new PropertySet("IfcHopper_Check");
-            set.Add("Checked", true);
-            wall.MergePropertySets(new[] { set });
-
-            var path = TestFiles.NewPath("schependomlaan.ifc");
-            Assert.Empty(IfcBackend.Writer.Write(model, path));
-            var read = Descendants(IfcBackend.Reader.Read(path).Project).OfType<Element>().Single(e => e.GlobalId == wall.GlobalId);
-            Assert.Equal(true, ((PropertySet)read.PropertySets.Single(s => s.Name == "IfcHopper_Check"))["Checked"].Value);
-        }
-
         private static IEnumerable<ModelObject> Descendants(ModelObject parent) => parent.Children.SelectMany(c => new[] { c }.Concat(Descendants(c)));
 
         /// <summary>
