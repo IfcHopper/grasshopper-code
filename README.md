@@ -56,6 +56,7 @@ During the beta, the best way to help is to use IfcHopper on real models and tel
 
 For code contributions:
 
+- Read [AGENTS.md](AGENTS.md) for shared contributor and coding-agent guidance, code practices and GitHub workflow conventions.
 - Read the [Developer reference](#developer-reference) below, especially [Architecture](#architecture) and [Compatibility after 1.0](#compatibility-after-10).
 - Keep Grasshopper components to input, output and validation; put algorithms in `IfcHopper.Core`, with xUnit tests in `IfcHopper.Tests`.
 - After changing component inputs or outputs, regenerate the samples (see the [samples README](samples/README.md)).
