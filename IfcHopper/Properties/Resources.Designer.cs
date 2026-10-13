@@ -1506,6 +1506,25 @@ namespace IfcHopper.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap PlacementParam {
+            get {
+                object obj = ResourceManager.GetObject("PlacementParam", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to the PlacementParam SVG icon.
+        /// </summary>
+        internal static string PlacementParam_svg {
+            get {
+                return ResourceManager.GetString("PlacementParam_svg", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap ModelInfo {
             get {
                 object obj = ResourceManager.GetObject("ModelInfo", resourceCulture);
