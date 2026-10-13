@@ -196,26 +196,5 @@ namespace IfcHopper.Tests
             Assert.False(read.RebuildsReadObjects);
         }
 
-        [SampleModelFact]
-        public void BridgeSample_RenameAndDeleteKeepOtherData()
-        {
-            var model = IfcBackend.Reader.Read(TestFiles.BridgeSample);
-            var (project, site) = EditSite(model);
-            var bridge = site.Facilities[0].Copy();
-            site.Facilities[0] = (Facility)bridge;
-            bridge.Name = "Renamed bridge";
-            var superstructure = (FacilityPart)((Facility)bridge).Parts[1].Copy();
-            ((Facility)bridge).Parts[1] = superstructure;
-            superstructure.Parts.Clear();
-
-            var read = WriteAndRead(project, out var path).Project.Sites[0].Facilities[0];
-            var lines = File.ReadAllLines(path);
-
-            Assert.Equal("Renamed bridge", read.Name);
-            Assert.Empty(read.Parts[1].Parts);
-            Assert.Equal(6, read.Parts[0].Parts.Count);
-            Assert.Contains(lines, l => l.Contains("IFCALIGNMENT"));
-            Assert.True(lines.Length < File.ReadLines(TestFiles.BridgeSample).Count());
-        }
     }
 }

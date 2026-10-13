@@ -97,23 +97,6 @@ namespace IfcHopper.Tests
             }
         }
 
-        [SampleModelFact]
-        public void BridgeSample_PreviewedButUnchangedGeometryIsWrittenUnchanged()
-        {
-            var model = IfcBackend.Reader.Read(TestFiles.BridgeSample);
-            foreach (var part in model.Project.Sites.SelectMany(s => s.Facilities).SelectMany(f => f.Parts))
-                foreach (var element in part.Elements) _ = element.Geometry;
-
-            int Count<T>(string file)
-            {
-                using (var ifc = MemoryModel.OpenRead(file)) return ifc.Instances.OfType<T>().Count();
-            }
-            var path = WriteBack(model);
-            Assert.Equal(Count<IfcShapeRepresentation>(TestFiles.BridgeSample), Count<IfcShapeRepresentation>(path));
-            Assert.Equal(Count<IfcPolygonalFaceSet>(TestFiles.BridgeSample), Count<IfcPolygonalFaceSet>(path));
-            Assert.Equal(Count<IfcMappedItem>(TestFiles.BridgeSample), Count<IfcMappedItem>(path));
-        }
-
         [Fact]
         public void CopiedElement_KeepsLazyGeometryAndMovesIt()
         {

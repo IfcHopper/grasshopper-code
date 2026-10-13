@@ -106,23 +106,5 @@ namespace IfcHopper.Tests
             Assert.DoesNotContain(File.ReadLines(path), l => l.Contains("IFCMAPCONVERSION"));
         }
 
-        [SampleModelFact]
-        public void BridgeSample_ReadsGeoreferenceAndPlacements()
-        {
-            var project = IfcBackend.Reader.Read(TestFiles.BridgeSample).Project;
-
-            var georeference = project.Georeference;
-            Assert.Equal("EPSG:5110", georeference.CrsName);
-            Assert.Equal(("EUREF89", "NN2000", "NTM 10"), (georeference.GeodeticDatum, georeference.VerticalDatum, georeference.MapZone));
-            Assert.Equal(145700, georeference.Eastings, 6);
-            Assert.Equal(6566100, georeference.Northings, 6);
-            Assert.Equal(1.0, georeference.Scale, 12);
-
-            var piers = project.Sites[0].Facilities[0].Parts[0].Parts;
-            Assert.All(piers, p => Assert.NotNull(p.Placement));
-            // Bridge parts sit at their elevations; their elements are placed along the alignment.
-            Assert.Equal(55.75, piers[0].Placement.Origin[2], 6);
-            Assert.True(piers.Select(p => p.Placement.Origin[2]).Distinct().Count() > 1, "Piers should be at different heights.");
-        }
     }
 }

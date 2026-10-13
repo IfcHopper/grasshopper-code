@@ -11,8 +11,12 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <PsdDir>$(MSBuildThisFileDirectory)obj\annex-a-psd\</PsdDir>
-    <PsdUrl>https://standards.buildingsmart.org/IFC/DEV/IFC4_3/HTML/annex-a-psd.zip</PsdUrl>
+    <!-- Keep the source, checksum and cache revision together when updating templates. -->
+    <PsdRevision>41f3439ef11c77e7e159859a9e7c655b256f3a68</PsdRevision>
+    <PsdSha256>22B6B5428FEF492F874252F08ABC077357D353143E1C4E53B877234E564FFEC7</PsdSha256>
+    <PsdDir Condition="'$(PsdDir)' == ''">$(MSBuildThisFileDirectory)obj\annex-a-psd\$(PsdRevision)\</PsdDir>
+    <_PsdDir>$([MSBuild]::EnsureTrailingSlash('$(PsdDir)'))</_PsdDir>
+    <PsdUrl Condition="'$(PsdUrl)' == ''">https://raw.githubusercontent.com/buildingSMART/Standards-builds/$(PsdRevision)/IFC/DEV/IFC4_3/HTML/annex-a-psd.zip</PsdUrl>
   </PropertyGroup>
 
   <!--
@@ -20,7 +24,7 @@
     not in the repository: the build downloads them into obj/ when missing. Items are added in the target so files
     downloaded in the same build are embedded.
   -->
-  <!-- DownloadFile sends no User-Agent, which buildingSMART refuses (403). -->
+  <!-- Bound download time and report offline setup instructions when acquisition fails. -->
   <UsingTask TaskName="DownloadPsd" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
     <ParameterGroup>
       <Url ParameterType="System.String" Required="true" />
@@ -29,11 +33,21 @@
     <Task>
       <Using Namespace="System.Net.Http" />
       <Code Type="Fragment" Language="cs"><![CDATA[
-        using (var client = new HttpClient())
+        try
         {
-            client.DefaultRequestHeaders.UserAgent.ParseAdd("IfcHopper-build");
-            System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(File));
-            System.IO.File.WriteAllBytes(File, client.GetByteArrayAsync(Url).GetAwaiter().GetResult());
+            using (var client = new HttpClient())
+            {
+                client.Timeout = System.TimeSpan.FromSeconds(60);
+                client.DefaultRequestHeaders.UserAgent.ParseAdd("IfcHopper-build");
+                var bytes = client.GetByteArrayAsync(Url).GetAwaiter().GetResult();
+                System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(File));
+                System.IO.File.WriteAllBytes(File, bytes);
+            }
+        }
+        catch (System.Exception ex)
+        {
+            Log.LogError("Cannot download IFC property templates from {0}: {1}. Supply an extracted Annex A folder with -p:PsdDir=... or a local ZIP with -p:PsdArchive=... (see README.md).", Url, ex.Message);
+            return false;
         }
       ]]></Code>
     </Task>
@@ -41,14 +55,21 @@
 
   <Target Name="EmbedPropertySetTemplates" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
-      <PsdZip>$(IntermediateOutputPath)annex-a-psd.zip</PsdZip>
-      <PsdMissing Condition="!Exists('$(PsdDir)Pset_WallCommon.xml')">true</PsdMissing>
+      <PsdZip Condition="'$(PsdArchive)' == ''">$(IntermediateOutputPath)annex-a-psd.zip</PsdZip>
+      <PsdZip Condition="'$(PsdArchive)' != ''">$(PsdArchive)</PsdZip>
+      <PsdMissing Condition="!Exists('$(_PsdDir)Pset_WallCommon.xml')">true</PsdMissing>
     </PropertyGroup>
-    <Message Condition="'$(PsdMissing)' == 'true'" Importance="high" Text="Downloading the IFC 4.3 property set templates from $(PsdUrl)" />
-    <DownloadPsd Condition="'$(PsdMissing)' == 'true'" Url="$(PsdUrl)" File="$(PsdZip)" />
-    <Unzip Condition="'$(PsdMissing)' == 'true'" SourceFiles="$(PsdZip)" DestinationFolder="$(PsdDir)" />
+    <Error Condition="'$(PsdMissing)' == 'true' and '$(PsdArchive)' != '' and !Exists('$(PsdArchive)')" Text="PsdArchive does not exist: $(PsdArchive)" />
+    <Message Condition="'$(PsdMissing)' == 'true' and '$(PsdArchive)' == ''" Importance="high" Text="Downloading the IFC 4.3 property set templates from $(PsdUrl)" />
+    <DownloadPsd Condition="'$(PsdMissing)' == 'true' and '$(PsdArchive)' == ''" Url="$(PsdUrl)" File="$(PsdZip)" />
+    <GetFileHash Condition="'$(PsdMissing)' == 'true'" Files="$(PsdZip)" Algorithm="SHA256">
+      <Output TaskParameter="Hash" PropertyName="_PsdArchiveHash" />
+    </GetFileHash>
+    <Error Condition="'$(PsdMissing)' == 'true' and '$(_PsdArchiveHash)' != '$(PsdSha256)'" Text="IFC template archive checksum mismatch. Expected $(PsdSha256), got $(_PsdArchiveHash). Use the pinned buildingSMART archive documented in README.md." />
+    <Unzip Condition="'$(PsdMissing)' == 'true'" SourceFiles="$(PsdZip)" DestinationFolder="$(_PsdDir)" />
+    <Error Condition="!Exists('$(_PsdDir)Pset_WallCommon.xml')" Text="PsdDir must contain the extracted Annex A XML files, including Pset_WallCommon.xml: $(PsdDir)" />
     <ItemGroup>
-      <_Psd Include="$(PsdDir)*.xml" />
+      <_Psd Include="$(_PsdDir)*.xml" />
       <EmbeddedResource Include="@(_Psd)" LogicalName="IfcHopper.Core.Psd.%(_Psd.Filename)%(_Psd.Extension)" />
     </ItemGroup>
     <Error Condition="'@(_Psd)' == ''" Text="No property set templates in $(PsdDir)." />

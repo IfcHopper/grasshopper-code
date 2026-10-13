@@ -73,21 +73,6 @@ namespace IfcHopper.Tests
             Assert.Null(elements["Plain"].DisplayColour(Assert.Single(elements["Plain"].Geometry)));
         }
 
-        [SampleModelFact("IFC Schependomlaan.ifc")]
-        public void SchependomlaanSample_MaterialsAreRead()
-        {
-            var project = IfcBackend.Reader.Read(TestFiles.Sample("IFC Schependomlaan.ifc")).Project;
-            var elements = Descendants(project).OfType<Element>().ToList();
-            foreach (var group in elements.GroupBy(e => e.Material?.IfcClass ?? "none")) _output.WriteLine($"{group.Key}: {group.Count()}");
-            var meshes = elements.SelectMany(e => e.Geometry.Select(m => (Element: e, Mesh: m))).ToList();
-            _output.WriteLine($"{meshes.Count} meshes, {meshes.Count(m => m.Mesh.Colour == null)} without own style, " +
-                $"{meshes.Count(m => m.Element.DisplayColour(m.Mesh) == null)} without display colour");
-
-            Assert.Contains(elements, e => e.Material is MaterialLayerSet set && set.TotalThickness > 0);
-            Assert.All(meshes.Where(m => m.Element.Material?.DisplayColour != null), m => Assert.NotNull(m.Element.DisplayColour(m.Mesh)));
-            Assert.True(meshes.Count(m => m.Element.DisplayColour(m.Mesh) == null) < meshes.Count(m => m.Mesh.Colour == null) / 10);
-        }
-
         [Theory]
         [InlineData(IfcSchema.Ifc4x3)]
         [InlineData(IfcSchema.Ifc4)]

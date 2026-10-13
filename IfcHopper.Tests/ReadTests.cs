@@ -7,7 +7,7 @@ using Xunit;
 
 namespace IfcHopper.Tests
 {
-    /// <summary>Reader behaviour: file cache, in-place writing and the bridge sample model.</summary>
+    /// <summary>Reader behaviour: file cache, in-place writing and source identity.</summary>
     public class ReadTests
     {
         [Fact]
@@ -78,39 +78,5 @@ namespace IfcHopper.Tests
             Assert.Equal(readSite.GlobalId, IfcBackend.Reader.Read(rebuiltPath).Project.Sites[0].GlobalId);
         }
 
-        [SampleModelFact]
-        public void BridgeSample_ReadsNestedParts()
-        {
-            var bridge = IfcBackend.Reader.Read(TestFiles.BridgeSample).Project.Sites.Single().Facilities.Single();
-
-            Assert.Equal("IfcBridge", bridge.IfcClass);
-            Assert.Equal("SLAB_BRIDGE", bridge.ObjectType);
-            Assert.Equal(new[] { "Substructure", "Superstructure" }, bridge.Parts.Select(p => p.Name));
-            Assert.Equal(new[] { "A1", "P1", "P2", "P3", "P4", "A2" }, bridge.Parts[0].Parts.Select(p => p.Name));
-
-            var pier = bridge.Parts[0].Parts[1];
-            Assert.Equal(("PIER", FacilityUsage.Vertical), (pier.PredefinedType, pier.Usage));
-            Assert.Contains(pier.Elements, e => e.IfcClass == "IfcColumn");
-        }
-
-        [SampleModelFact]
-        public void BridgeSample_ReadsUnitsAndContexts()
-        {
-            var project = IfcBackend.Reader.Read(TestFiles.BridgeSample).Project;
-
-            Assert.Equal("Metre", project.Units.Length.Name);
-            var model = project.Contexts.Single(c => c.Dimension == 3);
-            Assert.Equal(new[] { "Body", "Axis", "Box", "Reference" }, model.SubContexts.Select(s => s.Identifier));
-            Assert.NotNull(model.TrueNorth);
-        }
-
-        [SampleModelFact]
-        public void BridgeSample_WriteInPlaceKeepsAllData()
-        {
-            var copy = TestFiles.NewPath("bridge.ifc");
-            IfcBackend.Writer.Write(IfcBackend.Reader.Read(TestFiles.BridgeSample), copy);
-
-            Assert.Equal(File.ReadLines(TestFiles.BridgeSample).Count(), File.ReadLines(copy).Count());
-        }
     }
 }

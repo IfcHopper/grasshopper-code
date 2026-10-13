@@ -93,14 +93,6 @@ namespace IfcHopper.Tests
             Assert.Equal(Red, Assert.Single(GeometryReadTests.ReadElement(recoloured).Geometry).Colour);
         }
 
-        [SampleModelFact]
-        public void BridgeSample_ColoursAreRead()
-        {
-            var project = IfcBackend.Reader.Read(TestFiles.BridgeSample).Project;
-            var meshes = project.Sites.SelectMany(s => s.Facilities).SelectMany(f => f.Parts).SelectMany(AllElements).SelectMany(e => e.Geometry).ToList();
-            Assert.Contains(meshes, m => m.Colour != null);
-        }
-
         private static IEnumerable<Element> AllElements(FacilityPart part) => part.Elements.Concat(part.Parts.SelectMany(AllElements));
 
         private static int FaceSetLabel(string path)

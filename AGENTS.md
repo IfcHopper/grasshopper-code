@@ -70,7 +70,7 @@ dotnet test IfcHopper.sln
 
 First core build downloads buildingSMART templates; restore needs package sources. Distinguish environment/network failures from code failures.
 
-- Must add/update meaningful regression tests for domain changes/bugs, covering relevant invalid/empty data, units, transforms and schemas rather than mirroring implementation. Report skips, including missing `SampleModels/` fixtures; green does not prove skipped coverage.
+- Must add/update meaningful regression tests for domain changes/bugs, covering relevant invalid/empty data, units, transforms and schemas rather than mirroring implementation. External fixtures must come only from `buildingSMART/IFC4.x-specification-models`, pinned and hash-verified via `tools/FetchTestFixtures.ps1`; never use private manual-testing models. Report skips; green does not prove skipped coverage.
 - Must update SampleBuilder sources for component-contract/example changes and regenerate affected samples, never manually editing generated `.gh`, `.3dm` or IFC files:
 
 ```sh

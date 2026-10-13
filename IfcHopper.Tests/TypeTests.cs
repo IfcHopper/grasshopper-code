@@ -94,31 +94,6 @@ namespace IfcHopper.Tests
             Assert.Same(elements["Beam A"].Type, replaced.Type);
         }
 
-        [SampleModelFact("IFC Schependomlaan.ifc")]
-        public void SchependomlaanSample_TypesAreRead()
-        {
-            var project = IfcBackend.Reader.Read(TestFiles.Sample("IFC Schependomlaan.ifc")).Project;
-            var elements = Descendants(project).OfType<Element>().ToList();
-            var typed = elements.Where(e => e.Type != null).ToList();
-            var instances = typed.Where(e => e.TypeTransform != null).ToList();
-            foreach (var group in typed.GroupBy(e => e.Type.IfcClass)) _output.WriteLine($"{group.Key}: {group.Count()} typed, {group.Count(e => e.TypeTransform != null)} instances");
-
-            Assert.NotEmpty(typed);
-            Assert.Contains(typed, e => e.Type.IfcClass == "IfcDoorStyle");
-            foreach (var element in instances.Take(50)) AssertPlacedType(element);
-        }
-
-        [SampleModelFact]
-        public void BridgeSample_TypesAreRead()
-        {
-            var project = IfcBackend.Reader.Read(TestFiles.BridgeSample).Project;
-            var typed = Descendants(project).OfType<Element>().Where(e => e.Type != null).ToList();
-            _output.WriteLine($"{typed.Count} typed, {typed.Count(e => e.TypeTransform != null)} instances, {typed.Select(e => e.Type).Distinct().Count()} types");
-
-            Assert.NotEmpty(typed);
-            foreach (var element in typed.Where(e => e.TypeTransform != null)) AssertPlacedType(element);
-        }
-
         [Theory]
         [InlineData(IfcSchema.Ifc4x3)]
         [InlineData(IfcSchema.Ifc4)]

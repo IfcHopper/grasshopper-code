@@ -1,0 +1,26 @@
+﻿{
+    "repository":  "buildingSMART/IFC4.x-specification-models",
+    "commit":  "50e6c5c63a3586badc5dc857f5f4736675135525",
+    "files":  [
+                  {
+                      "path":  "models/building-elements/wall-extrusion/wall-extruded-solid.ifc",
+                      "sha256":  "7e1c9a3147300d3d9e787b657766cadb2d578930eccf8956313f2f4ee976ff99"
+                  },
+                  {
+                      "path":  "models/building-elements/slab-openings/slab-openings.ifc",
+                      "sha256":  "958350475139ad5ee7bfdf1181c259c9f188c977302233c10dbe5644b5843a90"
+                  },
+                  {
+                      "path":  "models/mapped-geometric-shape/mapped-shape-with-transformation/mapped-shape-with-transformation.ifc",
+                      "sha256":  "92b95e00e087b6a5ff5d3662a20861874f47932aa5d816ac1e558730b98099f9"
+                  },
+                  {
+                      "path":  "models/tessellated-shape/column-straight-rectangle-tessellation/column-straight-rectangle-tessellation.ifc",
+                      "sha256":  "c65f0a5e7339ff654b39e63349ed4cdff22b15a7ff25c2fef4e896385dd1f310"
+                  },
+                  {
+                      "path":  "models/alignment-geometries-and-linear-positioning/linear-placement-of-signal/linear-placement-of-signal.ifc",
+                      "sha256":  "3c6b97f7a82f1a1d114233702e876f387a03701be0d8a621685e5773ce664c97"
+                  }
+              ]
+}

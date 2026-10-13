@@ -179,21 +179,6 @@ namespace IfcHopper.Tests
             Assert.Equal(1 + 3, mesh.Vertices.Max(v => v[0]), 9);
         }
 
-        [SampleModelFact("IFC Schependomlaan.ifc")]
-        public void SchependomlaanSample_ClippingsAndTrimmedProfilesAreRead()
-        {
-            var project = IfcBackend.Reader.Read(TestFiles.Sample("IFC Schependomlaan.ifc")).Project;
-            var elements = Descendants(project).OfType<Element>().ToList();
-            var meshes = elements.SelectMany(e => e.Geometry).ToList();
-            var skipped = elements.SelectMany(e => e.SkippedGeometry).ToList();
-
-            _output.WriteLine($"{elements.Count} elements, {elements.Count(e => e.Geometry.Count > 0)} with geometry, {meshes.Count} meshes");
-            foreach (var group in skipped.GroupBy(s => s)) _output.WriteLine($"skipped {group.Key}: {group.Count()}");
-
-            Assert.DoesNotContain(skipped, s => s.Contains("IfcTrimmedCurve") || s.Contains("IfcBooleanClippingResult"));
-            Assert.All(meshes.Where(m => m.IsClosed), m => Assert.True(m.SignedVolume() > 0));
-        }
-
         private static IEnumerable<ModelObject> Descendants(ModelObject parent) => parent.Children.SelectMany(c => new[] { c }.Concat(Descendants(c)));
 
         [Fact]
@@ -253,21 +238,6 @@ namespace IfcHopper.Tests
             var element = ReadElement(path);
             Assert.Empty(element.Geometry);
             Assert.Equal(new[] { "IfcSphere" }, element.SkippedGeometry);
-        }
-
-        [SampleModelFact]
-        public void BridgeSample_GeometryIsFaceted()
-        {
-            var project = IfcBackend.Reader.Read(TestFiles.BridgeSample).Project;
-            var elements = project.Sites.SelectMany(s => s.Facilities).SelectMany(f => f.Parts).SelectMany(AllElements).ToList();
-            var meshes = elements.SelectMany(e => e.Geometry).ToList();
-            var skipped = elements.SelectMany(e => e.SkippedGeometry).ToList();
-
-            _output.WriteLine($"{elements.Count} elements, {elements.Count(e => e.Geometry.Count > 0)} with geometry, {meshes.Count} meshes");
-            foreach (var group in skipped.GroupBy(s => s)) _output.WriteLine($"skipped {group.Key}: {group.Count()}");
-
-            Assert.NotEmpty(meshes);
-            Assert.All(meshes.Where(m => m.IsClosed), m => Assert.True(m.SignedVolume() > 0));
         }
 
         private static IEnumerable<Element> AllElements(FacilityPart part) => part.Elements.Concat(part.Parts.SelectMany(AllElements));

@@ -66,10 +66,20 @@ Build and test (needs the .NET 8 SDK):
 
 ```sh
 dotnet build IfcHopper.sln
+powershell -File tools/FetchTestFixtures.ps1
 dotnet test IfcHopper.sln
 ```
 
-The build produces `IfcHopper.gha` in `IfcHopper/bin/<Configuration>/net8.0/`; add that folder to the Grasshopper library paths to load it. The first build downloads the IFC 4.3 property set templates from buildingSMART (see [Reference](#reference-ifc-43-add2-specification)).
+The build produces `IfcHopper.gha` in `IfcHopper/bin/<Configuration>/net8.0/`; add that folder to the Grasshopper library paths to load it. The first build automatically downloads the pinned buildingSMART templates below and verifies their SHA-256 checksum before extraction. No local reference files or manual template setup are required; subsequent builds reuse the ignored cache.
+
+For offline builds, supply a copy of the pinned archive or its extracted XML folder (absolute paths recommended):
+
+```sh
+dotnet build IfcHopper.sln -p:PsdArchive="C:/reference/annex-a-psd.zip"
+dotnet build IfcHopper.sln -p:PsdDir="C:/reference/annex-a-psd"
+```
+
+Use either option. Archives must match the pinned checksum; `PsdDir` embeds XML directly from the supplied folder, whose integrity/provenance is the caller's responsibility. Preserve upstream notices and do not substitute templates from a moving branch. A mirror serving the identical archive can be selected with `-p:PsdUrl=...`.
 
 Contributions are licensed under the same licence as the project.
 
@@ -108,7 +118,7 @@ Solution layout:
 - `IfcHopper/` – the Grasshopper plugin (`IfcHopper.gha`), referencing `IfcHopper.Core`.
   - `Components/` – Grasshopper components. Input/output and validation only; delegate work to `IfcHopper.Core`. One subfolder per toolbar panel: `File/`, `Project/`, `Facility/`, `FacilityPart/`, `Object/`, `Utilities/`.
   - `Types/` – Grasshopper goo/param types wrapping IFC entities.
-- `IfcHopper.Tests/` – xUnit tests for `IfcHopper.Core`. Tests using `SampleModels/` are skipped when the folder is missing.
+- `IfcHopper.Tests/` – xUnit tests for `IfcHopper.Core`, using synthetic models, project-generated samples and pinned public [buildingSMART specification fixtures](IfcHopper.Tests/Fixtures/README.md). Private manual-testing models are never used.
 - Rhino-dependent logic (e.g. geometry conversion) goes in the plugin or a separate Rhino-dependent library, never in `IfcHopper.Core`.
 - Other folders only when a concern doesn't fit the above.
 
@@ -214,7 +224,13 @@ Saved Grasshopper definitions restore wires by parameter position and internalis
 
 The [IFC 4.3 ADD2 specification](https://standards.buildingsmart.org/IFC/DEV/IFC4_3/HTML/content/introduction.html) by buildingSMART is the source of truth for entity, type, attribute and property set definitions.
 
-The standard property and quantity set templates (Annex A) are embedded in `IfcHopper.Core`. They are owned by buildingSMART and not in this repository: the first build downloads them from [buildingSMART](https://standards.buildingsmart.org/IFC/DEV/IFC4_3/HTML/annex-a-psd.zip) into `IfcHopper.Core/obj/annex-a-psd/`.
+The property and quantity set templates (Annex A) are embedded unchanged in `IfcHopper.Core`. They are owned by buildingSMART, not stored in this repository. The build downloads the [archive from buildingSMART/Standards-builds](https://raw.githubusercontent.com/buildingSMART/Standards-builds/41f3439ef11c77e7e159859a9e7c655b256f3a68/IFC/DEV/IFC4_3/HTML/annex-a-psd.zip) into an ignored `obj/` archive and extracts it under `IfcHopper.Core/obj/annex-a-psd/<revision>/`.
+
+- Revision: `41f3439ef11c77e7e159859a9e7c655b256f3a68`.
+- SHA-256: `22B6B5428FEF492F874252F08ABC077357D353143E1C4E53B877234E564FFEC7`.
+- Snapshot identifier: `IFC4X3_ADD2_DEV_20260526` (development documentation, not a claim of frozen release equivalence).
+
+The same snapshot's [EXPRESS](https://raw.githubusercontent.com/buildingSMART/Standards-builds/41f3439ef11c77e7e159859a9e7c655b256f3a68/IFC/DEV/IFC4_3/HTML/IFC4X3_ADD2_DEV_20260526.exp) and [XSD](https://raw.githubusercontent.com/buildingSMART/Standards-builds/41f3439ef11c77e7e159859a9e7c655b256f3a68/IFC/DEV/IFC4_3/HTML/IFC4X3_ADD2_DEV_20260526.xsd) are optional reference downloads; the build does not need them. Source status and terms are described in [buildingSMART's README](https://github.com/buildingSMART/Standards-builds/blob/41f3439ef11c77e7e159859a9e7c655b256f3a68/README.md). Update the revision, checksum and provenance together when deliberately changing template versions.
 
 ## Icons
 

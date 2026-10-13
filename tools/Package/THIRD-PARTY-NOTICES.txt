@@ -16,4 +16,8 @@ System.Reflection.Metadata, System.Resources.Extensions)
   Licence: MIT. Source code: https://github.com/dotnet/runtime and https://github.com/dotnet/winforms
 
 IFC 4.3 property and quantity set templates (Annex A), embedded unchanged in IfcHopper.Core.dll
-  By buildingSMART International: https://standards.buildingsmart.org/IFC/DEV/IFC4_3/HTML/annex-a-psd.zip
+  By buildingSMART International.
+  Snapshot: IFC4X3_ADD2_DEV_20260526 (development documentation).
+  Source: https://raw.githubusercontent.com/buildingSMART/Standards-builds/41f3439ef11c77e7e159859a9e7c655b256f3a68/IFC/DEV/IFC4_3/HTML/annex-a-psd.zip
+  SHA-256: 22B6B5428FEF492F874252F08ABC077357D353143E1C4E53B877234E564FFEC7
+  Upstream status and terms: https://github.com/buildingSMART/Standards-builds/blob/41f3439ef11c77e7e159859a9e7c655b256f3a68/README.md

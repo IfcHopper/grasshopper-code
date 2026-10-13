@@ -249,19 +249,6 @@ namespace IfcHopper.Tests
             Assert.Equal("S-1", ((PropertySet)read["Slab"].PropertySets.Single(s => s.Name == "Shared"))["Code"].Value);
         }
 
-        [SampleModelFact("IFC Schependomlaan.ifc")]
-        public void SchependomlaanSample_PropertySetsAreRead()
-        {
-            var project = IfcBackend.Reader.Read(TestFiles.Sample("IFC Schependomlaan.ifc")).Project;
-            var elements = Descendants(project).OfType<Element>().ToList();
-            var sets = elements.SelectMany(e => e.PropertySets).ToList();
-            foreach (var group in sets.GroupBy(s => (s.Name, s.FromType)).OrderByDescending(g => g.Count()).Take(10))
-                _output.WriteLine($"{group.Key.Name}{(group.Key.FromType ? " (type)" : "")}: {group.Count()}");
-
-            Assert.NotEmpty(sets);
-            Assert.Contains(sets.OfType<PropertySet>().SelectMany(s => s.Properties), p => p.Value != null);
-        }
-
         [Theory]
         [InlineData(IfcSchema.Ifc4x3)]
         [InlineData(IfcSchema.Ifc2x3)]

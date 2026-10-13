@@ -219,20 +219,6 @@ namespace IfcHopper.Tests
             Assert.Equal(new[] { oldOrigin[0], oldOrigin[1] + 3, oldOrigin[2] }, opening.Placement.Origin.Select(v => System.Math.Round(v, 6)));
         }
 
-        [SampleModelFact("IFC Schependomlaan.ifc")]
-        public void SchependomlaanSample_OpeningsAreRead()
-        {
-            var project = IfcBackend.Reader.Read(TestFiles.Sample("IFC Schependomlaan.ifc")).Project;
-            var elements = Descendants(project).OfType<Element>().ToList();
-            var openings = elements.SelectMany(e => e.Openings).ToList();
-            _output.WriteLine($"{openings.Count} openings, {openings.Sum(o => o.Fills.Count)} fills, {openings.Count(o => o.Geometry.Count == 0)} without geometry");
-
-            Assert.DoesNotContain(elements, e => e is Opening);
-            Assert.True(openings.Count >= 70);
-            Assert.True(openings.Sum(o => o.Fills.Count) >= 70);
-            Assert.All(openings, o => Assert.NotEmpty(o.Geometry));
-        }
-
         private static System.Collections.Generic.IEnumerable<ModelObject> Descendants(ModelObject parent) =>
             parent.Children.SelectMany(c => new[] { c }.Concat(Descendants(c)));
 
