@@ -10,7 +10,7 @@ Style reference: [aidannewsome/grasshopper-icons](https://github.com/aidannewsom
 - Both are linked in `IfcHopper/Properties/Resources.resx` (System.Resources) and read through the generated `Properties.Resources` class.
 - Components return the PNG from `Icon`, for example `protected override Bitmap Icon => Properties.Resources.ReadIfc;`.
 - Name icons after the component or type they belong to. In the `.resx`, the PNG is `<Name>` and the SVG is `<Name>_svg`.
-- Component icons are 24×24. The plugin icon `IfcHopper/Resources/IfcHopper.svg` is 64×64, kept from IfcHopperShell and not redrawn.
+- Component icons are 24×24. The plugin icon `IfcHopper/Resources/IfcHopper.svg` has a 64×64 vector canvas; its corresponding PNG is exported at 1000×1000 without a drop shadow.
 - Parameter icons (`<Name>Param`) follow Grasshopper parameters (see grasshopper-icons `parameters/`): a dark hexagon filling the 24×24 canvas (radial #454545 → black, black outline, white bevel highlights) with the matching component icon inside at 55% scale, recoloured to light grey `#b4b4b4` fills and white strokes. Rendered with `--no-shadow`.
 - Deconstruct icons (`Deconstruct<Name>`) show the subject icon at 60% scale above three parts in the subject's colour, linked by pixel dashes.
 
@@ -20,7 +20,7 @@ PNGs are always generated from the SVGs with `tools/IconRenderer`, which also ap
 
 ```sh
 dotnet run --project tools/IconRenderer -- IfcHopper/Resources/Icons
-dotnet run --project tools/IconRenderer -- --no-shadow --size 64 IfcHopper/Resources/IfcHopper.svg
+dotnet run --project tools/IconRenderer -- --no-shadow --size 1000 IfcHopper/Resources/IfcHopper.svg
 ```
 
 `--preview` prints a text map of each rendered icon so it can be checked without opening image files.
