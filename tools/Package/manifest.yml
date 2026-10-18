@@ -1,0 +1,15 @@
+name: ifchopper
+version: $version
+authors:
+  - Mattia Bressanelli
+  - Luca Florio
+description: >
+  Create, read, update and delete native IFC data in Grasshopper.
+  Supports IFC2X3, IFC4 and IFC4X3. Requires Rhino 8 with .NET 8.
+url: https://ifchopper.github.io/grasshopper-documentation/
+icon: icon.png
+keywords:
+  - IFC
+  - openBIM
+  - Grasshopper
+  - guid:347916dc-8267-41e2-a7a3-6f5a7e574005

@@ -40,6 +40,7 @@ Requirements: Rhino 8.20 or later (Windows or Mac).
 
 - User documentation: https://ifchopper.github.io/grasshopper-documentation/
 - [Samples](samples/README.md): one Grasshopper definition per workflow, with the IFC files they write.
+- [Packaging and publishing](tools/Package/README.md): local food4Rhino ZIP and Yak builds, release checks, and the two publishing routes. Generated packages remain ignored; building does not publish them.
 
 ## Roadmap and feature discussion
 

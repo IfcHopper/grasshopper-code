@@ -110,6 +110,8 @@ No `.github/` workflows existed when guidance was added; the following governs f
 
 ## Licensing and delivery
 
+- For food4Rhino/Yak packaging, follow [tools/Package/README.md](tools/Package/README.md). Build with `tools/Package/Distribute.ps1`; keep generated files in ignored `artifacts/`. Package creation does not authorize Git pushes, GitHub release changes or food4Rhino/Yak publication. Use one publishing route per name/version and verify the actual archive in a clean host installation before release.
+
 - Must preserve LGPL-3.0 project notices/contribution terms and third-party licences; check redistribution rights for code, packages, fonts, icons and datasets.
 - Must not ship private copies of host-provided RhinoCommon/Grasshopper assemblies. Include required redistributable dependencies/resources deliberately with notices.
 - Should use Yak when packaging is requested; maintain consistent plugin identity/assembly/package versions and accurate Rhino/platform tags. Must test the actual package in a clean install: dependency loading, icons, examples, update/uninstall. Development output is insufficient evidence.
