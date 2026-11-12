@@ -25,12 +25,15 @@ namespace SampleBuilder
             var output = Path.Combine(root, "samples");
             // IfcHopper is loaded as a package from its build output, like the Rhino 8 launch profile of the plugin.
             Environment.SetEnvironmentVariable("RHINO_PACKAGE_DIRS", Path.Combine(root, "IfcHopper", "bin", "Debug", "net8.0"));
+            // Bind this assembly before Rhino discovers installed packages with the same identity.
+            // The module check below still rejects any session that registers a different build.
+            var pluginPath = Path.Combine(root, "IfcHopper", "bin", "Debug", "net8.0", "IfcHopper.gha");
+            System.Reflection.Assembly.LoadFrom(pluginPath);
 
             using (new RhinoCore(new[] { "/netcore", "/nosplash" }, WindowStyle.NoWindow))
             {
                 var grasshopper = RhinoApp.GetPlugInObject("Grasshopper") as Grasshopper.Plugin.GH_RhinoScriptInterface
                     ?? throw new InvalidOperationException("Grasshopper could not be loaded.");
-                var pluginPath = Path.Combine(root, "IfcHopper", "bin", "Debug", "net8.0", "IfcHopper.gha");
                 grasshopper.RunHeadless();
                 if (!Instances.ComponentServer.ObjectProxies.Any(p => p.Desc.Category == "IfcHopper"))
                 {
