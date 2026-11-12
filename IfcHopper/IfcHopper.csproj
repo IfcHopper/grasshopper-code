@@ -13,7 +13,7 @@
 
   <PropertyGroup>
     <!-- Specifies information for Assembly and Yak -->
-    <Version>1.0.0-beta.1</Version>
+    <Version>1.0.0-beta.2</Version>
     <!-- Shown by Grasshopper (IfcHopperInfo.AssemblyVersion), without the commit hash .NET appends by default. -->
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <Title>IfcHopper</Title>
