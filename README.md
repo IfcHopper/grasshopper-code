@@ -47,14 +47,14 @@ Target: Rhino 8.20+ and .NET 8 on Windows/macOS. Beta.2 was checked on Windows x
 ## Roadmap and feature discussion
 
 - [Release plan](docs/DEVELOPMENT.md#release-plan): what comes after 1.0, in order.
-- Feature discussion: _link coming soon_.
+- Feature discussion: [IfcHopper Discussions](https://github.com/orgs/IfcHopper/discussions).
 
 ## Contributing
 
 During the beta, the best way to help is to use IfcHopper on real models and tell us what happens:
 
 - **Bugs:** open an [issue](https://github.com/IfcHopper/grasshopper-code/issues) with your Rhino version, the steps to reproduce, the message on the component and, if you can share it, the IFC file or a small definition.
-- **Ideas and missing IFC features:** use the feature discussion, so others can join.
+- **Ideas and missing IFC features:** use [IfcHopper Discussions](https://github.com/orgs/IfcHopper/discussions), so others can join.
 - **Code:** pull requests are welcome. For larger changes, open an issue or discussion first, so we can agree on the approach.
 
 For code contributions:
