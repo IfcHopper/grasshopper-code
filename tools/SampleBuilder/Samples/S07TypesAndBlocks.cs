@@ -1,4 +1,7 @@
+using System;
 using System.Drawing;
+using System.Linq;
+using Grasshopper.Kernel;
 using Rhino;
 using Rhino.Geometry;
 
@@ -65,6 +68,16 @@ namespace SampleBuilder.Samples
             c.Group("3. Deconstruct Element Type: geometry in type coordinates", Canvas.Colours.Read, deconstruct, name, cls);
 
             var project = House(c, Canvas.RightOf(columns, 80), Top, "Types and blocks", columns, chairs);
+            var storey = c.Document.Objects.OfType<IGH_Component>().Single(component => component.Name == "Storey");
+            // Column placements and queried block instances have different tree paths. Merge them
+            // deliberately here so this example writes one storey containing all five objects (#4).
+            Canvas.Input(storey, "Elements").DataMapping = GH_DataMapping.Flatten;
+            c.Group("4. Flatten Storey Elements: all three columns and both chairs in one IFC", Canvas.Colours.Read, storey);
+            c.BeforeSave.Add(() =>
+            {
+                if (Canvas.Output(storey).VolatileDataCount != 1 || Canvas.Input(storey, "Elements").VolatileDataCount != 5)
+                    throw new InvalidOperationException("Sample 07 must collect three columns and two chairs into one storey.");
+            });
             WriteFile(c, Canvas.RightOf(project, 80), Top, project, IfcName);
         }
     }

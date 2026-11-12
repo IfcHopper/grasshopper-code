@@ -27,6 +27,35 @@ namespace IfcHopper.Tests
         }
 
         [Fact]
+        public void TypesAndBlocksSample_ContainsColumnsAndChairsInOneStorey()
+        {
+            var model = IfcBackend.Reader.Read(SampleIfc("07 Types and blocks"));
+            var storey = Assert.Single(Descendants(model.Project).OfType<Storey>());
+            var elements = storey.Elements;
+            Assert.Equal(5, elements.Count);
+
+            var columns = elements.Where(e => e.IfcClass == "IfcColumn").OrderBy(e => e.Placement.Origin[0]).ToList();
+            Assert.Equal(3, columns.Count);
+            Assert.Equal(new[] { 0.0, 4.0, 8.0 }, columns.Select(e => e.Placement.Origin[0]));
+            Assert.All(columns, e =>
+            {
+                Assert.Equal(("Column", "Column 300x300", "IfcColumnType"), (e.Name, e.Type.Name, e.Type.IfcClass));
+                Assert.NotNull(e.TypeTransform);
+                Assert.NotEmpty(e.Geometry);
+            });
+
+            var chairs = elements.Where(e => e.IfcClass == "IfcFurniture").OrderBy(e => e.Placement.Origin[0]).ToList();
+            Assert.Equal(2, chairs.Count);
+            Assert.Equal(new[] { 2.0, 3.0 }, chairs.Select(e => e.Placement.Origin[0]));
+            Assert.All(chairs, e =>
+            {
+                Assert.Equal(("Chair", "Chair", "IfcFurnitureType"), (e.Name, e.Type.Name, e.Type.IfcClass));
+                Assert.NotNull(e.TypeTransform);
+                Assert.NotEmpty(e.Geometry);
+            });
+        }
+
+        [Fact]
         public void SampleFiles_HoldWhatTheirSamplesShow()
         {
             var openings = Elements("11 Openings").Single(e => e.Name == "Wall").Openings;
