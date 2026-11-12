@@ -10,7 +10,7 @@ Grasshopper definitions, one per workflow. Open them in Rhino 8 with IfcHopper i
 | 04 Infrastructure | Road, bridge, railway and marine facility with typed facility parts (nested) and their elements. |
 | 05 Spaces | Spaces in a storey and on the site, a partial space, furniture in a space, Pset_SpaceCommon. |
 | 06 Geometry and colour | Brep, mesh and extrusion geometry, colours with transparency, an element assembly. |
-| 07 Types and blocks | Element types from Grasshopper geometry and from a Rhino block, placed by objects. Open `07 Types and blocks.3dm` first. |
+| 07 Types and blocks | Three columns and two chairs placed from element types. Storey Elements is flattened to collect both branches into one IFC. Open `07 Types and blocks.3dm` first. |
 | 08 Materials | Materials with a property set, a layer set and a constituent set; an object showing its type's material. |
 | 09 Property and quantity sets | Standard and custom property sets, a quantity set, deconstructing them, replacing and deleting sets on Modify Object. |
 | 10 Classification | Classification references on an object and its type, inheritance, and replacing or removing them by system. |
