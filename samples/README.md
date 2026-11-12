@@ -26,6 +26,8 @@ Samples that write a file write it to `ifc/` next to the definition. The Write t
 
 The definitions are generated; do not edit them by hand. Each one is built in code by `tools/SampleBuilder` (one class per sample in `tools/SampleBuilder/Samples`). The builder runs Rhino 8 headless (Rhino.Inside), loads IfcHopper from its build output, and solves every definition. It fails when a component reports an error, an unexpected warning or remark, or when objects overlap on the canvas. It then saves the `.gh` files, the `.3dm` of sample 07 and the IFC files.
 
+Samples explicitly show advanced inputs for discoverability. New components placed from the toolbar start compact; use the bottom arrow to expand inputs and the top arrow to collapse unused metadata inputs. Connected and configured inputs remain visible. See [compact inputs](../docs/ADVANCED_INPUTS.md) for the groups and compatibility behavior.
+
 ```sh
 dotnet build IfcHopper/IfcHopper.csproj
 dotnet run --project tools/SampleBuilder              # all samples
@@ -33,6 +35,7 @@ dotnet run --project tools/SampleBuilder -- 7 11      # samples 07 and 11
 dotnet run --project tools/SampleBuilder -- --describe     # inputs and outputs of the IfcHopper components
 dotnet run --project tools/SampleBuilder -- --docs ../grasshopper-documentation   # component pages of the docs site
 dotnet run --project tools/SampleBuilder -- --find Block   # Grasshopper components by name
+dotnet run --project tools/SampleBuilder -- --check-inputs # compact input layout, persistence and undo regressions
 ```
 
 Regenerate after changing component inputs or outputs. `IfcHopper.Tests/SampleDefinitionTests` reads the IFC files in `ifc/` back. The builder needs a licensed Rhino 8 in `C:\Program Files\Rhino 8`, or in `RHINO_SYSTEM_DIR`.

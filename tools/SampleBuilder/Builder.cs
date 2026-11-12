@@ -60,6 +60,9 @@ namespace SampleBuilder
                         throw new InvalidOperationException("SampleBuilder loaded a different IfcHopper build; remove other installed copies from this session.");
                 }
 
+                if (args.Contains("--check-inputs"))
+                    return CollapsibleInputChecks.Run(Path.Combine(root, "artifacts", "input-checks"));
+
                 Verbose = args.Contains("--verbose");
                 var filters = args.Where(a => !a.StartsWith("--")).ToList();
                 var selected = Samples.Where(s => filters.Count == 0 || filters.Any(f => s.Number.ToString() == f.TrimStart('0') || s.Title.IndexOf(f, StringComparison.OrdinalIgnoreCase) >= 0)).ToList();

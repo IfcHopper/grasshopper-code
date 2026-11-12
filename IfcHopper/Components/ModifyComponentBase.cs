@@ -11,7 +11,7 @@ namespace IfcHopper.Components
     /// Unconnected inputs keep the original value. A connected child list replaces the children; children left out are
     /// deleted when the model is written back to its source file.
     /// </summary>
-    public abstract class ModifyComponentBase : GH_Component
+    public abstract class ModifyComponentBase : CollapsibleComponent
     {
         protected const string ChildListNote = " Connected: replaces the list; objects left out are deleted on write. Unconnected: unchanged.";
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Windows.Forms;
 using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
@@ -17,6 +18,10 @@ namespace SampleBuilder
     /// </summary>
     internal sealed class Canvas
     {
+        private readonly bool _expandAdvancedInputs;
+
+        public Canvas(bool expandAdvancedInputs = true) => _expandAdvancedInputs = expandAdvancedInputs;
+
         public GH_Document Document { get; } = new GH_Document();
 
         /// <summary>Actions run after the solution and before saving, e.g. switching off a Write toggle used to produce files.</summary>
@@ -43,6 +48,17 @@ namespace SampleBuilder
         {
             obj.NewInstanceGuid();
             obj.CreateAttributes();
+            if (_expandAdvancedInputs && obj is GH_Component component)
+            {
+                // Educational examples expose all inputs. Exercise the public menu action rather
+                // than depending on the plugin's implementation type or a reflection-only setting.
+                using (var menu = new ContextMenuStrip())
+                {
+                    component.AppendMenuItems(menu);
+                    var advanced = menu.Items.OfType<ToolStripMenuItem>().FirstOrDefault(item => item.Text == "Show advanced inputs");
+                    if (advanced != null && !advanced.Checked) advanced.PerformClick();
+                }
+            }
             obj.Attributes.Pivot = new PointF(x, y);
             Document.AddObject(obj, false);
             obj.Attributes.ExpireLayout();

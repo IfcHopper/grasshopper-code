@@ -8,7 +8,7 @@ using IfcHopper.Types;
 
 namespace IfcHopper.Components
 {
-    public class OpeningComponent : GH_Component
+    public class OpeningComponent : CollapsibleComponent
     {
         public OpeningComponent()
           : base("Opening", "Opening",
