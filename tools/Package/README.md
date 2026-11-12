@@ -12,6 +12,19 @@ Use `-YakPath` for a different Rhino installation. Version comes from
 `IfcHopper/IfcHopper.csproj`; `manifest.yml` is the maintained metadata source.
 No login, upload, Git push or GitHub release modification occurs.
 
+For a local Debug build, run the same script with `-Configuration Debug`. Both
+the ZIP and Yak package go to ignored `artifacts/debug/`, separate from Release
+packages. The package version still comes from the project; Debug is the build
+configuration, not a separate published version. Host assemblies and PDBs remain
+excluded.
+
+To use that folder as a local feed in Rhino, open Options > Advanced and append
+its absolute path to `Rhino.Options.PackageManager.Sources`, separated from the
+existing sources by a semicolon. Run `_PackageManager`, enable prereleases and
+search for `ifchopper`; install the beta version and restart Rhino. Avoid loading
+another development or manually installed copy alongside it. See McNeel's
+[custom repository instructions](https://developer.rhino3d.com/guides/yak/package-sources/).
+
 Outputs in ignored `artifacts/`:
 
 - `IfcHopper-<version>.zip`: food4Rhino manual download (also suitable for GitHub Releases).
@@ -35,7 +48,10 @@ the manifest explicitly preserves the plugin's `GH_AssemblyInfo.Id` for discover
 The supported project target remains Rhino 8.20+, .NET 8, Windows/macOS. These local
 packages are release candidates, not evidence of host compatibility. Yak infers its
 minimum Rhino tag from the referenced SDK (currently 8.27); do not rename it to
-8.20 without testing against the minimum host. The maintainer reports that the
+8.20 without testing against the minimum host. If Windows Application Control
+blocks Yak's inspection and it emits an unrestricted `any-any` tag, the builder
+uses the referenced Grasshopper SDK version for the Rhino tag and prints a warning;
+this does not verify loading or alter Windows policy. The maintainer reports that the
 release works on macOS on Apple Silicon. The Yak build therefore uses `any` so
 Package Manager can offer the same managed payload on Windows and macOS. The
 exact tested Rhino/macOS versions, Intel Mac coverage and clean installation of
