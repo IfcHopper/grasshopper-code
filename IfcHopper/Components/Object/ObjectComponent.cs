@@ -20,6 +20,12 @@ namespace IfcHopper.Components
         {
         }
 
+        public override Rhino.Geometry.BoundingBox ClippingBox => ComponentPreview.ClippingBox(this);
+
+        public override void DrawViewportMeshes(IGH_PreviewArgs args) => ComponentPreview.DrawMeshes(this, args);
+
+        public override void DrawViewportWires(IGH_PreviewArgs args) => ComponentPreview.DrawWires(this, args);
+
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddTextParameter("Class", "C", "IFC element class, e.g. IfcWall, IfcSlab, IfcColumn, IfcBeam.", GH_ParamAccess.item, Element.DefaultIfcClass);

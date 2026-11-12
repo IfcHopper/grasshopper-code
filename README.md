@@ -40,6 +40,7 @@ Requirements: Rhino 8.20 or later (Windows or Mac).
 
 - User documentation: https://ifchopper.github.io/grasshopper-documentation/
 - [Samples](samples/README.md): one Grasshopper definition per workflow, with the IFC files they write.
+- [Release notes](docs/RELEASE_NOTES.md): changes planned for the next beta.
 - [Packaging and publishing](tools/Package/README.md): local food4Rhino ZIP and Yak builds, release checks, and the two publishing routes. Generated packages remain ignored; building does not publish them.
 
 ## Roadmap and feature discussion
@@ -220,6 +221,8 @@ Saved Grasshopper definitions restore wires by parameter position and internalis
 ## Samples
 
 [samples/](samples/README.md) holds one Grasshopper definition per workflow (first building, reading, units and georeference, infrastructure, spaces, geometry, types and blocks, materials, property sets, classification, openings, attributes, editing in place, schema export, finding objects), with the IFC files they write. They are generated and checked by `tools/SampleBuilder`, which runs Rhino 8 headless; see the samples README to regenerate them.
+
+Object and Modify Object preview their output geometry, with openings subtracted. They do not also preview the uncut input geometry or opening cutters. Upstream geometry and Opening components have their own Preview switches; hide those when inspecting the cut result. Deconstruct Object still exposes opening geometry for inspection.
 
 ## Reference: IFC 4.3 ADD2 specification
 

@@ -17,6 +17,12 @@ namespace IfcHopper.Components
 
         public override GH_Exposure Exposure => GH_Exposure.tertiary;
 
+        public override Rhino.Geometry.BoundingBox ClippingBox => ComponentPreview.ClippingBox(this);
+
+        public override void DrawViewportMeshes(IGH_PreviewArgs args) => ComponentPreview.DrawMeshes(this, args);
+
+        public override void DrawViewportWires(IGH_PreviewArgs args) => ComponentPreview.DrawWires(this, args);
+
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddParameter(new ElementParam(), "Object", "O", "IfcHopper element to edit.", GH_ParamAccess.item);

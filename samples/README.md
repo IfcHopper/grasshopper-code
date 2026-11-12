@@ -36,3 +36,7 @@ dotnet run --project tools/SampleBuilder -- --find Block   # Grasshopper compone
 ```
 
 Regenerate after changing component inputs or outputs. `IfcHopper.Tests/SampleDefinitionTests` reads the IFC files in `ifc/` back. The builder needs a licensed Rhino 8 in `C:\Program Files\Rhino 8`, or in `RHINO_SYSTEM_DIR`.
+
+The builder verifies that the loaded IfcHopper module matches the current Debug build, including when Grasshopper loads assemblies into memory. If another installed copy is selected, it stops rather than validating the wrong plugin. When headless package discovery omits the development folder, it uses a signature-checked Grasshopper 8 loader fallback.
+
+Sample 11 hides its construction volumes and opening previews so they do not cover the cut wall. Enable their Preview switches to inspect them. Building sample 11 also checks Object and Modify Object preview drawing, hidden/disabled visibility and clipping bounds, and the cut wall volume through Deconstruct Object and the object mesh cast. These checks require Rhino; the Core test suite does not exercise viewport drawing.
