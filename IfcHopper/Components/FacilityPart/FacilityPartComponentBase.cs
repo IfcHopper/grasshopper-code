@@ -8,7 +8,7 @@ using IfcHopper.Types;
 namespace IfcHopper.Components
 {
     /// <summary>Common inputs and output for the facility part components (Road Part, Bridge Part, ...).</summary>
-    public abstract class FacilityPartComponentBase : GH_Component
+    public abstract class FacilityPartComponentBase : CollapsibleComponent
     {
         protected FacilityPartComponentBase(string name, string description)
           : base(name, name, description, ComponentCategory.Tab, ComponentCategory.FacilityPart)

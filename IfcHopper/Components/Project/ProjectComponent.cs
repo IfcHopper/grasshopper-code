@@ -8,7 +8,7 @@ using IfcHopper.Types;
 
 namespace IfcHopper.Components
 {
-    public class ProjectComponent : GH_Component
+    public class ProjectComponent : CollapsibleComponent
     {
         public ProjectComponent()
           : base("Project", "Project",

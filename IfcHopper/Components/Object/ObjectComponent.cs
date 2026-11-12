@@ -11,7 +11,7 @@ using Rhino.DocObjects;
 
 namespace IfcHopper.Components
 {
-    public class ObjectComponent : GH_Component
+    public class ObjectComponent : CollapsibleComponent
     {
         public ObjectComponent()
           : base("Object", "Object",

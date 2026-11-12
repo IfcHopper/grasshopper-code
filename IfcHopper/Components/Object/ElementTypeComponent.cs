@@ -10,7 +10,7 @@ using IfcHopper.Types;
 
 namespace IfcHopper.Components
 {
-    public class ElementTypeComponent : GH_Component
+    public class ElementTypeComponent : CollapsibleComponent
     {
         public ElementTypeComponent()
           : base("Element Type", "Type",

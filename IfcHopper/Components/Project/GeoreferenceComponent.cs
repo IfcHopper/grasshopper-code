@@ -7,7 +7,7 @@ using Rhino.Geometry;
 
 namespace IfcHopper.Components
 {
-    public class GeoreferenceComponent : GH_Component
+    public class GeoreferenceComponent : CollapsibleComponent
     {
         public GeoreferenceComponent()
           : base("Georeference", "Georef",
@@ -17,6 +17,9 @@ namespace IfcHopper.Components
         }
 
         public override GH_Exposure Exposure => GH_Exposure.secondary;
+
+        protected override bool IsAdvancedInput(IGH_Param parameter) => base.IsAdvancedInput(parameter)
+            || parameter.Optional && (parameter.Name == "Geodetic Datum" || parameter.Name == "Vertical Datum");
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
