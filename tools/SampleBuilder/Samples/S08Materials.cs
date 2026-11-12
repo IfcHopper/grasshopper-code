@@ -53,6 +53,14 @@ namespace SampleBuilder.Samples
             c.Wire(steel, beamType, "Material");
             var beam = Element(c, x2, Canvas.Below(beamType), new Point3d(3, 2.5, 3.1), new Vector3d(3, 0.1, 0.1), "IfcBeam", "Beam", null);
             c.Wire(beamType, beam, "Element Type");
+            c.BeforeSave.Add(() =>
+            {
+                MaterialPreviewChecks.Run();
+                MaterialPreviewChecks.CheckColour(wall, Color.FromArgb(255, 170, 85, 60));
+                MaterialPreviewChecks.CheckColour(slab, Color.FromArgb(255, 185, 185, 180));
+                MaterialPreviewChecks.CheckColour(window, Color.FromArgb(255, 200, 200, 205));
+                MaterialPreviewChecks.CheckColour(beam, Color.FromArgb(255, 110, 115, 125));
+            });
             c.Group("3. Objects with a material; the beam shows the steel of its type", Canvas.Colours.Ifc, wall, slab, window, beamType, beam);
 
             var deconstruct = c.Ifc("Deconstruct Material", Canvas.RightOf(wall, 80), Top + 900);
