@@ -1,6 +1,6 @@
 # Beta.2 preparation
 
-Target: `1.0.0-beta.2`. Development continues; this is not a release announcement. Keep the version bump, tag and publication until remaining issues are reviewed and the candidate is validated. Follow [RELEASING.md](RELEASING.md).
+Target: `1.0.0-beta.2`. Release candidate validation is in progress; publication status must be checked on GitHub. Follow [RELEASING.md](RELEASING.md).
 
 ## Changes to include
 
@@ -17,12 +17,18 @@ Target: `1.0.0-beta.2`. Development continues; this is not a release announcemen
 
 ## Remaining release gates
 
-- [ ] Review remaining open issues and merge accepted fixes into `main`.
-- [ ] Set candidate version; prepare final release notes and known issues.
-- [ ] Final candidate Release build/tests using pinned public fixtures; no private models required.
+- [x] Review remaining open issues and merge accepted fixes into `main`. Issue #15 is a follow-up enhancement for individual input controls, deferred beyond beta.2.
+- [x] Set candidate version; prepare final release notes and known issues.
+- [x] Final candidate Release build/tests using pinned public fixtures; no private models required.
 - [x] Verify fresh-cache template acquisition and record pinned source/checksum/provenance. Recheck if templates change before release.
-- [ ] Regenerate/solve samples and review intentional artifact changes.
-- [ ] Regenerate component docs/icons, update manual pages/sample download and pass docs build.
-- [ ] Package exact final commit; inspect version, dependencies, resources and licence notices.
+- [x] Regenerate/solve samples and review intentional artifact changes.
+- [x] Regenerate component docs/icons, update manual pages/sample download and pass docs build.
+- [ ] Package exact final commit; inspect version, dependencies, resources and licence notices (candidate archives inspected; final build follows this commit).
 - [ ] Clean installation checks on supported platforms/minimum Rhino, including Placement toolbar/icon and persistence; record actual host coverage.
 - [ ] Only after validation and authorization: tag, publish pre-release and coordinate docs deployment.
+
+## Candidate checks on 2026-11-13
+
+Release build, 195 tests (zero skips), all 15 sample solves, compact input host regressions, component docs generation and ZIP/Yak builds passed. SDK 10.0.401 targets .NET 8 on Windows x64 / Rhino 8.37.26307.15001. See [release notes](RELEASE_NOTES.md) for precise platform and clean-install limits. Docs production build passed with broken links configured to fail. Publication is pending.
+
+The actual extracted Release ZIP also passed all 15 solves and compact-input regressions in headless Rhino. SampleBuilder accepts `IFCHOPPER_PLUGIN_DIR` to repeat this validation; the selected module identity is verified. Interactive clean-install/update/uninstall and minimum-host/macOS coverage remain disclosed limitations, not passed gates.

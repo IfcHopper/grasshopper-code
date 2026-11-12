@@ -1,10 +1,10 @@
-﻿# Contributor and agent guide
+# Contributor and agent guide
 
 Applies repository-wide to humans and coding agents. **Must** means required; **should** means the default unless a reason is documented. These are project policies informed by official sources, not universal McNeel requirements. Apply relevant rules without unrelated cleanup or implementing future capabilities.
 
 ## Orientation and architecture
 
-Read [README.md](README.md) (Architecture, Data flow, Compatibility after 1.0), [sample instructions](samples/README.md), [icon conventions](docs/ICONS.md), affected code and tests. Discuss substantial architecture/API changes through the README contribution process; routine fixes can proceed.
+Read [developer reference](docs/DEVELOPMENT.md) (Architecture, Data flow, Compatibility after 1.0), [sample instructions](samples/README.md), [icon conventions](docs/ICONS.md), affected code and tests. Discuss substantial architecture/API changes through the README contribution process; routine fixes can proceed.
 
 | Location | Responsibility |
 | --- | --- |

@@ -1,6 +1,6 @@
 # Release notes
 
-## 1.0.0-beta.2 (unreleased)
+## 1.0.0-beta.2
 
 - Implement [#10](https://github.com/IfcHopper/grasshopper-code/issues/10): affected creation and Modify components have a bottom expand arrow and a top collapse arrow with the bottom control inset two canvas units and the top control at the content-box edge. New components start compact; connected or configured inputs remain visible. Expansion is saved per component, old definitions without the option open expanded, and layout-only undo/redo retains computed outputs. Inputs remain registered with unchanged identities, order, types, access and data. See [compact inputs](ADVANCED_INPUTS.md).
 - Fix [#6](https://github.com/IfcHopper/grasshopper-code/issues/6): Object and Modify Object preview only their outputs, so uncut input bodies and opening cutters no longer cover the cut result. Output preview visibility, selection colours and mesh-edge settings remain in effect. Hide previews of upstream geometry and Opening components to inspect the cuts.
@@ -8,6 +8,17 @@
 - Address [#5](https://github.com/IfcHopper/grasshopper-code/issues/5): the same output-only preview change removes the default-colour input drawn over material-coloured Object and Modify Object results. Sample 08 now checks assigned and inherited material colours, explicit surface-colour precedence, material replacement without upstream mutation, and colour updates across repeated solves. Upstream components still have independent previews; hide those to inspect the result alone.
 - Fix [#4](https://github.com/IfcHopper/grasshopper-code/issues/4): flatten the Storey Elements input in sample 07 so its three columns and two chairs are collected into one storey and IFC file. This restructuring applies only to the example; the Storey component's data-tree contract is unchanged. A regression checks both element classes, their types, placements and geometry in the generated IFC.
 
+
+Individual input plus/minus controls ([#15](https://github.com/IfcHopper/grasshopper-code/issues/15)) are a follow-up enhancement and are not included in beta.2; this release provides the overall expand/collapse arrows.
+
+### Candidate validation and testing limits (2026-11-13)
+
+- Release solution build passed with SDK 10.0.401 targeting .NET 8. All 195 tests passed, with zero failures or skips, using hash-verified public fixtures at revision `50e6c5c63a3586badc5dc857f5f4736675135525`.
+- All 15 samples regenerated and solved in headless Rhino 8.37.26307.15001 on Windows x64. Compact input, persistence, undo/redo, legacy definition and hover lifecycle checks passed. Component docs were regenerated from the same candidate source.
+- Release ZIP and Yak archives were built and inspected. The extracted Release ZIP loaded in a fresh headless Rhino process; all 15 sample solves and compact-input regressions passed against its module identity, and docs were regenerated against that payload. Yak assembly inspection succeeded and produced `rh8_27-any`; the Yak package requires Rhino 8.27+, despite the project's intended Rhino 8.20+ target.
+- **Unverified:** Rhino 8.20; builds with the .NET 8 SDK; macOS (both Apple Silicon and Intel) for this candidate; clean ZIP/Yak installation, update/uninstall, and interactive preview/bake/save/reopen on the final Release archive. Earlier maintainer feedback on Apple Silicon did not record exact Rhino/macOS versions and does not validate this archive. WindowsDesktop, System.Drawing and native dependencies remain platform-sensitive. An `any` package tag is not proof of macOS support.
+- Docs production build passed; the refreshed beta.2 sample ZIP contains 15 definitions and every entry was hash-compared with the candidate samples. The build reported stale browser-support metadata.
+- NuGet vulnerability lookup returned NU1900 network warnings; vulnerability auditing was not completed. Existing fresh-cache template validation is recorded in BETA2.md; templates were unchanged for this candidate.
 These changes keep component GUIDs, input/output contracts and IFC storage unchanged. No definition migration is required. Beta releases may introduce deliberate breaking changes before 1.0.0 stable; any such changes will be listed here with migration instructions.
 
 Validation for #10: the solution builds; all 195 Core tests pass with no skips; all 15 samples were regenerated, solved and checked for layout overlaps in headless Rhino. Dedicated host checks pass for arrow clicks, compact bounds, parameter identities/access, connected and persistent input visibility, repeated solves, GH_IO roundtrips, missing legacy options and layout-only undo/redo retaining computed data. The local Debug beta.2 Yak was rebuilt with successful assembly inspection. These checks used Windows x64, Rhino 8.37.26307.15001 and .NET 8 with SDK 10.0.401. The maintainer confirmed the final arrow placement and interaction in Rhino using the local Debug beta.2 package. Minimum Rhino 8.20, the .NET 8 SDK and macOS remain unverified; native offscreen label/icon rendering is incomplete even for unchanged Grasshopper components.

@@ -1,6 +1,6 @@
 # Releasing
 
-How an IfcHopper release is made. What each release contains is in the README [Release plan](../README.md#release-plan); the rules for component inputs and outputs are in [Compatibility after 1.0](../README.md#compatibility-after-10).
+How an IfcHopper release is made. What each release contains is in the [Release plan](DEVELOPMENT.md#release-plan); the rules for component inputs and outputs are in [Compatibility after 1.0](DEVELOPMENT.md#compatibility-after-10).
 
 ## Versions
 
@@ -20,11 +20,11 @@ How an IfcHopper release is made. What each release contains is in the README [R
    dotnet run --project tools/SampleBuilder        # regenerates and solves the samples
    ```
 
-   Commit intentional regenerated sample changes. External fixtures come only from the pinned public buildingSMART specification-models repository; never require private manual-testing models. Record skipped tests; do not describe them as passed. For blocked template downloads, use the README's offline procedure and record source/version. Check a fresh build cache as well as an incremental build.
+   Commit intentional regenerated sample changes. External fixtures come only from the pinned public buildingSMART specification-models repository; never require private manual-testing models. Record skipped tests; do not describe them as passed. For blocked template downloads, use the [offline build procedure](BUILDING.md) and record source/version. Check a fresh build cache as well as an incremental build.
 3. **Prepare docs and notes** using the workflow below, including changed parameter icons/visibility, samples downloads, highlights, installation, compatibility/migrations, known issues and bug reporting. Validate the docs build before release; publish in coordination with the release.
 4. **Package and validate:** `powershell -File tools/Package/Package.ps1` builds in Release and writes `artifacts/IfcHopper-<version>.zip`: an `IfcHopper` folder with the plugin and its DLLs (no `.pdb`), `LICENSE.txt`, `INSTALL.txt` and `THIRD-PARTY-NOTICES.txt` (from `tools/Package/`). Update notices for dependency changes. Inspect archive contents and embedded version; exclude host assemblies and stale outputs. Test the ZIP in a clean installation on supported Windows/macOS and minimum Rhino release: loading, solving, preview, bake, save/reopen, undo, update/uninstall. Record actual coverage and outstanding limits. Close Rhino before rebuilding loaded DLLs.
 5. **Freeze and tag only after validation.** Commit all intended release changes, merge into `main`, confirm a clean working tree, and build the final ZIP from that exact commit. If the commit changes, repeat affected checks and packaging. Then tag and push: `git tag v1.0.0-beta.2`, `git push origin main v1.0.0-beta.2`. Never move an already published tag to repair a release.
-6. **Publish** a GitHub Release for that tag: title `IfcHopper <version>`, prepared notes and the validated ZIP attached; mark betas as pre-release. Publish coordinated docs. Tagging/publication require explicit release authorization, not merely successful local checks.
+6. **Publish** a GitHub Release for that tag: title `IfcHopper <version>`, prepared notes and the validated ZIP attached; mark betas as pre-release. Verify the release and its downloadable ZIP first; then push the prepared docs to deploy them immediately afterward. Confirm the deployment and sample ZIP download. Tagging/publication require explicit release authorization, not merely successful local checks.
 
 ## Docs
 
@@ -46,4 +46,4 @@ The [docs site](https://github.com/IfcHopper/grasshopper-documentation) is a Doc
 - Version `1.0.0`, a normal (not pre-release) GitHub Release.
 - Docs: set `versions.current.label` to `v1.0` and update the beta wording (introduction notice, samples zip name).
 - When 1.1 development starts, freeze 1.0 in the docs with `npm run docusaurus docs:version 1.0`.
-- From 1.0 on, component inputs and outputs follow [Compatibility after 1.0](../README.md#compatibility-after-10).
+- From 1.0 on, component inputs and outputs follow [Compatibility after 1.0](DEVELOPMENT.md#compatibility-after-10).

@@ -24,10 +24,13 @@ namespace SampleBuilder
             var root = FindRepositoryRoot();
             var output = Path.Combine(root, "samples");
             // IfcHopper is loaded as a package from its build output, like the Rhino 8 launch profile of the plugin.
-            Environment.SetEnvironmentVariable("RHINO_PACKAGE_DIRS", Path.Combine(root, "IfcHopper", "bin", "Debug", "net8.0"));
+            // A caller can validate an extracted distribution instead of development output.
+            var pluginDirectory = Environment.GetEnvironmentVariable("IFCHOPPER_PLUGIN_DIR")
+                ?? Path.Combine(root, "IfcHopper", "bin", "Debug", "net8.0");
+            Environment.SetEnvironmentVariable("RHINO_PACKAGE_DIRS", pluginDirectory);
             // Bind this assembly before Rhino discovers installed packages with the same identity.
             // The module check below still rejects any session that registers a different build.
-            var pluginPath = Path.Combine(root, "IfcHopper", "bin", "Debug", "net8.0", "IfcHopper.gha");
+            var pluginPath = Path.Combine(pluginDirectory, "IfcHopper.gha");
             System.Reflection.Assembly.LoadFrom(pluginPath);
 
             using (new RhinoCore(new[] { "/netcore", "/nosplash" }, WindowStyle.NoWindow))
@@ -45,11 +48,11 @@ namespace SampleBuilder
                         null, new[] { typeof(GH_ExternalFile), typeof(bool) }, null)
                         ?? throw new NotSupportedException("This Grasshopper version has no supported headless loader signature.");
                     if (!(bool)loader.Invoke(Instances.ComponentServer, new object[] { new GH_ExternalFile(pluginPath), false }))
-                        throw new InvalidOperationException("Grasshopper could not load the current Debug plugin.");
+                        throw new InvalidOperationException("Grasshopper could not load the selected plugin.");
                 }
                 var objectProxy = Instances.ComponentServer.ObjectProxies.FirstOrDefault(p => p.Desc.Category == "IfcHopper" && p.Desc.Name == "Object");
                 if (objectProxy == null)
-                    throw new InvalidOperationException("The current Debug plugin was not discovered by headless Grasshopper.");
+                    throw new InvalidOperationException("The selected plugin was not discovered by headless Grasshopper.");
                 // Grasshopper may load GHA bytes into memory, leaving Assembly.Location empty.
                 // Compare module IDs from metadata instead of relying on a physical load path.
                 using (var file = File.OpenRead(pluginPath))
