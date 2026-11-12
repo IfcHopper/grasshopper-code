@@ -29,11 +29,16 @@ namespace SampleBuilder
             return Run(args);
         }
 
-        /// <summary>Loads Rhino's assemblies (RhinoCommon, Grasshopper, Eto, ...) from the installation.</summary>
+        /// <summary>Loads host assemblies from Rhino and matching plugin dependencies from the Debug build.</summary>
         private static Assembly ResolveFromRhino(AssemblyLoadContext context, AssemblyName name)
         {
             var folders = new[] { Path.Combine(RhinoSystem, "netcore"), RhinoSystem, Path.Combine(Path.GetDirectoryName(RhinoSystem), "Plug-ins", "Grasshopper") };
-            var file = folders.Select(f => Path.Combine(f, name.Name + ".dll")).FirstOrDefault(File.Exists);
+            // RHINO_PACKAGE_DIRS is set by Builder to this repository's Debug output. Assemblies
+            // parsed explicitly by headless Grasshopper also need its dependencies resolved there.
+            var buildFolder = Environment.GetEnvironmentVariable("RHINO_PACKAGE_DIRS");
+            var file = folders.Concat(new[] { buildFolder }).Where(f => !string.IsNullOrEmpty(f))
+                .Select(f => Path.Combine(f, name.Name + ".dll"))
+                .FirstOrDefault(f => File.Exists(f) && (name.Version == null || AssemblyName.GetAssemblyName(f).Version >= name.Version));
             return file == null ? null : context.LoadFromAssemblyPath(file);
         }
 
