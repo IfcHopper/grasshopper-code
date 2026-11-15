@@ -8,7 +8,7 @@ using IfcHopper.Types;
 
 namespace IfcHopper.Components
 {
-    public class PsetComponent : GH_Component
+    public class PsetComponent : IfcComponent
     {
         public PsetComponent()
           : base("Pset", "Pset",

@@ -9,7 +9,7 @@ using IfcHopper.Types;
 
 namespace IfcHopper.Components
 {
-    public class ModelInfoComponent : GH_Component
+    public class ModelInfoComponent : IfcComponent
     {
         public ModelInfoComponent()
           : base("Model Info", "Info",

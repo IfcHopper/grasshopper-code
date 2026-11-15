@@ -10,7 +10,7 @@ using Rhino;
 
 namespace IfcHopper.Components
 {
-    public class ReadIfcComponent : GH_Component
+    public class ReadIfcComponent : IfcComponent
     {
         /// <summary>Rhino units matching the last read file, when they differ from the document units.</summary>
         private UnitSystem? _fileUnits;

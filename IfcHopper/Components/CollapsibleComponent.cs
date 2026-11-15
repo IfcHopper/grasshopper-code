@@ -10,7 +10,7 @@ using Grasshopper.Kernel.Undo;
 namespace IfcHopper.Components
 {
     /// <summary>Component with a presentation-only advanced-input toggle; registered parameters and their data remain unchanged.</summary>
-    public abstract class CollapsibleComponent : GH_Component
+    public abstract class CollapsibleComponent : IfcComponent
     {
         // These optional metadata inputs have no persistent defaults. Main task inputs (including
         // geometry, type, material and placement) remain visible. Never infer relevance from Optional alone.

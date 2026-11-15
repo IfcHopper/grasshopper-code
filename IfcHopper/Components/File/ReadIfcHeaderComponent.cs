@@ -5,7 +5,7 @@ using Grasshopper.Kernel;
 
 namespace IfcHopper.Components
 {
-    public class ReadIfcHeaderComponent : GH_Component
+    public class ReadIfcHeaderComponent : IfcComponent
     {
         public ReadIfcHeaderComponent()
           : base("Read IFC Header", "Header",

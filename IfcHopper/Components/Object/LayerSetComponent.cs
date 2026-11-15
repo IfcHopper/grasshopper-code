@@ -8,7 +8,7 @@ using IfcHopper.Types;
 
 namespace IfcHopper.Components
 {
-    public class LayerSetComponent : GH_Component
+    public class LayerSetComponent : IfcComponent
     {
         public LayerSetComponent()
           : base("Layer Set", "LayerSet",

@@ -7,7 +7,7 @@ using IfcHopper.Types;
 
 namespace IfcHopper.Components
 {
-    public class DeconstructQtoComponent : GH_Component
+    public class DeconstructQtoComponent : IfcComponent
     {
         public DeconstructQtoComponent()
           : base("Deconstruct Qto", "DeQto",

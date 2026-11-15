@@ -6,7 +6,7 @@ using IfcHopper.Types;
 
 namespace IfcHopper.Components
 {
-    public class ClassificationComponent : GH_Component
+    public class ClassificationComponent : IfcComponent
     {
         public ClassificationComponent()
           : base("Classification", "Class",

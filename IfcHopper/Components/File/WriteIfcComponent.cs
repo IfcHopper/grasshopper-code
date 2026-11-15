@@ -6,8 +6,20 @@ using Grasshopper.Kernel;
 
 namespace IfcHopper.Components
 {
-    public class WriteIfcComponent : GH_Component
+    public class WriteIfcComponent : IfcComponent
     {
+        private bool _hasSuccessfulResults;
+
+        /// <summary>A destination path alone does not indicate a successful requested write.</summary>
+        protected override bool HasSuccessfulResults => _hasSuccessfulResults;
+
+        /// <summary>Resets write success before each batch of input iterations.</summary>
+        protected override void BeforeSolveInstance()
+        {
+            base.BeforeSolveInstance();
+            _hasSuccessfulResults = false;
+        }
+
         public WriteIfcComponent()
           : base("Write IFC", "WriteIFC",
               "Writes an IfcHopper model to an IFC file. The path is output even when Write is false.",
@@ -66,7 +78,11 @@ namespace IfcHopper.Components
             }
             DA.SetData(0, path);
 
-            if (!write) return;
+            if (!write)
+            {
+                _hasSuccessfulResults = true;
+                return;
+            }
             if (model == null || !model.IsValid)
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "No valid model to write.");
@@ -75,6 +91,7 @@ namespace IfcHopper.Components
             try
             {
                 var warnings = IfcBackend.Writer.Write(model.Value, path, schema);
+                _hasSuccessfulResults = true;
                 foreach (var warning in warnings) AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, warning);
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, $"Written {DateTime.Now:T}");
                 if (model.Value.RebuildsReadObjects)
