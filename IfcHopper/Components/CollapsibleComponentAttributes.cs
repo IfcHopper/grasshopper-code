@@ -14,6 +14,12 @@ namespace IfcHopper.Components
     /// <summary>Compacts unused metadata parameters and draws expand/collapse controls without altering the parameter server.</summary>
     internal sealed class CollapsibleComponentAttributes : GH_ComponentAttributes
     {
+        // GH1 8.20 stores the rendered tag list internally; IGH_Param.StateTags returns
+        // a fresh list, so updating it cannot move the icons used by rendering/tooltips.
+        // Verified on Rhino 8; replace this bridge when GH exposes cached tag layout publicly.
+        private static readonly System.Reflection.FieldInfo RenderTagsField = typeof(GH_LinkedParamAttributes)
+            .GetField("m_renderTags", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Grasshopper linked-parameter state-tag cache is unavailable.");
         private readonly CollapsibleComponent _component;
         private RectangleF _button;
         private RectangleF _collapseButton;
@@ -71,6 +77,7 @@ namespace IfcHopper.Components
                 {
                     hidden.Attributes.Bounds = RectangleF.Empty;
                     hidden.Attributes.Pivot = PointF.Empty;
+                    MoveStateTags(hidden.Attributes, 0, true);
                 }
                 Bounds = m_innerBounds;
                 foreach (var parameter in inputs.Concat(outputs))
@@ -110,6 +117,10 @@ namespace IfcHopper.Components
                         // the previous row (or above the first); reveal the next hidden row.
                         var gap = previous?.Attributes.Bounds.Bottom ?? (visible.Count > 0 ? visible[0].Attributes.Bounds.Top
                             : m_innerBounds.Top + m_innerBounds.Height * .5f);
+                        // The trailing gap belongs to the capsule bottom even when this
+                        // column is shorter. Match the expand arrow's inset from the stroke.
+                        if (visible.Count == 0 || ReferenceEquals(previous, visible[visible.Count - 1]))
+                            gap = m_innerBounds.Bottom - 2;
                         _parameterControls.Add(new ParameterControl(parameter, true, new PointF(edge, gap)));
                         gapHasControl = true;
                     }
@@ -130,10 +141,25 @@ namespace IfcHopper.Components
             {
                 var attributes = parameters[i].Attributes;
                 var box = attributes.Bounds;
+                var oldCenter = box.Top + box.Height * .5f;
                 box.Y = top + i * rowHeight;
                 box.Height = rowHeight;
                 attributes.Bounds = box;
                 attributes.Pivot = new PointF(input ? box.Left : box.Right, box.Top + rowHeight * 0.5f);
+                // GH_LinkedParamAttributes caches the state-tag stages during Layout. Move
+                // them after moving the row so mapping/simplify icons and tooltips follow it.
+                MoveStateTags(attributes, box.Top + box.Height * .5f - oldCenter, false);
+            }
+        }
+
+        private static void MoveStateTags(IGH_Attributes attributes, float deltaY, bool hidden)
+        {
+            if (RenderTagsField.GetValue(attributes) is not GH_StateTagList tags) return;
+            foreach (IGH_StateTag tag in tags)
+            {
+                var stage = tag.Stage;
+                stage.Offset(0, (int)Math.Round(deltaY));
+                tag.Stage = hidden ? Rectangle.Empty : stage;
             }
         }
 
@@ -160,6 +186,40 @@ namespace IfcHopper.Components
                 }
             }
 
+            // Canvas decorations (for example Sunglasses' rich capsules) repaint objects
+            // after this channel. Draw interactive controls after those decorations.
+            // Exports retain the existing arrows and omit interactive +/- controls.
+            if (!interactive) RenderControls(canvas, graphics, false);
+        }
+
+        private void CanvasPrePaintOverlay(GH_Canvas canvas)
+        {
+            if (canvas.DrawingMode != GH_CanvasMode.Control || _button.IsEmpty
+                || !ReferenceEquals(canvas.Document, _component.OnPingDocument())) return;
+            var bounds = Bounds;
+            if (!canvas.Viewport.IsVisible(ref bounds, 10)) return;
+            var graphics = canvas.Graphics;
+            var state = graphics.Save();
+            try
+            {
+                // Rich-capsule overlays can paint across the capsule's rounded edge too.
+                // Use GH's outline renderer to retain its palette, corners and zoom rules.
+                var palette = GH_CapsuleRenderEngine.GetImpliedPalette(Owner);
+                if (palette == GH_Palette.Normal && !Owner.IsPreviewCapable) palette = GH_Palette.Hidden;
+                using (var capsule = GH_Capsule.CreateCapsule(Bounds, palette))
+                {
+                    capsule.SetJaggedEdges(Owner.Params.Input.Count == 0, Owner.Params.Output.Count == 0);
+                    var style = GH_CapsuleRenderEngine.GetImpliedStyle(palette, Selected, Owner.Locked, Owner.Hidden);
+                    graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                    capsule.RenderEngine.RenderOutlines(graphics, canvas.Viewport.Zoom, style);
+                }
+                RenderControls(canvas, graphics, true);
+            }
+            finally { graphics.Restore(state); }
+        }
+
+        private void RenderControls(GH_Canvas canvas, Graphics graphics, bool interactive)
+        {
             var center = ButtonCenter;
             // Re-evaluate on paint as well: zooming or moving the component changes its distance
             // from the last canvas mouse position even without another mouse event.
@@ -246,7 +306,7 @@ namespace IfcHopper.Components
             {
                 e.Title = (control.Show ? "Show " : "Hide ") + control.Parameter.Name;
                 e.Text = control.Show ? "Reveal the next hidden parameter at this gap." : "Hide this unused parameter.";
-                e.Description = "Changes layout only. Connected parameters and configured inputs stay visible.";
+                e.Description = "Hiding unused parameters resets their tree controls. Connected parameters and inputs with persistent values stay visible.";
                 return;
             }
             if (!_button.IsEmpty && Distance(ButtonCenter, point) <= 3)
@@ -298,6 +358,7 @@ namespace IfcHopper.Components
             // Component-level RespondToMouseMove is deliberately not used for hover refresh.
             canvas.MouseMove += CanvasMouseMove;
             canvas.MouseLeave += CanvasMouseLeave;
+            canvas.CanvasPrePaintOverlay += CanvasPrePaintOverlay;
             canvas.DocumentChanged += CanvasDocumentChanged;
             canvas.Disposed += CanvasDisposed;
         }
@@ -308,6 +369,7 @@ namespace IfcHopper.Components
             {
                 _hoverCanvas.MouseMove -= CanvasMouseMove;
                 _hoverCanvas.MouseLeave -= CanvasMouseLeave;
+                _hoverCanvas.CanvasPrePaintOverlay -= CanvasPrePaintOverlay;
                 _hoverCanvas.DocumentChanged -= CanvasDocumentChanged;
                 _hoverCanvas.Disposed -= CanvasDisposed;
                 _hoverCanvas = null;

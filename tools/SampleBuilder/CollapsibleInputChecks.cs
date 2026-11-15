@@ -148,13 +148,169 @@ namespace SampleBuilder
                     }
                     foreach (var parameter in component.Params.Output.Where(p => !p.Attributes.Bounds.IsEmpty))
                         Require(parameter.Attributes.Bounds.Left == outputAnchors[parameter.InstanceGuid], $"{component.Name}: output label anchor moved.");
+                    CheckTrailingPlusAlignment(component);
+                    CheckPlusOpenedCollapse(component, family.Document);
                 }
             }
             CheckCanvasHover();
+            CheckZoomRendering(output);
+            CheckStateTags(output);
+            CheckInputControlCollapse();
             CheckDeconstructOutputs(output);
             CheckIndividualControls(output);
-            Console.WriteLine("All affected component families: arrow toggles, registered input identities and compact bounds passed.");
+            Console.WriteLine("All affected component families: arrow toggles, top collapse of all plus-opened inputs/outputs, undo/redo, registered identities and compact bounds passed.");
             return 0;
+        }
+
+        private static void CheckStateTags(string output)
+        {
+            var canvas = new Canvas(expandAdvancedInputs: false);
+            using (canvas.Document)
+            {
+                var component = (GH_Component)canvas.Ifc("Object", 180, 100);
+                var input = Canvas.Input(component, "Geometry");
+                var outputParameter = Canvas.Output(component);
+                foreach (var mapping in new[] { GH_DataMapping.Flatten, GH_DataMapping.Graft })
+                {
+                    input.DataMapping = mapping;
+                    outputParameter.DataMapping = mapping;
+                    input.Simplify = outputParameter.Simplify = true;
+                    for (var i = 0; i < 4; i++)
+                    {
+                        component.Attributes.ExpireLayout();
+                        component.Attributes.PerformLayout();
+                        foreach (var parameter in new[] { input, outputParameter })
+                        {
+                            var field = typeof(GH_LinkedParamAttributes).GetField("m_renderTags",
+                                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                            var tags = (GH_StateTagList)field.GetValue(parameter.Attributes);
+                            Require(tags != null && tags.Count > 0, "Configured parameters must have state tags.");
+                            var bounds = tags.BoundingBox;
+                            var row = parameter.Attributes.Bounds;
+                            Require(Math.Abs(bounds.Top + bounds.Height * .5f - (row.Top + row.Height * .5f)) <= 1,
+                                $"{parameter.Name}: mapping/simplify icons must follow the parameter row. Tags={bounds}, row={row}, expanded={Expanded(component)}");
+                        }
+                        ClickArrow(component);
+                    }
+                }
+                component.Attributes.PerformLayout();
+                Capture(canvas.Document, Path.Combine(output, "state-tags.png"));
+            }
+            Console.WriteLine("Input/output flatten, graft and simplify state tags follow repeated compact/expanded layout changes.");
+        }
+
+        private static void CheckPlusOpenedCollapse(GH_Component component, GH_Document document)
+        {
+            var parameters = component.Params.Input.Concat(component.Params.Output).ToArray();
+            var hidden = parameters.Where(p => p.Attributes.Bounds.IsEmpty).ToArray();
+            if (hidden.Length == 0) return;
+            // Reveal every available row via real plus clicks, including the last row that
+            // removes the compact layout. The global expanded flag must still remain false.
+            while (true)
+            {
+                var plus = ParameterControls(component).FirstOrDefault(c => c.Show);
+                if (plus.Parameter == null) break;
+                var visibleCount = parameters.Count(p => !p.Attributes.Bounds.IsEmpty);
+                var e = new GH_CanvasMouseEvent(Point.Empty, plus.Center, MouseButtons.Left, 1, 0);
+                Require(component.Attributes.RespondToMouseDown(null, e) == GH_ObjectResponse.Handled,
+                    $"{component.Name}: plus did not reveal its parameter.");
+                component.Attributes.PerformLayout();
+                Require(parameters.Count(p => !p.Attributes.Bounds.IsEmpty) == visibleCount + 1,
+                    $"{component.Name}: each plus click must reveal exactly one parameter.");
+            }
+            Require(!Expanded(component) && hidden.All(p => !p.Attributes.Bounds.IsEmpty),
+                $"{component.Name}: plus must reveal all hidden input/output rows without changing the global flag.");
+            foreach (var parameter in hidden)
+            {
+                parameter.DataMapping = GH_DataMapping.Graft;
+                parameter.Reverse = parameter.Simplify = true;
+            }
+            var identities = parameters.Select(p => p.InstanceGuid).ToArray();
+            ClickPartialCollapse(component);
+            Require(!Expanded(component) && hidden.All(p => p.Attributes.Bounds.IsEmpty),
+                $"{component.Name}: top arrow must collapse all plus-opened inputs and outputs, including rows with tree controls.");
+            Require(hidden.All(p => p.DataMapping == GH_DataMapping.None && !p.Reverse && !p.Simplify),
+                $"{component.Name}: collapsing must reset tree controls on both hidden inputs and outputs.");
+            Require(identities.SequenceEqual(component.Params.Input.Concat(component.Params.Output).Select(p => p.InstanceGuid)),
+                $"{component.Name}: collapsing plus-opened rows must preserve parameter identities.");
+            document.UndoServer.PerformUndo();
+            component.Attributes.PerformLayout();
+            Require(!Expanded(component) && hidden.All(p => !p.Attributes.Bounds.IsEmpty),
+                $"{component.Name}: undo must restore every plus-opened input/output row.");
+            Require(hidden.All(p => p.DataMapping == GH_DataMapping.Graft && p.Reverse && p.Simplify),
+                $"{component.Name}: undo must restore input and output tree controls.");
+            document.UndoServer.PerformRedo();
+            component.Attributes.PerformLayout();
+            Require(hidden.All(p => p.Attributes.Bounds.IsEmpty),
+                $"{component.Name}: redo must collapse every plus-opened input/output row.");
+            Require(hidden.All(p => p.DataMapping == GH_DataMapping.None && !p.Reverse && !p.Simplify),
+                $"{component.Name}: redo must reset input and output tree controls.");
+        }
+
+        private static void CheckTrailingPlusAlignment(GH_Component component)
+        {
+            var controls = ParameterControls(component);
+            var body = ((GH_ComponentAttributes)component.Attributes).ContentBox;
+            foreach (var column in new[] { component.Params.Input, component.Params.Output })
+            {
+                var lastVisible = column.FindLastIndex(p => !p.Attributes.Bounds.IsEmpty);
+                foreach (var control in controls.Where(c => c.Show && column.Contains(c.Parameter) && column.IndexOf(c.Parameter) > lastVisible))
+                    Require(control.Center.Y == body.Bottom - 2,
+                        $"{component.Name}/{control.Parameter.Name}: trailing plus must align with the bottom expand arrow.");
+            }
+        }
+
+        private static void CheckInputControlCollapse()
+        {
+            CheckControlCollapse(true);
+            CheckControlCollapse(false);
+        }
+
+        private static void CheckControlCollapse(bool inputSide)
+        {
+            var canvas = new Canvas(expandAdvancedInputs: false);
+            using (canvas.Document)
+            {
+                var component = (GH_Component)canvas.Ifc(inputSide ? "Object" : "Deconstruct Object", 180, 100);
+                var name = inputSide ? "Tag" : "Description";
+                var input = inputSide ? Canvas.Input(component, name) : Canvas.Output(component, name);
+                var wired = inputSide ? Canvas.Input(component, "GlobalId") : Canvas.Output(component, "GlobalId");
+                var source = canvas.Panel(0, 0, 100, 30, "Connected");
+                if (inputSide) canvas.Wire(source, component, "GlobalId");
+                else canvas.Wire(component, source, null, "GlobalId");
+                foreach (var mapping in new[] { GH_DataMapping.Flatten, GH_DataMapping.Graft, GH_DataMapping.None })
+                {
+                    ClickArrow(component);
+                    foreach (var parameter in new[] { input, wired })
+                    {
+                        parameter.DataMapping = mapping;
+                        parameter.Reverse = parameter.Simplify = true;
+                    }
+                    ClickArrow(component);
+                    component.Attributes.PerformLayout();
+                    Require(input.Attributes.Bounds.IsEmpty && input.DataMapping == GH_DataMapping.None && !input.Reverse && !input.Simplify,
+                        "Collapsing an unused input must hide it and clear its tree controls.");
+                    Require(!wired.Attributes.Bounds.IsEmpty && wired.DataMapping == mapping && wired.Reverse && wired.Simplify,
+                        "Connected input tree controls must survive collapse.");
+                    canvas.Document.UndoServer.PerformUndo();
+                    component.Attributes.PerformLayout();
+                    Require(Expanded(component) && !input.Attributes.Bounds.IsEmpty
+                        && input.DataMapping == mapping && input.Reverse && input.Simplify,
+                        "Undo must restore the input and its original tree controls.");
+                    canvas.Document.UndoServer.PerformRedo();
+                    component.Attributes.PerformLayout();
+                    Require(input.Attributes.Bounds.IsEmpty && input.DataMapping == GH_DataMapping.None && !input.Reverse && !input.Simplify,
+                        "Redo must hide the input and clear its controls again.");
+                    ClickParameter(component, name, true);
+                    input.DataMapping = mapping;
+                    input.Reverse = input.Simplify = true;
+                    ClickParameter(component, name, false);
+                    component.Attributes.PerformLayout();
+                    Require(input.Attributes.Bounds.IsEmpty && input.DataMapping == GH_DataMapping.None && !input.Reverse && !input.Simplify,
+                        "The individual minus control must also clear unused input tree controls.");
+                }
+            }
+            Console.WriteLine($"Unused {(inputSide ? "input" : "output")} tree controls: global/individual collapse resets controls, undo/redo restores them, connected parameters retain controls.");
         }
 
         private static void CheckIndividualControls(string output)
@@ -478,6 +634,108 @@ namespace SampleBuilder
                 Require(subscription.GetValue(attributes) == null, "Disposing the canvas must detach hover handlers.");
             }
             Console.WriteLine("Canvas hover: cardinal/diagonal approaches, outside bottom/top edge growth, mouse leave and subscription cleanup passed.");
+        }
+
+        private static void CheckZoomRendering(string output)
+        {
+            var sunglassesPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "Grasshopper", "Libraries", "sunglasses.gha");
+            System.Reflection.MethodInfo richCapsules = null;
+            if (File.Exists(sunglassesPath))
+            {
+                var assembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.GetName().Name.Equals("sunglasses", StringComparison.OrdinalIgnoreCase))
+                    ?? System.Reflection.Assembly.Load(File.ReadAllBytes(sunglassesPath));
+                richCapsules = assembly.GetType("Sunglasses.Drawing")?.GetMethod("PaintRichedCapsules");
+                Require(richCapsules != null, "Installed Sunglasses has no rich-capsule rendering entry point.");
+            }
+            var definition = new Canvas(expandAdvancedInputs: false);
+            using (definition.Document)
+            {
+                foreach (var name in new[] { "Object", "Deconstruct Object" })
+                {
+                    var component = (GH_Component)definition.Ifc(name, 180, 100);
+                    foreach (var expanded in new[] { false, true })
+                    {
+                        if (expanded) ClickArrow(component);
+                        var content = ((GH_ComponentAttributes)component.Attributes).ContentBox;
+                        var control = expanded ? ParameterControls(component).Last(c => !c.Show) : ParameterControls(component).Last(c => c.Show);
+                        using (var canvas = new HoverProbeCanvas { Size = new Size(1000, 700), Document = definition.Document })
+                        {
+                            canvas.CreateControl();
+                            foreach (var zoom in new[] { 1f, 4f, 6f, 10f, 20f })
+                            {
+                                canvas.Viewport.Zoom = zoom;
+                                canvas.Viewport.Focus(new PointF(control.Center.X * zoom, control.Center.Y * zoom));
+                                canvas.MoveTo(new PointF(control.Center.X + 20, control.Center.Y + 20));
+                                // GH fades interactive controls over successive frames. Compare
+                                // settled frames, rather than two different animation alphas.
+                                for (var frame = 0; frame < 64; frame++)
+                                {
+                                    using (canvas.GetCanvasScreenBuffer(GH_CanvasMode.Control)) { }
+                                    if (GH_Canvas.ZoomFadeHigh == 255) break;
+                                    System.Threading.Thread.Sleep(10);
+                                    Application.DoEvents();
+                                }
+                                using (var baseline = canvas.GetCanvasScreenBuffer(GH_CanvasMode.Control))
+                                {
+                                    canvas.CanvasPostPaintObjects += PaintDecoration;
+                                    if (richCapsules != null)
+                                    {
+                                        var fade = (GH_FadeAnimation)richCapsules.DeclaringType.GetProperty("Fade").GetValue(null);
+                                        for (var frame = 0; zoom >= fade.Threshold && frame < 128; frame++)
+                                        {
+                                            using (canvas.GetCanvasScreenBuffer(GH_CanvasMode.Control)) { }
+                                            if (fade.FadeAlpha == 255) break;
+                                            System.Threading.Thread.Sleep(10);
+                                            Application.DoEvents();
+                                        }
+                                        Require(zoom < fade.Threshold || fade.FadeAlpha == 255,
+                                            $"Sunglasses high-zoom decoration must finish fading in: zoom={zoom}, threshold={fade.Threshold}, alpha={fade.FadeAlpha}, duration={fade.Duration}.");
+                                    }
+                                    using (var decorated = canvas.GetCanvasScreenBuffer(GH_CanvasMode.Control))
+                                    {
+                                        // The circle's two sides must survive the later decoration,
+                                        // including a minus that lies on the edge of a parameter panel.
+                                        foreach (var offset in new[] { -.9f, .9f })
+                                        {
+                                            var point = canvas.Viewport.ProjectPoint(new PointF(control.Center.X + offset, control.Center.Y));
+                                            var x = (int)Math.Round(point.X);
+                                            var y = (int)Math.Round(point.Y);
+                                            Require(x >= 0 && x < baseline.Width && y >= 0 && y < baseline.Height,
+                                                $"Zoom probe outside bitmap: {name}, expanded={expanded}, zoom={zoom}, point={point}, size={baseline.Size}, center={control.Center}.");
+                                            Require(baseline.GetPixel(x, y).ToArgb() == decorated.GetPixel(x, y).ToArgb(),
+                                                $"{name}: {(expanded ? "minus" : "plus")} is obscured at zoom {zoom}, at {point}, baseline={baseline.GetPixel(x, y)}, decorated={decorated.GetPixel(x, y)}.");
+                                        }
+                                        var border = canvas.Viewport.ProjectPoint(new PointF(control.Center.X + 4, component.Attributes.Bounds.Bottom));
+                                        var borderX = (int)Math.Round(border.X);
+                                        var borderY = (int)Math.Round(border.Y);
+                                        if (borderX >= 0 && borderX < baseline.Width && borderY >= 0 && borderY < baseline.Height)
+                                            Require(baseline.GetPixel(borderX, borderY).ToArgb() == decorated.GetPixel(borderX, borderY).ToArgb(),
+                                                $"{name}: capsule bottom border is damaged at zoom {zoom}.");
+                                        if (zoom == 20)
+                                            decorated.Save(Path.Combine(output, $"zoom-{name.Replace(' ', '-')}-{expanded}.png"), System.Drawing.Imaging.ImageFormat.Png);
+                                    }
+                                    canvas.CanvasPostPaintObjects -= PaintDecoration;
+                                }
+                            }
+                            canvas.Document = null;
+                        }
+                        if (expanded) ClickArrow(component);
+
+                        void PaintDecoration(GH_Canvas canvas)
+                        {
+                            // Exercise the installed overlay without changing its user settings.
+                            // A simple opaque repaint also guarantees coverage without Sunglasses.
+                            if (richCapsules != null)
+                                richCapsules.Invoke(null, new object[] { canvas, new IGH_DocumentObject[] { component } });
+                            else
+                                canvas.Graphics.FillRectangle(Brushes.LightGray, content);
+                        }
+                    }
+                    definition.Document.RemoveObject(component, false);
+                }
+            }
+            Console.WriteLine($"Zoom controls: input/output plus/minus survive post-object decoration at 100–2000% ({(richCapsules == null ? "synthetic overlay; Sunglasses unavailable" : "installed Sunglasses")}).");
         }
 
         private sealed class HoverProbeCanvas : GH_Canvas

@@ -23,7 +23,9 @@ At the normal Grasshopper parameter-control zoom level, eligible visible paramet
 have a small minus button on the content-box edge at the centre of their row. A plus
 button sits at each gap containing hidden parameters. Click it to reveal the next
 hidden parameter at that gap in its original registered order; the tooltip names
-that parameter. Repeated clicks reveal subsequent hidden parameters. Inputs use
+that parameter. A plus after the last visible row sits two canvas units above the
+content-box bottom, aligned with the expand arrow on both sides, including shorter
+columns. Repeated clicks reveal subsequent hidden parameters. Inputs use
 the left content edge and outputs the right. Labels retain their native justification.
 Opening even one unused parameter with plus also shows the top collapse arrow;
 the bottom expand arrow remains available to show the others. The top arrow
@@ -33,6 +35,13 @@ These buttons use the native dimension components' black/white circular plus/min
 appearance, 1.5-to-3 canvas-unit proximity radius and zoom fading. They are custom
 presentation controls; they do not insert or remove registered parameters. They are
 interactive canvas controls and are omitted from export drawings.
+
+Interactive arrows and plus/minus controls are painted after object decorations,
+so high-zoom detail panels (including Sunglasses rich capsules) do not cover them.
+The capsule outline is restored with Grasshopper's native outline renderer to keep
+its rounded corners, theme and zoom-dependent border treatment. This drawing pass
+uses the same canvas subscription lifetime as hover tracking and does not run for
+exports.
 
 Minus is available only for an eligible unused parameter. Connected parameters and
 configured inputs cannot be hidden; their wires and values take precedence over an
@@ -74,14 +83,16 @@ secondary metadata and keeps its standard layout. Wired outputs stay visible eve
 when they carry no data. Hidden output data is still computed normally.
 
 Connected parameters remain visible, including connections carrying empty data. Inputs
-with persistent values or configured flatten/graft, reverse or simplify settings
-also remain visible. To set an advanced value, expand the component first. Clearing
+with persistent values also remain visible. Flatten/graft, reverse and simplify
+settings alone do not keep an unused input open. Collapsing an unused input or output
+(with the top arrow, menu or individual minus) clears these controls and hides the
+row. Connected inputs and outputs retain their controls. To set an advanced value, expand the component first. Clearing
 that value makes its unused row eligible to collapse again.
 
-Only canvas presentation changes. All parameters remain registered in their original
+All parameters remain registered in their original
 order, with their types, access modes, values and wires intact. Toggling the arrow
 does not expire computation or trigger file writes. Undo/redo restores the layout
-option without replacing parameters or expiring their computed outputs.
+option and any cleared parameter controls without replacing parameters or expiring their computed outputs.
 
 Expansion is saved per component through GH_IO. Definitions saved before this option
 existed reopen fully expanded. Newly placed components start compact. The generated
