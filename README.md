@@ -41,7 +41,7 @@ Target: Rhino 8.20+ and .NET 8 on Windows/macOS. Beta.2 was checked on Windows x
 - User documentation: https://ifchopper.github.io/grasshopper-documentation/
 - [Samples](samples/README.md): one Grasshopper definition per workflow, with the IFC files they write.
 - [Release notes](docs/RELEASE_NOTES.md): changes and testing limits for beta.2.
-- [Compact inputs](docs/ADVANCED_INPUTS.md): use the bottom arrow to show advanced component inputs.
+- [Compact parameters](docs/ADVANCED_INPUTS.md): use the bottom arrow to show advanced inputs and Deconstruct outputs.
 - [Large coordinates](docs/LARGE_COORDINATES.md): precision protection, coordinate warnings and synthetic test files.
 - [Explicit colour preview](docs/PREVIEW.md): standard shading by default; use native Custom Preview with geometry and materials for colour.
 - [Find Objects expressions](docs/FIND_OBJECTS.md): regex inclusion/exclusion and migration from beta wildcards.

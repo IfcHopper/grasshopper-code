@@ -9,7 +9,7 @@ using IfcHopper.Types;
 
 namespace IfcHopper.Components
 {
-    public class DeconstructMaterialComponent : IfcComponent
+    public class DeconstructMaterialComponent : CollapsibleComponent
     {
         public DeconstructMaterialComponent()
           : base("Deconstruct Material", "DeMaterial",

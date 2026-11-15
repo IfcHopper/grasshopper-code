@@ -8,7 +8,7 @@ using Rhino.Geometry;
 
 namespace IfcHopper.Components
 {
-    public class DeconstructContextComponent : IfcComponent
+    public class DeconstructContextComponent : CollapsibleComponent
     {
         public DeconstructContextComponent()
           : base("Deconstruct Context", "DeContext",

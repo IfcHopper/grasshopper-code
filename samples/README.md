@@ -27,7 +27,7 @@ Samples that write a file write it to `ifc/` next to the definition. The Write t
 
 The definitions are generated; do not edit them by hand. Each one is built in code by `tools/SampleBuilder` (one class per sample in `tools/SampleBuilder/Samples`). The builder runs Rhino 8 headless (Rhino.Inside), loads IfcHopper from its build output, and solves every definition. It fails when a component reports an error, an unexpected warning or remark, or when objects overlap on the canvas. It then saves the `.gh` files, the `.3dm` of sample 07 and the IFC files.
 
-Samples explicitly show advanced inputs for discoverability. New components placed from the toolbar start compact; use the bottom arrow to expand inputs and the top arrow to collapse unused metadata inputs. Connected and configured inputs remain visible. See [compact inputs](../docs/ADVANCED_INPUTS.md) for the groups and compatibility behavior.
+Samples explicitly show advanced parameters for discoverability, including Deconstruct outputs. New components with secondary metadata placed from the toolbar start compact; use the bottom arrow to expand and the top arrow to collapse unused metadata. Connected parameters and configured inputs remain visible. See [compact parameters](../docs/ADVANCED_INPUTS.md) for the groups and compatibility behavior.
 
 ```sh
 dotnet build IfcHopper/IfcHopper.csproj
