@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using Grasshopper.GUI;
@@ -15,11 +16,23 @@ namespace IfcHopper.Components
     {
         private readonly CollapsibleComponent _component;
         private RectangleF _button;
+        private RectangleF _collapseButton;
+        private float _collapseRadius = 1.5f;
         private bool _compact;
         private GH_Canvas _hoverCanvas;
         private Point _cursorControl;
         private bool _hasCursor;
         private float _hoverRadius = 1.5f;
+        private readonly List<ParameterControl> _parameterControls = new List<ParameterControl>();
+        private float[] _parameterRadii = Array.Empty<float>();
+
+        private sealed class ParameterControl
+        {
+            public IGH_Param Parameter { get; }
+            public bool Show { get; }
+            public PointF Center { get; }
+            public ParameterControl(IGH_Param parameter, bool show, PointF center) { Parameter = parameter; Show = show; Center = center; }
+        }
         private PointF ButtonCenter => new PointF(_button.Left + _button.Width * 0.5f, _button.Top + _button.Height * 0.5f);
 
         // Measured from Rhino 8.37's annotation ZUI renderer (IOComponents.ZuiComponent):
@@ -33,6 +46,9 @@ namespace IfcHopper.Components
         {
             base.Layout();
             _button = RectangleF.Empty;
+            _collapseButton = RectangleF.Empty;
+            _parameterControls.Clear();
+            _parameterRadii = Array.Empty<float>();
             if (!_component.HasAdvancedParameters) return;
             var inputs = Owner.Params.Input.Where(_component.IsInputVisible).ToList();
             var outputs = Owner.Params.Output.Where(_component.IsOutputVisible).ToList();
@@ -69,6 +85,42 @@ namespace IfcHopper.Components
             // components. The collapse control already aligns with the native top position.
             var y = _component.Expanded ? m_innerBounds.Top : m_innerBounds.Bottom - 2;
             _button = new RectangleF(m_innerBounds.Left + m_innerBounds.Width * 0.5f - 3, y - 3, 6, 6);
+            // Individually revealed rows need a collapse action even while the global mode
+            // remains compact. Keep the bottom expand arrow available for the other rows.
+            if (!_component.Expanded && _component.CanCollapseParameters)
+                _collapseButton = new RectangleF(m_innerBounds.Left + m_innerBounds.Width * .5f - 3, m_innerBounds.Top - 3, 6, 6);
+            LayoutParameterControls(Owner.Params.Input, true);
+            LayoutParameterControls(Owner.Params.Output, false);
+            _parameterRadii = Enumerable.Repeat(1.5f, _parameterControls.Count).ToArray();
+        }
+
+        private void LayoutParameterControls(List<IGH_Param> parameters, bool input)
+        {
+            var visible = parameters.Where(p => input ? _component.IsInputVisible(p) : _component.IsOutputVisible(p)).ToList();
+            var edge = input ? m_innerBounds.Left : m_innerBounds.Right;
+            IGH_Param previous = null;
+            bool gapHasControl = false;
+            foreach (var parameter in parameters)
+            {
+                if (!visible.Contains(parameter))
+                {
+                    if (_component.IsEligible(parameter) && !gapHasControl)
+                    {
+                        // Match GH 8.37's native variable-parameter UI: plus at the gap after
+                        // the previous row (or above the first); reveal the next hidden row.
+                        var gap = previous?.Attributes.Bounds.Bottom ?? (visible.Count > 0 ? visible[0].Attributes.Bounds.Top
+                            : m_innerBounds.Top + m_innerBounds.Height * .5f);
+                        _parameterControls.Add(new ParameterControl(parameter, true, new PointF(edge, gap)));
+                        gapHasControl = true;
+                    }
+                    continue;
+                }
+                if (_component.CanHide(parameter))
+                    _parameterControls.Add(new ParameterControl(parameter, false,
+                        new PointF(edge, parameter.Attributes.Bounds.Top + parameter.Attributes.Bounds.Height * .5f)));
+                previous = parameter;
+                gapHasControl = false;
+            }
         }
 
         private void LayoutRows(System.Collections.Generic.List<IGH_Param> parameters, float rowHeight, bool input)
@@ -113,17 +165,42 @@ namespace IfcHopper.Components
             // from the last canvas mouse position even without another mouse event.
             var radius = interactive && _hasCursor ? ButtonRadius(Distance(center, canvas.Viewport.UnprojectPoint(_cursorControl))) : 1.5f;
             if (interactive) _hoverRadius = radius;
+            RenderArrow(graphics, center, _component.Expanded, radius);
+            if (!_collapseButton.IsEmpty)
+            {
+                var collapseCenter = CenterOf(_collapseButton);
+                var collapseRadius = interactive && _hasCursor ? ButtonRadius(Distance(collapseCenter, canvas.Viewport.UnprojectPoint(_cursorControl))) : 1.5f;
+                if (interactive) _collapseRadius = collapseRadius;
+                RenderArrow(graphics, collapseCenter, true, collapseRadius);
+            }
+            if (interactive && GH_Canvas.ZoomFadeHigh > 0)
+            {
+                var cursor = _hasCursor ? canvas.Viewport.UnprojectPoint(_cursorControl) : new PointF(float.MaxValue, float.MaxValue);
+                for (int i = 0; i < _parameterControls.Count; i++)
+                {
+                    var control = _parameterControls[i];
+                    var controlRadius = _hasCursor ? ButtonRadius(Distance(control.Center, cursor)) : 1.5f;
+                    _parameterRadii[i] = controlRadius;
+                    RenderParameterControl(graphics, control, controlRadius, GH_Canvas.ZoomFadeHigh);
+                }
+            }
+        }
+
+        private static PointF CenterOf(RectangleF box) => new PointF(box.Left + box.Width * .5f, box.Top + box.Height * .5f);
+
+        private static void RenderArrow(Graphics graphics, PointF center, bool collapse, float radius)
+        {
             var x = center.X;
             var y = center.Y;
-            var direction = _component.Expanded ? -1 : 1;
+            var direction = collapse ? -1 : 1;
             var smoothing = graphics.SmoothingMode;
             try
             {
                 graphics.SmoothingMode = SmoothingMode.AntiAlias;
                 var circle = new RectangleF(x - radius, y - radius, radius * 2, radius * 2);
-                graphics.FillEllipse(_component.Expanded ? Brushes.White : Brushes.Black, circle);
+                graphics.FillEllipse(collapse ? Brushes.White : Brushes.Black, circle);
                 using (var edge = new Pen(Color.Black, 0.5f)) graphics.DrawEllipse(edge, circle);
-                using (var pen = new Pen(_component.Expanded ? Color.Black : Color.White, radius * 0.25f)
+                using (var pen = new Pen(collapse ? Color.Black : Color.White, radius * 0.25f)
                     { LineJoin = LineJoin.Miter, StartCap = LineCap.Flat, EndCap = LineCap.Flat })
                     graphics.DrawLines(pen, new[]
                     {
@@ -135,8 +212,43 @@ namespace IfcHopper.Components
             finally { graphics.SmoothingMode = smoothing; }
         }
 
+        private static void RenderParameterControl(Graphics graphics, ParameterControl control, float radius, int alpha)
+        {
+            var smoothing = graphics.SmoothingMode;
+            graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            try
+            {
+                using var fill = new SolidBrush(Color.FromArgb(alpha, control.Show ? Color.Black : Color.White));
+                using var edge = new Pen(Color.FromArgb(alpha, Color.Black), .5f);
+                using var glyph = new Pen(Color.FromArgb(alpha, control.Show ? Color.White : Color.Black), radius * .25f);
+                var center = control.Center;
+                var circle = new RectangleF(center.X - radius, center.Y - radius, 2 * radius, 2 * radius);
+                graphics.FillEllipse(fill, circle);
+                graphics.DrawEllipse(edge, circle);
+                var half = .5f * radius;
+                graphics.DrawLine(glyph, center.X - half, center.Y, center.X + half, center.Y);
+                if (control.Show) graphics.DrawLine(glyph, center.X, center.Y - half, center.X, center.Y + half);
+            }
+            finally { graphics.SmoothingMode = smoothing; }
+        }
+
         public override void SetupTooltip(PointF point, GH_TooltipDisplayEventArgs e)
         {
+            if (!_collapseButton.IsEmpty && Distance(CenterOf(_collapseButton), point) <= 3)
+            {
+                e.Title = "Hide advanced parameters";
+                e.Text = "Collapse unused metadata parameters, including individually revealed rows.";
+                e.Description = "Connected parameters and configured inputs remain visible.";
+                return;
+            }
+            var control = _parameterControls.FirstOrDefault(c => Distance(c.Center, point) <= 3);
+            if (control != null && GH_Canvas.ZoomFadeHigh > 5)
+            {
+                e.Title = (control.Show ? "Show " : "Hide ") + control.Parameter.Name;
+                e.Text = control.Show ? "Reveal the next hidden parameter at this gap." : "Hide this unused parameter.";
+                e.Description = "Changes layout only. Connected parameters and configured inputs stay visible.";
+                return;
+            }
             if (!_button.IsEmpty && Distance(ButtonCenter, point) <= 3)
             {
                 e.Title = _component.Expanded ? "Hide advanced parameters" : _component.AdvancedMenuText;
@@ -149,6 +261,22 @@ namespace IfcHopper.Components
 
         public override GH_ObjectResponse RespondToMouseDown(GH_Canvas sender, GH_CanvasMouseEvent e)
         {
+            if (e.Button == MouseButtons.Left && !_collapseButton.IsEmpty && Distance(CenterOf(_collapseButton), e.CanvasLocation) <= 3)
+            {
+                _component.CollapseAdvancedParameters();
+                sender?.Invalidate();
+                return GH_ObjectResponse.Handled;
+            }
+            if (e.Button == MouseButtons.Left && (sender == null || GH_Canvas.ZoomFadeHigh > 5))
+            {
+                var control = _parameterControls.FirstOrDefault(c => Distance(c.Center, e.CanvasLocation) <= 3);
+                if (control != null)
+                {
+                    _component.SetParameterVisible(control.Parameter, control.Show);
+                    sender?.Invalidate();
+                    return GH_ObjectResponse.Handled;
+                }
+            }
             if (e.Button == MouseButtons.Left && !_button.IsEmpty && Distance(ButtonCenter, e.CanvasLocation) <= 3)
             {
                 _component.ToggleAdvancedInputs();
@@ -186,6 +314,8 @@ namespace IfcHopper.Components
             }
             _hasCursor = false;
             _hoverRadius = 1.5f;
+            _collapseRadius = 1.5f;
+            for (int i = 0; i < _parameterRadii.Length; i++) _parameterRadii[i] = 1.5f;
         }
 
         private void CanvasMouseMove(object sender, MouseEventArgs e)
@@ -199,12 +329,27 @@ namespace IfcHopper.Components
             _cursorControl = e.Location;
             _hasCursor = true;
             UpdateHoverRadius(ButtonRadius(Distance(ButtonCenter, _hoverCanvas.Viewport.UnprojectPoint(e.Location))));
+            UpdateParameterRadii(_hoverCanvas.Viewport.UnprojectPoint(e.Location));
         }
 
         private void CanvasMouseLeave(object sender, EventArgs e)
         {
             _hasCursor = false;
             UpdateHoverRadius(1.5f);
+            UpdateParameterRadii(null);
+        }
+
+        private void UpdateParameterRadii(PointF? cursor)
+        {
+            bool changed = false;
+            var collapseRadius = cursor.HasValue && !_collapseButton.IsEmpty ? ButtonRadius(Distance(CenterOf(_collapseButton), cursor.Value)) : 1.5f;
+            if (_collapseRadius != collapseRadius) { _collapseRadius = collapseRadius; changed = true; }
+            for (int i = 0; i < _parameterControls.Count; i++)
+            {
+                var radius = cursor.HasValue ? ButtonRadius(Distance(_parameterControls[i].Center, cursor.Value)) : 1.5f;
+                if (_parameterRadii[i] != radius) { _parameterRadii[i] = radius; changed = true; }
+            }
+            if (changed) _hoverCanvas?.Invalidate();
         }
 
         private void UpdateHoverRadius(float value)

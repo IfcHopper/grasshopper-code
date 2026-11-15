@@ -152,8 +152,155 @@ namespace SampleBuilder
             }
             CheckCanvasHover();
             CheckDeconstructOutputs(output);
+            CheckIndividualControls(output);
             Console.WriteLine("All affected component families: arrow toggles, registered input identities and compact bounds passed.");
             return 0;
+        }
+
+        private static void CheckIndividualControls(string output)
+        {
+            var definition = new Canvas(expandAdvancedInputs: false);
+            using (definition.Document)
+            {
+                var component = (GH_Component)definition.Ifc("Object", 100, 100);
+                var description = Canvas.Input(component, "Description");
+                var ids = component.Params.Input.Concat(component.Params.Output).Select(p => p.InstanceGuid).ToArray();
+                definition.Document.Enabled = true;
+                definition.Document.NewSolution(true, GH_SolutionMode.Silent);
+                var computed = Canvas.Output(component).VolatileData.AllData(true).Single();
+                var solves = 0;
+                definition.Document.SolutionEnd += (sender, args) => solves++;
+                var plus = ParameterControls(component).Single(c => c.Parameter == description && c.Show);
+                Require(plus.Center.X == ((GH_ComponentAttributes)component.Attributes).ContentBox.Left
+                    && plus.Center.Y == Canvas.Input(component, "Name").Attributes.Bounds.Bottom,
+                    "Plus must sit at the native gap after the previous visible row.");
+                ClickParameter(component, "Description", true);
+                Require(!description.Attributes.Bounds.IsEmpty && !Expanded(component), "Plus must reveal only the chosen input in compact mode.");
+                Require(Canvas.Input(component, "GlobalId").Attributes.Bounds.IsEmpty, "Plus must not reveal unrelated inputs.");
+                ClickPartialCollapse(component);
+                Require(description.Attributes.Bounds.IsEmpty && !Expanded(component), "Top arrow must collapse a single plus-opened input without expanding other inputs.");
+                definition.Document.UndoServer.PerformUndo();
+                component.Attributes.PerformLayout();
+                Require(!description.Attributes.Bounds.IsEmpty && !Expanded(component), "Undo must restore the individually opened input.");
+                var control = ParameterControls(component).Single(c => c.Parameter == description && !c.Show);
+                var body = ((GH_ComponentAttributes)component.Attributes).ContentBox;
+                Require(control.Center.X == body.Left && control.Center.Y == description.Attributes.Bounds.Top + description.Attributes.Bounds.Height * .5f,
+                    "Minus must sit on the content-box edge at the row centre, matching native dimension components.");
+                ClickParameter(component, "Description", false);
+                Require(description.Attributes.Bounds.IsEmpty, "Minus must hide the chosen unused input.");
+                definition.Document.UndoServer.PerformUndo();
+                component.Attributes.PerformLayout();
+                Require(!description.Attributes.Bounds.IsEmpty, "Individual undo must restore the previous choice.");
+                definition.Document.UndoServer.PerformRedo();
+                component.Attributes.PerformLayout();
+                Require(description.Attributes.Bounds.IsEmpty, "Individual redo must restore the hidden choice.");
+                ClickParameter(component, "Description", true);
+                ClickArrow(component);
+                definition.Document.UndoServer.PerformUndo();
+                component.Attributes.PerformLayout();
+                Require(!description.Attributes.Bounds.IsEmpty && Canvas.Input(component, "GlobalId").Attributes.Bounds.IsEmpty,
+                    "Undo of show-all must restore individual choices.");
+                definition.Document.UndoServer.PerformRedo();
+                component.Attributes.PerformLayout();
+                ClickParameter(component, "Description", false);
+                Require(Expanded(component) && description.Attributes.Bounds.IsEmpty, "An individual minus must work in expanded mode.");
+                Require(solves == 0 && ReferenceEquals(computed, Canvas.Output(component).VolatileData.AllData(true).Single()),
+                    "Individual controls/undo must retain computed data without solving.");
+                Require(ids.SequenceEqual(component.Params.Input.Concat(component.Params.Output).Select(p => p.InstanceGuid)), "Individual controls changed parameter identities.");
+
+                var file = Path.Combine(output, "individual-visibility.gh");
+                Require(new GH_DocumentIO(definition.Document).SaveQuiet(file), "Could not save individual visibility.");
+                var io = new GH_DocumentIO();
+                Require(io.Open(file), "Could not reopen individual visibility.");
+                using (io.Document)
+                {
+                    var read = (GH_Component)io.Document.Objects.Single(o => o.InstanceGuid == component.InstanceGuid);
+                    read.Attributes.PerformLayout();
+                    Require(Expanded(read) && Canvas.Input(read, "Description").Attributes.Bounds.IsEmpty,
+                        "Individual hidden choice in expanded mode must survive save/reopen.");
+                }
+                var chunk = new GH_LooseChunk("Component");
+                Require(component.Write(chunk), "Could not write individual options.");
+                chunk.RemoveChunk("IndividualVisibility");
+                var legacy = new Canvas(expandAdvancedInputs: false);
+                using (legacy.Document)
+                {
+                    var read = (GH_Component)legacy.Ifc("Object", 0, 0);
+                    Require(read.Read(chunk), "Could not read earlier compact definitions.");
+                    read.Attributes.PerformLayout();
+                    Require(!Canvas.Input(read, "Description").Attributes.Bounds.IsEmpty, "Missing per-parameter options must use the saved global mode.");
+                }
+
+                ClickArrow(component);
+                ClickParameter(component, "Description", true);
+                var shownFile = Path.Combine(output, "individual-shown-compact.gh");
+                Require(new GH_DocumentIO(definition.Document).SaveQuiet(shownFile), "Could not save individual shown choice.");
+                var shownIO = new GH_DocumentIO();
+                Require(shownIO.Open(shownFile), "Could not reopen individual shown choice.");
+                using (shownIO.Document)
+                {
+                    var read = (GH_Component)shownIO.Document.Objects.Single(o => o.InstanceGuid == component.InstanceGuid);
+                    read.Attributes.PerformLayout();
+                    Require(!Expanded(read) && !Canvas.Input(read, "Description").Attributes.Bounds.IsEmpty
+                        && Canvas.Input(read, "GlobalId").Attributes.Bounds.IsEmpty, "Individual shown choice must survive in compact mode.");
+                }
+
+                Canvas.Set(component, "Description", "Keep me");
+                component.Attributes.ExpireLayout();
+                component.Attributes.PerformLayout();
+                Require(!description.Attributes.Bounds.IsEmpty && !ParameterControls(component).Any(c => c.Parameter == description && !c.Show),
+                    "Configured inputs must stay visible and have no minus.");
+                var source = definition.Panel(0, 0, 100, 30, "Connected");
+                definition.Wire(source, component, "GlobalId");
+                component.Attributes.ExpireLayout();
+                component.Attributes.PerformLayout();
+                Require(!ParameterControls(component).Any(c => c.Parameter == Canvas.Input(component, "GlobalId") && !c.Show), "Wired inputs must have no minus.");
+                var deconstruct = (GH_Component)definition.Ifc("Deconstruct Object", 400, 100);
+                ClickParameter(deconstruct, "Description", true);
+                ClickPartialCollapse(deconstruct);
+                Require(Canvas.Output(deconstruct, "Description").Attributes.Bounds.IsEmpty, "Top arrow must collapse a single plus-opened output.");
+                ClickParameter(deconstruct, "Description", true);
+                ClickParameter(deconstruct, "Description", false);
+                Require(Canvas.Output(deconstruct, "Description").Attributes.Bounds.IsEmpty, "Output minus must hide unused metadata.");
+                ClickParameter(deconstruct, "Description", true);
+                var recipient = definition.Panel(700, 0, 100, 30);
+                definition.Wire(deconstruct, recipient, null, "Description");
+                deconstruct.Attributes.ExpireLayout();
+                deconstruct.Attributes.PerformLayout();
+                Require(!ParameterControls(deconstruct).Any(c => c.Parameter == Canvas.Output(deconstruct, "Description") && !c.Show), "Wired outputs must have no minus.");
+            }
+            Console.WriteLine("Individual parameter controls: placement, reveal/hide, undo/redo, global reset undo, saved choices, legacy defaults and wired/configured protection passed.");
+        }
+
+        private static (IGH_Param Parameter, bool Show, PointF Center)[] ParameterControls(GH_Component component)
+        {
+            component.Attributes.PerformLayout();
+            var controls = (System.Collections.IEnumerable)component.Attributes.GetType().GetField("_parameterControls",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).GetValue(component.Attributes);
+            return controls.Cast<object>().Select(c => ((IGH_Param)c.GetType().GetProperty("Parameter").GetValue(c),
+                (bool)c.GetType().GetProperty("Show").GetValue(c), (PointF)c.GetType().GetProperty("Center").GetValue(c))).ToArray();
+        }
+
+        private static void ClickParameter(GH_Component component, string name, bool show)
+        {
+            var control = ParameterControls(component).Single(c => c.Parameter.Name == name && c.Show == show);
+            var e = new GH_CanvasMouseEvent(Point.Empty, control.Center, MouseButtons.Left, 1, 0);
+            Require(component.Attributes.RespondToMouseDown(null, e) == GH_ObjectResponse.Handled, "Parameter control did not handle its click.");
+            component.Attributes.PerformLayout();
+        }
+
+        private static void ClickPartialCollapse(GH_Component component)
+        {
+            component.Attributes.PerformLayout();
+            var box = (RectangleF)component.Attributes.GetType().GetField("_collapseButton",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).GetValue(component.Attributes);
+            var content = ((GH_ComponentAttributes)component.Attributes).ContentBox;
+            Require(!box.IsEmpty && box.Top + box.Height * .5f == content.Top,
+                "A top collapse arrow must appear when even one unused parameter is plus-opened.");
+            var point = new PointF(box.Left + box.Width * .5f, box.Top + box.Height * .5f);
+            var e = new GH_CanvasMouseEvent(Point.Empty, point, MouseButtons.Left, 1, 0);
+            Require(component.Attributes.RespondToMouseDown(null, e) == GH_ObjectResponse.Handled, "Partial-layout top arrow must handle its click.");
+            component.Attributes.PerformLayout();
         }
 
         private static void CheckDeconstructOutputs(string output)
@@ -250,6 +397,7 @@ namespace SampleBuilder
                     canvas.Viewport.Focus(center);
                     DrawFrame();
                     Require(ReferenceEquals(subscription.GetValue(attributes), canvas), "Rendering must attach canvas-level hover tracking.");
+                    CheckParameterHover(true);
                     using (var export = new GH_Canvas { Size = new Size(800, 650), Document = definition.Document })
                     {
                         export.CreateControl();
@@ -284,6 +432,7 @@ namespace SampleBuilder
                     center = new PointF(box.Left + box.Width * 0.5f, box.Top);
                     canvas.Viewport.Focus(center);
                     DrawFrame();
+                    CheckParameterHover(false);
                     var above = new PointF(center.X, center.Y - 6);
                     Require(!attributes.Bounds.Contains(above), "The collapse-hover regression must approach from outside the top edge.");
                     canvas.MoveTo(above);
@@ -305,6 +454,25 @@ namespace SampleBuilder
                     void DrawFrame()
                     {
                         using (canvas.GetCanvasScreenBuffer(GH_CanvasMode.Control)) { }
+                    }
+
+                    void CheckParameterHover(bool show)
+                    {
+                        var controls = ParameterControls(component);
+                        var index = Array.FindIndex(controls, control => control.Parameter.Name == "Description" && control.Show == show);
+                        Require(index >= 0, "Missing native-position parameter control.");
+                        var point = controls[index].Center;
+                        var radii = attributes.GetType().GetField("_parameterRadii", flags);
+                        foreach (var offset in new[] { (6f, 0f), (-6f, 0f), (0f, 6f), (0f, -6f) })
+                        {
+                            canvas.MoveTo(new PointF(point.X + offset.Item1, point.Y + offset.Item2));
+                            Require(Math.Abs(((float[])radii.GetValue(attributes))[index] - 2.25f) < .02f,
+                                "Parameter +/- hover sizing must match native controls from every direction.");
+                        }
+                        canvas.MoveTo(point);
+                        Require(((float[])radii.GetValue(attributes))[index] == 3f, "Parameter +/- maximum radius must be 3.");
+                        canvas.LeaveCanvas();
+                        Require(((float[])radii.GetValue(attributes))[index] == 1.5f, "Parameter +/- must reset on mouse leave.");
                     }
                 }
                 Require(subscription.GetValue(attributes) == null, "Disposing the canvas must detach hover handlers.");

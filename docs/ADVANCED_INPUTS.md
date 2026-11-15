@@ -17,6 +17,35 @@ canvas, so the same growth applies from every direction, including outside the
 component rectangle. The handlers detach on component removal/replacement,
 document changes and canvas disposal; leaving the canvas restores resting size.
 
+## Individual plus/minus controls
+
+At the normal Grasshopper parameter-control zoom level, eligible visible parameters
+have a small minus button on the content-box edge at the centre of their row. A plus
+button sits at each gap containing hidden parameters. Click it to reveal the next
+hidden parameter at that gap in its original registered order; the tooltip names
+that parameter. Repeated clicks reveal subsequent hidden parameters. Inputs use
+the left content edge and outputs the right. Labels retain their native justification.
+Opening even one unused parameter with plus also shows the top collapse arrow;
+the bottom expand arrow remains available to show the others. The top arrow
+collapses unused individually opened rows, and undo restores the previous choices.
+
+These buttons use the native dimension components' black/white circular plus/minus
+appearance, 1.5-to-3 canvas-unit proximity radius and zoom fading. They are custom
+presentation controls; they do not insert or remove registered parameters. They are
+interactive canvas controls and are omitted from export drawings.
+
+Minus is available only for an eligible unused parameter. Connected parameters and
+configured inputs cannot be hidden; their wires and values take precedence over an
+individual hidden choice. Core task parameters remain visible and have no minus.
+The same controls apply to secondary Deconstruct outputs.
+
+Individual choices override the last overall expanded/compact setting and are saved
+by parameter identity in a versioned GH_IO chunk. The overall arrow/menu actions
+clear those choices and show all/collapse unused parameters. Undo/redo of either
+action restores the entire prior layout choice without replacing parameters,
+expiring computed data or writing files. Older definitions without individual choices
+keep their existing overall setting; definitions predating compact mode still open expanded.
+
 This visibility control is custom code using public GH SDK layout/rendering APIs.
 Rhino's specific annotation button is private to `IOComponents.gha`, not a public
 reusable SDK widget. The plugin does not call those private APIs. Both expanded
@@ -73,6 +102,10 @@ affected component family. Test definitions and offscreen captures go under igno
 `artifacts/input-checks/`. Native Grasshopper text/icon caches are not reliably
 rendered by the headless capture, including on unchanged components; these images
 are not a substitute for manual canvas verification.
+
+The individual-control checks exercise plus/minus clicks, native row-edge/gap placement,
+saved choices, undo/redo including overall-arrow resets, legacy missing-choice defaults,
+connected/configured protection, identity preservation and real canvas hover from all directions.
 
 Canvas-level mouse-event regressions also approach the button from all four cardinal
 directions and diagonals, including points below the component bounds, and verify

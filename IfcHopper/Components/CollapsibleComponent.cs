@@ -27,6 +27,7 @@ namespace IfcHopper.Components
         };
 
         private bool _expanded;
+        private readonly Dictionary<Guid, bool> _visibility = new Dictionary<Guid, bool>();
 
         protected CollapsibleComponent(string name, string nickname, string description, string category, string subcategory)
             : base(name, nickname, description + " Use the bottom arrow to show advanced parameters and the top arrow to collapse them; connected parameters and configured inputs stay visible.", category, subcategory) { }
@@ -34,6 +35,8 @@ namespace IfcHopper.Components
         internal bool Expanded => _expanded;
         internal bool HasAdvancedOutputs => Params.Output.Any(IsAdvancedOutput);
         internal bool HasAdvancedParameters => Params.Input.Any(IsAdvancedInput) || HasAdvancedOutputs;
+        internal bool CanCollapseParameters => Params.Input.Any(p => CanHide(p) && IsInputVisible(p))
+            || Params.Output.Any(p => CanHide(p) && IsOutputVisible(p));
         internal string AdvancedMenuText => HasAdvancedOutputs ? "Show advanced parameters" : "Show advanced inputs";
 
         /// <summary>Identifies optional metadata inputs eligible to collapse when unused; overrides can add component-specific metadata.</summary>
@@ -43,11 +46,25 @@ namespace IfcHopper.Components
         protected virtual bool IsAdvancedOutput(IGH_Param parameter) => AdvancedOutputNames.Contains(parameter.Name);
 
         internal bool IsOutputVisible(IGH_Param parameter) =>
-            _expanded || !IsAdvancedOutput(parameter) || parameter.Recipients.Count > 0;
+            !IsAdvancedOutput(parameter) || parameter.Recipients.Count > 0 || ChosenVisibility(parameter);
+
+        private bool ChosenVisibility(IGH_Param parameter) =>
+            _visibility.TryGetValue(parameter.InstanceGuid, out var visible) ? visible : _expanded;
+
+        internal bool IsEligible(IGH_Param parameter) => parameter.Kind == GH_ParamKind.input
+            ? IsAdvancedInput(parameter) : IsAdvancedOutput(parameter);
+
+        internal bool CanHide(IGH_Param parameter) => IsEligible(parameter) && (parameter.Kind == GH_ParamKind.input
+            ? !InputConfigured(parameter) : parameter.Recipients.Count == 0);
 
         internal bool IsInputVisible(IGH_Param parameter)
         {
-            if (_expanded || !IsAdvancedInput(parameter) || parameter.SourceCount > 0) return true;
+            return !IsAdvancedInput(parameter) || InputConfigured(parameter) || ChosenVisibility(parameter);
+        }
+
+        private static bool InputConfigured(IGH_Param parameter)
+        {
+            if (parameter.SourceCount > 0) return true;
             // Preserve configured inputs before the first solve as well as after data collection.
             if (parameter is Param_String text && !text.PersistentData.IsEmpty) return true;
             if (parameter is Param_GenericObject generic && !generic.PersistentData.IsEmpty) return true;
@@ -57,26 +74,55 @@ namespace IfcHopper.Components
 
         internal void ToggleAdvancedInputs()
         {
-            RecordUndoEvent(_expanded ? "Collapse advanced parameters" : "Expand advanced parameters", new AdvancedInputsUndoAction(InstanceGuid, _expanded));
-            SetExpanded(!_expanded);
+            SetAllParametersExpanded(!_expanded);
         }
 
-        private void SetExpanded(bool value)
+        internal void CollapseAdvancedParameters() => SetAllParametersExpanded(false);
+
+        private void SetAllParametersExpanded(bool expanded)
         {
-            _expanded = value;
+            var after = new VisibilityState(expanded, new Dictionary<Guid, bool>());
+            RecordUndoEvent(expanded ? "Expand advanced parameters" : "Collapse advanced parameters", new AdvancedInputsUndoAction(InstanceGuid, CaptureVisibility(), after));
+            ApplyVisibility(after);
+        }
+
+        internal void SetParameterVisible(IGH_Param parameter, bool visible)
+        {
+            if (!IsEligible(parameter) || !visible && !CanHide(parameter)) return;
+            var after = CaptureVisibility();
+            after.Choices[parameter.InstanceGuid] = visible;
+            RecordUndoEvent((visible ? "Show " : "Hide ") + parameter.Name, new AdvancedInputsUndoAction(InstanceGuid, CaptureVisibility(), after));
+            ApplyVisibility(after);
+        }
+
+        private sealed class VisibilityState
+        {
+            public readonly bool Expanded;
+            public readonly Dictionary<Guid, bool> Choices;
+            public VisibilityState(bool expanded, Dictionary<Guid, bool> choices) { Expanded = expanded; Choices = choices; }
+        }
+
+        private VisibilityState CaptureVisibility() => new VisibilityState(_expanded, new Dictionary<Guid, bool>(_visibility));
+
+        private void ApplyVisibility(VisibilityState state)
+        {
+            _expanded = state.Expanded;
+            _visibility.Clear();
+            foreach (var choice in state.Choices) _visibility.Add(choice.Key, choice.Value);
             Attributes.ExpireLayout();
             // Layout-only changes must not solve a definition or retrigger Write IFC.
             OnObjectChanged(GH_ObjectEventType.Layout);
         }
 
-        // Capture only a document-local identity and a bool. A generic object undo would deserialize
+        // Capture only document-local identities and visibility choices. A generic object undo would deserialize
         // all parameters and expire the solution; undoing this layout option must not retrigger IO.
         private sealed class AdvancedInputsUndoAction : IGH_UndoAction
         {
             private Guid _id;
-            private bool _before;
+            private VisibilityState _before;
+            private VisibilityState _after;
             public AdvancedInputsUndoAction() { }
-            public AdvancedInputsUndoAction(Guid id, bool before) { _id = id; _before = before; }
+            public AdvancedInputsUndoAction(Guid id, VisibilityState before, VisibilityState after) { _id = id; _before = before; _after = after; }
             public bool ExpiresSolution => false;
             public bool ExpiresDisplay => false;
             public GH_UndoState State { get; private set; } = GH_UndoState.undo;
@@ -89,30 +135,74 @@ namespace IfcHopper.Components
             public void Redo(GH_Document doc)
             {
                 if (State != GH_UndoState.redo) throw new InvalidOperationException("This input-layout action must be undone before redo.");
-                Apply(doc, !_before);
+                Apply(doc, _after);
                 State = GH_UndoState.undo;
             }
-            private void Apply(GH_Document doc, bool value)
+            private void Apply(GH_Document doc, VisibilityState value)
             {
                 var component = doc.FindObject(_id, false) as CollapsibleComponent
                     ?? throw new InvalidOperationException("The component for this advanced-input undo action no longer exists.");
-                component.SetExpanded(value);
+                component.ApplyVisibility(value);
             }
             public bool Write(GH_IWriter writer)
             {
                 writer.SetGuid("ComponentId", _id);
-                writer.SetBoolean("Before", _before);
+                WriteVisibility(writer.CreateChunk("Before"), _before);
+                WriteVisibility(writer.CreateChunk("After"), _after);
                 writer.SetInt32("State", (int)State);
                 return true;
             }
             public bool Read(GH_IReader reader)
             {
-                if (!reader.ItemExists("ComponentId") || !reader.ItemExists("Before") || !reader.ItemExists("State")) return false;
+                if (!reader.ItemExists("ComponentId") || !reader.ItemExists("State")) return false;
                 _id = reader.GetGuid("ComponentId");
-                _before = reader.GetBoolean("Before");
+                // Older layout-only undo records contained only the previous global flag.
+                if (reader.ItemExists("Before"))
+                {
+                    var before = reader.GetBoolean("Before");
+                    _before = new VisibilityState(before, new Dictionary<Guid, bool>());
+                    _after = new VisibilityState(!before, new Dictionary<Guid, bool>());
+                }
+                else
+                {
+                    var before = reader.FindChunk("Before");
+                    var after = reader.FindChunk("After");
+                    if (before == null || after == null) return false;
+                    _before = ReadVisibility(before);
+                    _after = ReadVisibility(after);
+                }
                 State = (GH_UndoState)reader.GetInt32("State");
                 return _id != Guid.Empty && Enum.IsDefined(typeof(GH_UndoState), State);
             }
+        }
+
+        private static void WriteVisibility(GH_IWriter writer, VisibilityState state)
+        {
+            writer.SetInt32("Version", 1);
+            writer.SetBoolean("Expanded", state.Expanded);
+            writer.SetInt32("Count", state.Choices.Count);
+            var index = 0;
+            foreach (var choice in state.Choices.OrderBy(pair => pair.Key))
+            {
+                var chunk = writer.CreateChunk("Choice", index++);
+                chunk.SetGuid("Parameter", choice.Key);
+                chunk.SetBoolean("Visible", choice.Value);
+            }
+        }
+
+        private static VisibilityState ReadVisibility(GH_IReader reader)
+        {
+            var choices = new Dictionary<Guid, bool>();
+            if (reader.ItemExists("Version") && reader.GetInt32("Version") != 1)
+                return new VisibilityState(false, choices);
+            var count = reader.ItemExists("Count") ? Math.Min(reader.GetInt32("Count"), reader.ChunkCount) : 0;
+            for (int i = 0; i < count; i++)
+            {
+                var choice = reader.FindChunk("Choice", i);
+                if (choice != null && choice.ItemExists("Parameter") && choice.ItemExists("Visible"))
+                    choices[choice.GetGuid("Parameter")] = choice.GetBoolean("Visible");
+            }
+            return new VisibilityState(reader.ItemExists("Expanded") && reader.GetBoolean("Expanded"), choices);
         }
 
         public override void CreateAttributes()
@@ -159,6 +249,7 @@ namespace IfcHopper.Components
         public override bool Write(GH_IWriter writer)
         {
             writer.SetBoolean("AdvancedInputsExpanded", _expanded);
+            WriteVisibility(writer.CreateChunk("IndividualVisibility"), CaptureVisibility());
             return base.Write(writer);
         }
 
@@ -167,6 +258,14 @@ namespace IfcHopper.Components
             // Existing definitions predate compact mode; preserve their fully expanded layout.
             _expanded = !reader.ItemExists("AdvancedInputsExpanded") || reader.GetBoolean("AdvancedInputsExpanded");
             var success = base.Read(reader);
+            _visibility.Clear();
+            var visibility = reader.FindChunk("IndividualVisibility");
+            if (visibility != null)
+            {
+                var eligible = new HashSet<Guid>(Params.Input.Concat(Params.Output).Where(IsEligible).Select(p => p.InstanceGuid));
+                foreach (var choice in ReadVisibility(visibility).Choices)
+                    if (eligible.Contains(choice.Key)) _visibility[choice.Key] = choice.Value;
+            }
             Attributes?.ExpireLayout();
             return success;
         }
