@@ -41,7 +41,7 @@ namespace SampleBuilder
                 if (!Instances.ComponentServer.ObjectProxies.Any(p => p.Desc.Category == "IfcHopper"))
                 {
                     // Rhino 8 headless package discovery can omit RHINO_PACKAGE_DIRS. The explicit
-                    // loader is internal in the Grasshopper 8.27 SDK, so this integration requires
+                    // loader is internal in the Grasshopper SDK, so this integration requires
                     // a signature-checked reflection call. Remove when a public explicit loader exists.
                     var loader = typeof(GH_ComponentServer).GetMethod("LoadExternalFile",
                         System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic,
