@@ -30,7 +30,7 @@ namespace IfcHopper.Components
         private readonly Dictionary<Guid, bool> _visibility = new Dictionary<Guid, bool>();
 
         protected CollapsibleComponent(string name, string nickname, string description, string category, string subcategory)
-            : base(name, nickname, description + " Use the bottom arrow to show advanced parameters and the top arrow to collapse them; connected parameters and configured inputs stay visible.", category, subcategory) { }
+            : base(name, nickname, description + " Use the bottom arrow to show advanced parameters and the top arrow to collapse them; connected parameters and inputs with persistent values stay visible.", category, subcategory) { }
 
         internal bool Expanded => _expanded;
         internal bool HasAdvancedOutputs => Params.Output.Any(IsAdvancedOutput);
@@ -298,7 +298,7 @@ namespace IfcHopper.Components
             base.AppendAdditionalComponentMenuItems(menu);
             if (!HasAdvancedParameters) return;
             Menu_AppendItem(menu, AdvancedMenuText, (sender, args) => ToggleAdvancedInputs(), true, _expanded)
-                .ToolTipText = "Show secondary metadata parameters. Connected parameters and configured inputs stay visible when collapsed. Expand with the bottom arrow and collapse with the top arrow.";
+                .ToolTipText = "Show secondary metadata parameters. Connected parameters and inputs with persistent values stay visible when collapsed. Expand with the bottom arrow and collapse with the top arrow.";
         }
 
         public override bool Write(GH_IWriter writer)

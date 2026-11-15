@@ -27,7 +27,7 @@ The IFC library sits behind IfcHopper's own interfaces, so other backends ([IfcO
 
 ## Installation
 
-Targets: GH1 in Rhino 8.20+ (.NET 8) and Rhino 9 (.NET 10), Windows/macOS. Keep both framework folders together when installing. Rhino 9 host checks are recorded in the release notes. Current source builds against the 8.20 Grasshopper/RhinoCommon SDK and produces `rh8_20` Yak packages. The published beta.2 Yak still requires Rhino 8.27+. Host checks used Windows x64 with Rhino 8.37 and Rhino 9.0; loading on Rhino 8.20 and macOS remains unverified. See [testing limits](docs/RELEASE_NOTES.md).
+Targets: GH1 in Rhino 8.20+ (.NET 8 or .NET 10, depending on the host runtime) and Rhino 9 (.NET 10), Windows/macOS. Keep both framework folders together when installing. Rhino 9 host checks are recorded in the release notes. Current source builds against the 8.20 Grasshopper/RhinoCommon SDK and produces `rh8_20` Yak packages. The published beta.2 Yak still requires Rhino 8.27+. Host checks used Windows x64 with Rhino 8.37 and Rhino 9.0; loading on Rhino 8.20 and macOS remains unverified. See [testing limits](docs/RELEASE_NOTES.md).
 
 1. Download the latest zip from [Releases](https://github.com/IfcHopper/grasshopper-code/releases).
 2. On Windows, unblock the zip (right-click > Properties > Unblock).

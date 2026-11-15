@@ -45,7 +45,11 @@ the manifest explicitly preserves the plugin's `GH_AssemblyInfo.Id` for discover
 
 ## Compatibility and release checks
 
-The GH1 plugin targets Rhino 8.20+ on .NET 8 and Rhino 9 on .NET 10.
+The GH1 plugin targets Rhino 8.20+ on .NET 8 or .NET 10, depending on the host
+runtime, and Rhino 9 on .NET 10. Current Rhino 8 versions default to .NET 10.
+Beta.3 is published on Yak with explicit `rh8_20-any` and `rh9_0-any`
+distributions containing the same validated multi-target payload. Its published
+bytes are immutable; use a higher version for subsequent package changes.
 Both builds retain the pinned Grasshopper 8.20 SDK API baseline. ZIP and Yak
 payloads contain separate net8.0/ and net10.0/ folders with their dependencies;
 the manifest, notices and installation instructions stay at the package root.
@@ -101,7 +105,7 @@ Only after approval to publish, run these commands manually. Substitute the actu
 filename printed by the build; no publishing command is part of either builder.
 
 ```powershell
-$yak = 'C:\Program Files\Rhino 8\System\Yak.exe'
+$yak = 'C:\Program Files\Rhino 9\System\Yak.exe'
 & $yak login
 # Optional public test publication; the test server is cleared nightly:
 & $yak push --source https://test.yak.rhino3d.com artifacts/<actual-filename>.yak
@@ -110,6 +114,11 @@ $yak = 'C:\Program Files\Rhino 8\System\Yak.exe'
 & $yak push artifacts/<actual-filename>.yak
 & $yak search --all --prerelease ifchopper
 ```
+
+For a payload verified in both major host versions, copy the validated `rh8_20-any`
+archive to the corresponding `rh9_0-any` filename and push both distributions.
+The copy must have the same SHA-256 hash; changing the distribution filename does
+not require rebuilding the archive. Record and verify both public downloads.
 
 Login uses Rhino Accounts. Keep its stored credentials outside the repository.
 Confirm package ownership before first publication; only owners can publish later

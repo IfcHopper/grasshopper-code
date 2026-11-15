@@ -1,7 +1,7 @@
 IfcHopper {version}
 Grasshopper plugin for openBIM: create, read, update and delete data in native IFC files.
 
-Requirements: Grasshopper 1 in Rhino 8.20+ (.NET 8) or Rhino 9 (.NET 10), Windows/macOS. .NET Framework mode is not supported.
+Requirements: Grasshopper 1 in Rhino 8.20+ (.NET 8 or .NET 10, depending on the host runtime) or Rhino 9 (.NET 10), Windows/macOS. .NET Framework mode is not supported.
 
 Install
 1. On Windows, unblock the zip before unzipping it: right-click the zip > Properties > tick Unblock.

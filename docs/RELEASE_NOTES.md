@@ -2,23 +2,34 @@
 
 ## 1.0.0-beta.3
 
-Prepared 2026-11-15. Local release candidate; publication and clean-install validation remain pending.
+Refreshed and published to Rhino Package Manager on 2026-11-15 after the compact-parameter fixes. Beta.3 is available as a prerelease for Rhino 8 and Rhino 9 GH1. The GitHub release files include the manual ZIP, both Yak distributions, samples and checksums. GUI clean-install validation remains pending.
 
 ### Beta.3 candidate validation (2026-11-15)
 
-- Built Release ZIP and Yak with SDK 10.0.401 from source commit `f648a8a1ace2edaa68b2d1d387c3e4eff6cd2401` plus the local beta.3 version/documentation changes. Packaging built both runtime targets successfully; NuGet vulnerability auditing reported NU1900 network warnings.
-- All 239 Core tests passed on .NET 8 and again on .NET 10 (478 executions, no skips). The initial sandbox run failed the profile-dependent default-path test on .NET 8; the full rerun outside the sandbox passed.
-- Inspected both archives: net8.0/net10.0 plugin payloads present, host SDK assemblies and PDBs excluded. Yak produced `rh8_20-any`. Generated all 62 component documentation pages from the extracted Release ZIP's net8.0 payload. Runtime-message host regressions passed against that payload in headless Rhino 8.37 on Windows x64.
-- Documentation production build passed; browser/baseline metadata was stale. The previously recorded documentation dependency audit finding remains unresolved; no new audit or dependency upgrade was performed.
-- Refreshed the documentation sample download from all 17 committed examples; all 36 archive files were hash-checked against source. Historical feature checks below describe earlier builds; they do not establish clean installation of this candidate.
-- Clean ZIP/Yak installation, automatic framework selection, update/uninstall, minimum Rhino 8.20, macOS and interactive viewport checks remain unverified. No publication was performed.
+- Rebuilt Release ZIP and Yak with SDK 10.0.401 from the merged fix at `1e43c56f19b805c8df4eaf652a1cad7d6d2bc5e6` plus runtime-installation metadata and component-help wording updates included in the beta.3 release source. Both runtime targets built with zero warnings/errors. NuGet vulnerability auditing was disabled for the offline build; this is not a dependency audit.
+- All 239 Release Core tests passed on .NET 8 and again on .NET 10 (478 executions, no skips).
+- Inspected both archives: all 46 ZIP files match their Yak counterparts; both plugin payloads match the Release output. Host SDK assemblies and PDBs are excluded. Yak produced `rh8_20-any`.
+- Compact input/output, state-tag position, plus-opened collapse, reset/undo/redo, persistence, parameter-identity and hover-lifetime regressions passed against the extracted Release ZIP in headless Rhino 8.37.26307.15001 / .NET 8 and Rhino 9.0.26300.09401 / .NET 10 on Windows x64. Rendering checks used the installed Sunglasses overlay at 100%, 400%, 600%, 1000% and 2000% zoom.
+- Regenerated all 62 component documentation pages from the extracted Release ZIP's net8.0 payload. The documentation production build passed with existing dependencies; stale browser/baseline metadata warnings remain. The earlier documentation dependency audit finding is unresolved; no new audit or dependency upgrade was performed.
+- Rechecked all 36 files in the documentation sample ZIP against the 17 committed examples; the archive remains current. Historical feature checks below describe earlier builds; they do not establish clean installation of this candidate.
+- Automatic discovery from the development build's parent framework directory was verified in Rhino 8.37 / .NET 10 and Rhino 9 / .NET 10 before packaging. The maintainer confirmed the interaction fixes. CLI installation of the exact Yak passed into the Rhino 8 and Rhino 9 package directories; runtime-message regressions passed from those installed payloads under both hosts. GUI installation/restart and package framework selection, update/uninstall, minimum Rhino 8.20, macOS and interactive viewport checks remain unverified.
+- Published both `rh8_20-any` and `rh9_0-any` distributions to the production Yak server. They contain identical validated bytes and are listed under `ifchopper 1.0.0-beta.3` with prereleases enabled. Downloaded both public distributions and verified their SHA-256 hashes against the tested archive. GitHub release assets use the same validated ZIP/Yak bytes. Documentation deployment remains separate. This published version must not be rebuilt with different bytes for another upload.
 
 | Artifact | SHA-256 |
 | --- | --- |
-| IfcHopper-1.0.0-beta.3.zip | `C969E6BC743D2698A01D9475FAE09D9C5957CA4ADB702CDAB8270FD1DE0C8391` |
-| ifchopper-1.0.0-beta.3-rh8_20-any.yak | `04175A573C107F66928097A98924EB351D8CA3794BA8224253A0B88828C2EB70` |
+| IfcHopper-1.0.0-beta.3.zip | `AE4192D47D05E8F88CFFE36E528F0EE81DB76A92E27EC8B273AAC548C402C238` |
+| ifchopper-1.0.0-beta.3-rh8_20-any.yak | `7D989C63B9570EA8A03686DB68417EAA7FFE4F218D11B1D79000FB456093CAE1` |
+| ifchopper-1.0.0-beta.3-rh9_0-any.yak | `7D989C63B9570EA8A03686DB68417EAA7FFE4F218D11B1D79000FB456093CAE1` |
 
 ### Changes and recorded feature validation
+
+#### Compact parameter controls and high-zoom rendering
+
+- Fix [PR #32](https://github.com/IfcHopper/grasshopper-code/pull/32): move flatten/graft/simplify state tags and their tooltip regions with compact input/output rows, and suppress tags for hidden rows.
+- Reset flatten/graft, reverse and simplify consistently when hiding unused inputs or outputs, including through individual minus controls. Connected parameters retain their settings; persistent input values remain visible. Undo/redo restores the rows and tree controls without replacing parameters or recomputing outputs.
+- Align trailing plus buttons with the bottom expand arrow. The top arrow collapses unused rows revealed individually with plus, on both sides.
+- Paint interactive controls and native capsule outlines after object decorations so Sunglasses high-zoom panels do not obscure buttons or borders.
+- Let Visual Studio expose both framework folders to Rhino. Current Rhino 8 uses .NET 10, so restricting its launch directory to net8.0 could build successfully without discovering IfcHopper. Keep both runtime payloads when installing.
 
 #### Rhino 9 / Grasshopper 1 support
 
@@ -28,7 +39,7 @@ Prepared 2026-11-15. Local release candidate; publication and clean-install vali
 
 Validation (2026-11-15): solution and SampleBuilder builds passed with SDK 10.0.401. All 239 Core tests passed on each runtime, no skips (478 executions). GH1 host checks passed on Windows x64, Rhino 9.0.26300.09401 / .NET 10: runtime diagnostics, compact inputs/outputs, individual controls, persistence/undo and native Custom Preview. Class Colours passed against the staged dual-runtime package's net10.0 payload; Rhino 9 compat reported no issues for the GHA. Rhino 8.37 runtime-diagnostic regression passed. Rhino 9 Yak 0.19.0 produced rh8_20-any with both framework folders and no host SDK assemblies. NuGet vulnerability auditing reported network warnings; sandbox profile/output restrictions required running the checks outside the sandbox.
 
-The maintainer also confirmed loading GH1 in Rhino 9 through Visual Studio after pinning each launch profile to its framework-specific output folder.
+The maintainer initially confirmed loading GH1 in Rhino 9 through Visual Studio after pinning each launch profile to its framework-specific output folder. PR #32 supersedes that configuration with the parent multi-target directory so current Rhino 8 also discovers its .NET 10 build.
 
 Limits: Rhino 8.20, macOS, interactive viewport behavior and clean Package Manager/manual install, framework auto-selection, update/uninstall remain unverified. Host checks explicitly load the matching payload. Existing published beta.2 is unchanged; beta.3 carries these changes. No publication was performed.
 

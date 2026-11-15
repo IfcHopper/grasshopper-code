@@ -298,7 +298,7 @@ namespace IfcHopper.Components
             {
                 e.Title = "Hide advanced parameters";
                 e.Text = "Collapse unused metadata parameters, including individually revealed rows.";
-                e.Description = "Connected parameters and configured inputs remain visible.";
+                e.Description = "Connected parameters and inputs with persistent values remain visible.";
                 return;
             }
             var control = _parameterControls.FirstOrDefault(c => Distance(c.Center, point) <= 3);
@@ -313,7 +313,7 @@ namespace IfcHopper.Components
             {
                 e.Title = _component.Expanded ? "Hide advanced parameters" : _component.AdvancedMenuText;
                 e.Text = _component.Expanded ? "Collapse unused metadata parameters." : "Show all available parameters.";
-                e.Description = "Connected parameters and configured inputs remain visible.";
+                e.Description = "Connected parameters and inputs with persistent values remain visible.";
                 return;
             }
             base.SetupTooltip(point, e);
