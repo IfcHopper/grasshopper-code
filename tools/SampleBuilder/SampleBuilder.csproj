@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- Builds the sample Grasshopper definitions in samples/ with Rhino 8 running headless (Rhino.Inside); needs a licensed Rhino 8. -->
+  <!-- Builds the sample Grasshopper definitions in samples/ with Rhino 8 or 9 running headless (Rhino.Inside); needs a licensed matching host. -->
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <TargetFrameworks>net8.0-windows;net10.0-windows</TargetFrameworks>
     <UseWindowsForms>true</UseWindowsForms>
     <PlatformTarget>x64</PlatformTarget>
     <Nullable>disable</Nullable>
@@ -13,7 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="../../IfcHopper.Core/IfcHopper.Core.csproj" />
     <Compile Include="../../IfcHopper.Tests/SyntheticLargeCoordinates.cs" Link="SyntheticLargeCoordinates.cs" />
-    <!-- Compile only: RhinoCommon and Grasshopper are loaded from the Rhino 8 installation at run time. -->
+    <!-- Compile only: RhinoCommon and Grasshopper are loaded from the selected Rhino installation at run time. -->
     <PackageReference Include="Grasshopper" Version="8.20.25147.11001-rc" ExcludeAssets="runtime" />
     <!-- Match the plugin's existing dependency so the runner does not bind the framework's older copy before loading it. -->
     <PackageReference Include="System.Drawing.Common" Version="10.0.12" />

@@ -16,8 +16,16 @@ $stage = Join-Path $artifacts ('zip-stage-' + [guid]::NewGuid().ToString('N'))
 $folder = Join-Path $stage 'IfcHopper'
 New-Item -ItemType Directory -Force $folder | Out-Null
 
-$output = Join-Path $root "IfcHopper\bin\$Configuration\net8.0"
-Copy-Item (Join-Path $output '*') $folder -Recurse -Exclude '*.pdb'
+foreach ($framework in @('net8.0', 'net10.0')) {
+    $output = Join-Path $root "IfcHopper/bin/$Configuration/$framework"
+    if (-not (Test-Path -LiteralPath (Join-Path $output 'IfcHopper.gha'))) { throw "Missing $framework build." }
+    $target = Join-Path $folder $framework
+    New-Item -ItemType Directory -Path $target | Out-Null
+    Copy-Item (Join-Path $output '*') $target -Recurse -Exclude '*.pdb'
+}
+if (Get-ChildItem -LiteralPath $folder -Recurse -File | Where-Object { $_.Name -in @('RhinoCommon.dll', 'Grasshopper.dll', 'GH_IO.dll') }) {
+    throw 'Package contains host SDK assemblies; do not distribute.'
+}
 Copy-Item (Join-Path $root 'LICENSE') (Join-Path $folder 'LICENSE.txt')
 Copy-Item (Join-Path $PSScriptRoot 'THIRD-PARTY-NOTICES.txt') $folder
 [IO.File]::WriteAllText((Join-Path $folder 'INSTALL.txt'), ([IO.File]::ReadAllText((Join-Path $PSScriptRoot 'INSTALL.txt')) -replace '\{version\}', $version))

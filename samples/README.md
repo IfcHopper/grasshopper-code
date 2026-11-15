@@ -1,6 +1,6 @@
 # IfcHopper samples
 
-Grasshopper definitions, one per workflow. Open them in Rhino 8 with IfcHopper installed. Each one explains its steps in groups on the canvas. Geometry is built in Grasshopper and sizes are in metres. The Rhino document units are respected, but the samples are easiest to follow in a metre document.
+Grasshopper definitions, one per workflow. Open them in Grasshopper 1 in Rhino 8 or 9 with IfcHopper installed. Each one explains its steps in groups on the canvas. Geometry is built in Grasshopper and sizes are in metres. The Rhino document units are respected, but the samples are easiest to follow in a metre document.
 
 | Sample | Shows |
 | --- | --- |
@@ -32,18 +32,18 @@ Samples explicitly show advanced parameters for discoverability, including Decon
 
 ```sh
 dotnet build IfcHopper/IfcHopper.csproj
-dotnet run --project tools/SampleBuilder              # all samples
-dotnet run --project tools/SampleBuilder -- 7 11      # samples 07 and 11
-dotnet run --project tools/SampleBuilder -- --describe     # inputs and outputs of the IfcHopper components
-dotnet run --project tools/SampleBuilder -- --docs ../grasshopper-documentation   # component pages of the docs site
-dotnet run --project tools/SampleBuilder -- --find Block   # Grasshopper components by name
-dotnet run --project tools/SampleBuilder -- --check-inputs # compact input layout, persistence and undo regressions
-dotnet run --project tools/SampleBuilder -- --check-large-coordinates # synthetic survey IFCs, definitions and precision checks
-dotnet run --project tools/SampleBuilder -- --check-custom-preview # native material override, plain geometry and bake-style regressions
+dotnet run --project tools/SampleBuilder -f net8.0-windows              # all samples
+dotnet run --project tools/SampleBuilder -f net8.0-windows -- 7 11      # samples 07 and 11
+dotnet run --project tools/SampleBuilder -f net8.0-windows -- --describe     # inputs and outputs of the IfcHopper components
+dotnet run --project tools/SampleBuilder -f net8.0-windows -- --docs ../grasshopper-documentation   # component pages of the docs site
+dotnet run --project tools/SampleBuilder -f net8.0-windows -- --find Block   # Grasshopper components by name
+dotnet run --project tools/SampleBuilder -f net8.0-windows -- --check-inputs # compact input layout, persistence and undo regressions
+dotnet run --project tools/SampleBuilder -f net8.0-windows -- --check-large-coordinates # synthetic survey IFCs, definitions and precision checks
+dotnet run --project tools/SampleBuilder -f net8.0-windows -- --check-custom-preview # native material override, plain geometry and bake-style regressions
 
-dotnet run --project tools/SampleBuilder -- --check-runtime-messages # partial-success warnings, total failures and repeated solves
+dotnet run --project tools/SampleBuilder -f net8.0-windows -- --check-runtime-messages # partial-success warnings, total failures and repeated solves
 
-dotnet run --project tools/SampleBuilder -- --check-class-colours # colour/tree correspondence, overrides, fallback and repeated solves
+dotnet run --project tools/SampleBuilder -f net8.0-windows -- --check-class-colours # colour/tree correspondence, overrides, fallback and repeated solves
 ```
 
 Regenerate after changing component inputs or outputs. `IfcHopper.Tests/SampleDefinitionTests` reads the IFC files in `ifc/` back. The builder needs a licensed Rhino 8 in `C:\Program Files\Rhino 8`, or in `RHINO_SYSTEM_DIR`.
@@ -55,3 +55,11 @@ Sample 08 checks that Object and Modify Object draw only their outputs, preserve
 Sample 11 hides its construction volumes and opening previews so they do not cover the cut wall. Enable their Preview switches to inspect them. Building sample 11 also checks Object and Modify Object preview drawing, hidden/disabled visibility and clipping bounds, and the cut wall volume through Deconstruct Object and the object mesh cast. These checks require Rhino; the Core test suite does not exercise viewport drawing.
 
 To validate an extracted Release ZIP, set `IFCHOPPER_PLUGIN_DIR` to the absolute path of its `IfcHopper` folder before running SampleBuilder. The default remains the current Debug build. The module identity check also applies to the supplied package.
+
+### Rhino 9 host checks
+
+Run dotnet run --project tools/SampleBuilder -f net10.0-windows -- --check-runtime-messages
+and the other check switches above for GH1 inside Rhino 9. The default host and
+Debug plugin folder follow the selected framework. Overrides RHINO_SYSTEM_DIR and
+IFCHOPPER_PLUGIN_DIR must select a matching host/runtime/payload. For an extracted
+package, point IFCHOPPER_PLUGIN_DIR at net10.0 (net8.0 for Rhino 8).

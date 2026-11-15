@@ -1,6 +1,6 @@
 # Building and contributing
 
-Build and test (needs the .NET 8 SDK):
+Build and test (needs the .NET 10 SDK and .NET 8/10 runtimes for tests):
 
 ```sh
 dotnet build IfcHopper.sln
@@ -13,7 +13,7 @@ The plugin and SampleBuilder explicitly reference McNeel's Grasshopper SDK
 published 8.20 SDK package; NuGet marks it unlisted and labels it `-rc`, so keep the
 explicit pin rather than choosing the latest listed package. Visual Studio restores
 these references through NuGet; installing the full Rhino 8.20 application is not
-required to compile. The runtime target stays `net8.0`.
+required to compile. The plugin targets `net8.0;net10.0`. Core stays `net8.0`; its tests execute under both runtimes.
 
 Compiling against this SDK checks the 8.20 API baseline. It does not establish host
 loading or platform compatibility: run the plugin/package in an actual Rhino 8.20
@@ -34,3 +34,31 @@ Use either option. Archives must match the pinned checksum; `PsdDir` embeds XML 
 
 Contributions are licensed under the same licence as the project.
 
+
+Rhino 9 development uses IfcHopper/bin/<Configuration>/net10.0/ and the Rhino 9
+launch profile. Select the corresponding target framework before debugging.
+SampleBuilder requires -f net8.0-windows for Rhino 8 or -f net10.0-windows
+for Rhino 9. Keep both framework folders together in distribution packages.
+See [packaging](../tools/Package/README.md).
+
+### VS Code launch profiles
+
+Open either the repository folder (grasshopper-code) or its IfcHopper project
+folder in VS Code. Both include matching launch/tasks configurations. In Run and
+Debug, choose "Rhino 9 - GH1" and press F5. This builds Debug/net10.0 and passes
+that exact directory to RHINO_PACKAGE_DIRS before starting Rhino 9 with GH1.
+"Rhino 8 - GH1" builds and loads Debug/net8.0 instead. Restart an already running
+Rhino to pick up changed environment variables. Avoid other installed copies of
+IfcHopper while debugging.
+
+The previous project-folder VS Code configuration only launched Rhino 8 and
+pointed at bin/Debug, rather than an explicit framework output. The Visual Studio
+launchSettings profiles do not replace VS Code's separate launch.json profiles.
+
+### Visual Studio launch profiles
+
+Use "Rhino 9 - netcore" with the net10.0 target selected (or Rhino 8 with net8.0).
+Each profile now explicitly sets RHINO_PACKAGE_DIRS to its framework folder under
+bin/<Configuration>. It does not use OutputPath, which can follow the selected
+framework or an outer multi-target build. Stop debugging and restart Rhino after
+changing profiles; reload the project if Visual Studio retains the old settings.

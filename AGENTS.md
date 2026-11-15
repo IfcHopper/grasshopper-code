@@ -15,7 +15,7 @@ Read [developer reference](docs/DEVELOPMENT.md) (Architecture, Data flow, Compat
 | `tools/SampleBuilder/`, `tools/IconRenderer/` | Generated examples; icon rendering |
 
 - Must keep Core independent of RhinoCommon, Grasshopper and UI frameworks; Rhino conversion belongs in the plugin or a Rhino-dependent library.
-- Must preserve **Rhino 8.20+, Windows/macOS, .NET 8 (`net8.0`)** unless explicitly changing support. Check APIs against the minimum service release; newer package references or installed SDKs prove nothing about host compatibility. Rhino 9 runtime advice does not retarget this project.
+- Must preserve **GH1 on Rhino 8.20+ (.NET 8) and Rhino 9 (.NET 10), Windows/macOS** unless explicitly changing support. Check APIs against the minimum service release; newer package references or installed SDKs prove nothing about host compatibility. Keep both plugin targets and the shared 8.20 SDK API baseline.
 - Must verify affected macOS behavior before claiming portability, especially native/Windows dependencies and `System.Drawing.Common`; follow host-supported icon handling.
 - Should use explicit dependency versions, justify additions and avoid unrelated upgrades. Document tested Rhino/service release, OS, runtime and architecture; compilation alone proves no host support.
 - Must preserve unrelated edits/user files and change generated artifacts through their sources. Never invent SDK APIs, IFC rules, issue numbers, SHAs or test results; consult authoritative version-appropriate sources when uncertain.
@@ -61,7 +61,7 @@ Read [developer reference](docs/DEVELOPMENT.md) (Architecture, Data flow, Compat
 
 ## Verification and documentation
 
-Use .NET 8 from repository root:
+Use the .NET 10 SDK from repository root (builds/tests both runtime targets):
 
 ```sh
 dotnet build IfcHopper.sln
@@ -75,7 +75,7 @@ First core build downloads buildingSMART templates; restore needs package source
 
 ```sh
 dotnet build IfcHopper/IfcHopper.csproj
-dotnet run --project tools/SampleBuilder -- 7 11
+dotnet run --project tools/SampleBuilder -f net8.0-windows -- 7 11
 ```
 
 Numbers select examples; omit for all. Builder requires licensed Rhino 8 at the documented location or `RHINO_SYSTEM_DIR`; see [sample workflow](samples/README.md).

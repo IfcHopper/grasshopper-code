@@ -23,10 +23,10 @@ namespace SampleBuilder
         {
             var root = FindRepositoryRoot();
             var output = Path.Combine(root, "samples");
-            // IfcHopper is loaded as a package from its build output, like the Rhino 8 launch profile of the plugin.
+            // IfcHopper is loaded as a package from its build output, like the matching Rhino launch profile of the plugin.
             // A caller can validate an extracted distribution instead of development output.
             var pluginDirectory = Environment.GetEnvironmentVariable("IFCHOPPER_PLUGIN_DIR")
-                ?? Path.Combine(root, "IfcHopper", "bin", "Debug", "net8.0");
+                ?? Path.Combine(root, "IfcHopper", "bin", "Debug", Program.PluginFramework);
             Environment.SetEnvironmentVariable("RHINO_PACKAGE_DIRS", pluginDirectory);
             // Bind this assembly before Rhino discovers installed packages with the same identity.
             // The module check below still rejects any session that registers a different build.
