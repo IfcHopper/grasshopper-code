@@ -1,5 +1,15 @@
 # Release notes
 
+## 1.0.0-beta.3 (in progress)
+
+- Add Move Model in Utilities: translate the complete supported model in world X/Y (Rhino document units), including parts, openings, fills and instance transforms. Keep Map Location defaults to true and compensates an existing georeference for its rotation and scale. No CRS is inferred. Upstream values and source files remain unchanged; Write IFC is still explicit. Unsupported source products/placements/map conversions are rejected instead of partly moved. Sample 16 demonstrates the workflow. In-place export now correctly rewrites independent source placement references and replaces IFC2X3 georeference sets without ID collisions. See [placement and georeference behavior](LARGE_COORDINATES.md#move-model).
+
+Move Model validation (2026-11-15): solution build and all 220 Core tests passed without skips, including both map-location modes across all three schemas, upstream/source preservation, type instances, openings/fills and independent placement chains. The twelve Rhino schema/unit cases also check translation and repeated solves; samples 03, 06, 08, 11 and 16 regenerated and solved on the Windows/Rhino host below. Minimum Rhino, macOS and interactive viewport/bake checks remain unverified.
+
+- Address [#19](https://github.com/IfcHopper/grasshopper-code/issues/19): Read IFC warns about large stored geometry coordinates or local placements without eagerly converting the object tree or faceting bodies. Rhino mesh conversion preserves double precision in both directions; cleanup runs temporarily near the mesh origin so a 20 mm survey wall does not collapse. World coordinates, placements and georeferencing are retained. Viewport and boolean limitations remain; there is no automatic model rebasing. See [large coordinates](LARGE_COORDINATES.md) for screening limits, generated IFC/Grasshopper reproductions and validation.
+
+Validation for #19 (2026-11-15): solution build and all 203 Core tests passed with no skips. Twelve synthetic host cases passed on Windows x64, Rhino 8.37.26307.15001 and .NET 8.0.21; samples 03, 06, 08 and 11 were regenerated and solved, including material-preview and opening-volume checks. Builds used SDK 10.0.401 targeting .NET 8. NuGet vulnerability lookup still reported NU1900 network warnings. Minimum Rhino 8.20, the .NET 8 SDK, macOS and interactive viewport/bake checks remain unverified.
+
 ## 1.0.0-beta.2
 
 - Implement [#10](https://github.com/IfcHopper/grasshopper-code/issues/10): affected creation and Modify components have a bottom expand arrow and a top collapse arrow with the bottom control inset two canvas units and the top control at the content-box edge. New components start compact; connected or configured inputs remain visible. Expansion is saved per component, old definitions without the option open expanded, and layout-only undo/redo retains computed outputs. Inputs remain registered with unchanged identities, order, types, access and data. See [compact inputs](ADVANCED_INPUTS.md).

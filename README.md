@@ -42,6 +42,7 @@ Target: Rhino 8.20+ and .NET 8 on Windows/macOS. Beta.2 was checked on Windows x
 - [Samples](samples/README.md): one Grasshopper definition per workflow, with the IFC files they write.
 - [Release notes](docs/RELEASE_NOTES.md): changes and testing limits for beta.2.
 - [Compact inputs](docs/ADVANCED_INPUTS.md): use the bottom arrow to show advanced component inputs.
+- [Large coordinates](docs/LARGE_COORDINATES.md): precision protection, coordinate warnings and synthetic test files.
 - [Packaging and publishing](tools/Package/README.md): local food4Rhino ZIP and Yak builds, release checks, and the two publishing routes. Generated packages remain ignored; building does not publish them.
 
 ## Roadmap and feature discussion

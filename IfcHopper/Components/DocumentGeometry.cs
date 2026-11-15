@@ -15,15 +15,20 @@ namespace IfcHopper.Components
         /// <summary>The Core mesh of <paramref name="geometry"/>, or null when it is not a mesh, Brep, Extrusion, Surface or SubD, or meshes to nothing.</summary>
         public static MeshGeometry ToMesh(GeometryBase geometry)
         {
-            var mesh = Facet(geometry);
+            using var mesh = Facet(geometry);
             if (mesh == null) return null;
 
-            mesh.Vertices.CombineIdentical(true, true);
-            mesh.Faces.CullDegenerateFaces();
+            NearOrigin(mesh, () =>
+            {
+                mesh.Vertices.CombineIdentical(true, true);
+                mesh.Faces.CullDegenerateFaces();
+            });
             if (mesh.Faces.Count == 0) return null;
 
             var scale = DocumentUnits.MetresPerUnit();
-            var vertices = mesh.Vertices.Select(v => new[] { v.X * scale, v.Y * scale, v.Z * scale });
+            // Enumeration exposes Point3f even on a double-precision mesh. Keep the double
+            // coordinates on the return path too (#19), or a read/modify/write loses detail.
+            var vertices = mesh.Vertices.ToPoint3dArray().Select(v => new[] { v.X * scale, v.Y * scale, v.Z * scale });
             var faces = mesh.Faces.Select(f => f.IsQuad ? new[] { f.A, f.B, f.C, f.D } : new[] { f.A, f.B, f.C });
             return new MeshGeometry(vertices, faces, mesh.IsClosed);
         }
@@ -36,6 +41,10 @@ namespace IfcHopper.Components
         {
             var scale = 1.0 / DocumentUnits.MetresPerUnit();
             var mesh = new Mesh();
+            // Set before adding vertices: promoting an already rounded Point3f cannot recover
+            // survey-coordinate detail. RhinoCommon supports this on the minimum Rhino 8 host.
+            // https://developer.rhino3d.com/api/rhinocommon/rhino.geometry.collections.meshvertexlist/usedoubleprecisionvertices
+            mesh.Vertices.UseDoublePrecisionVertices = true;
             foreach (var v in geometry.Vertices) mesh.Vertices.Add(v[0] * scale, v[1] * scale, v[2] * scale);
             foreach (var face in geometry.Faces)
             {
@@ -46,19 +55,40 @@ namespace IfcHopper.Components
                         mesh.Faces.AddFace(face[t[0]], face[t[1]], face[t[2]]);
             }
 
-            mesh.Vertices.CombineIdentical(true, true);
-            mesh.Faces.CullDegenerateFaces();
+            NearOrigin(mesh, () =>
+            {
+                mesh.Vertices.CombineIdentical(true, true);
+                mesh.Faces.CullDegenerateFaces();
+            });
             return mesh;
         }
 
         /// <summary>Unwelds creases above 30° for flat shading and colours the mesh (null: no vertex colours).</summary>
         public static Mesh Finish(Mesh mesh, Colour colour)
         {
-            mesh.Unweld(RhinoMath.ToRadians(30), true);
-            mesh.Normals.ComputeNormals();
-            mesh.Compact();
+            NearOrigin(mesh, () =>
+            {
+                mesh.Unweld(RhinoMath.ToRadians(30), true);
+                mesh.Normals.ComputeNormals();
+                mesh.Compact();
+            });
             if (colour != null) mesh.VertexColors.CreateMonotoneMesh(ToColor(colour));
             return mesh;
+        }
+
+        // Rhino 8 mesh cleanup can compare the single-precision vertex mirror even when
+        // double vertices exist (#19: CombineIdentical collapsed a 20 mm survey wall).
+        // Work temporarily near the first vertex, then restore the exact world frame.
+        // These meshes are owned here; borrowed/upstream geometry is duplicated by Facet.
+        private static void NearOrigin(Mesh mesh, Action operation)
+        {
+            if (mesh.Vertices.Count == 0) { operation(); return; }
+            mesh.Vertices.UseDoublePrecisionVertices = true;
+            var origin = mesh.Vertices.Point3dAt(0);
+            var offset = new Vector3d(origin);
+            mesh.Translate(-offset);
+            try { operation(); }
+            finally { mesh.Translate(offset); }
         }
 
         /// <summary>Core colour of a display colour; alpha becomes transparency.</summary>

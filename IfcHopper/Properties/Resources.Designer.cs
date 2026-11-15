@@ -1525,6 +1525,10 @@ namespace IfcHopper.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap MoveModel => (System.Drawing.Bitmap)ResourceManager.GetObject("MoveModel", resourceCulture);
+
+        internal static string MoveModel_svg => ResourceManager.GetString("MoveModel_svg", resourceCulture);
+
         internal static System.Drawing.Bitmap ModelInfo {
             get {
                 object obj = ResourceManager.GetObject("ModelInfo", resourceCulture);
