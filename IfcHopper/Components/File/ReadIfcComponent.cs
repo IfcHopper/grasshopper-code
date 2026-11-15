@@ -17,7 +17,7 @@ namespace IfcHopper.Components
 
         public ReadIfcComponent()
           : base("Read IFC", "ReadIFC",
-              "Reads an IFC file into an IfcHopper model. Only the project is converted; deconstruct components load the rest on demand. Lengths are converted to Rhino units.",
+              "Reads an IFC file into an IfcHopper model. Only the project is converted; deconstruct components load the rest on demand. Lengths are converted to Rhino units. Large stored coordinates and local placements produce a warning; meshes retain double precision without relocating the model.",
               ComponentCategory.Tab, ComponentCategory.File)
         {
         }
@@ -45,6 +45,8 @@ namespace IfcHopper.Components
                 var model = IfcBackend.Reader.Read(path);
                 DA.SetData(0, new ModelGoo(model));
                 CheckUnits(model.Project);
+                foreach (var warning in model.ReadWarnings)
+                    AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, warning);
             }
             catch (Exception ex)
             {

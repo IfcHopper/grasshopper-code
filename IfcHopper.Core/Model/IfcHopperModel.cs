@@ -16,6 +16,9 @@ namespace IfcHopper.Core.Model
         /// <summary>File the model was read from; null for models created in Grasshopper.</summary>
         public string SourcePath { get; internal set; }
 
+        /// <summary>Read-time diagnostics; empty for newly authored models. Reading this list performs no IO or lazy geometry loading.</summary>
+        public IReadOnlyList<string> ReadWarnings { get; internal set; } = System.Array.Empty<string>();
+
         /// <summary>Written to the FILE_NAME author of the IFC header.</summary>
         public string Author { get; set; }
 

@@ -1109,7 +1109,7 @@ namespace IfcHopper.Core.Backends.Xbim
                 set is QuantitySet quantities ? quantities.Quantities.Select(NewQuantity) : ((PropertySet)set).Properties.Select(NewProperty).Cast<IPersistEntity>();
 
             /// <summary>New set holding <paramref name="items"/> (properties or quantities); its id is derived from the object it is written for.</summary>
-            internal IIfcPropertySetDefinition NewPropertySet(PropertySetDefinition set, IIfcRoot owner, IEnumerable<IPersistEntity> items)
+            internal IIfcPropertySetDefinition NewPropertySet(PropertySetDefinition set, IIfcRoot owner, IEnumerable<IPersistEntity> items, string globalId = null)
             {
                 IIfcPropertySetDefinition entity;
                 if (set is QuantitySet quantities)
@@ -1120,7 +1120,7 @@ namespace IfcHopper.Core.Backends.Xbim
                 }
                 else entity = New<IIfcPropertySet>(p => p.HasProperties.AddRange(items.Cast<IIfcProperty>()));
 
-                entity.GlobalId = Register(GlobalIds.FromSeed(owner.GlobalId + "/pset/" + set.Name), set.Name);
+                entity.GlobalId = Register(globalId ?? GlobalIds.FromSeed(owner.GlobalId + "/pset/" + set.Name), set.Name);
                 entity.OwnerHistory = OwnerHistory();
                 entity.Name = set.Name;
                 if (set.Description != null) entity.Description = set.Description;
@@ -1329,7 +1329,7 @@ namespace IfcHopper.Core.Backends.Xbim
             /// the ePSet_MapConversion and ePSet_ProjectedCRS property sets on the project.
             /// IFC scale converts model length units to map units, so the file length unit is folded into it.
             /// </summary>
-            internal void AddGeoreference(Georeference georeference, IIfcProject project, IIfcGeometricRepresentationContext context, Units units)
+            internal void AddGeoreference(Georeference georeference, IIfcProject project, IIfcGeometricRepresentationContext context, Units units, bool replacement = false)
             {
                 var scale = georeference.Scale * units.Length.ToSi;
                 if (_schema == IfcSchema.Ifc2x3)
@@ -1344,12 +1344,14 @@ namespace IfcHopper.Core.Backends.Xbim
                         NewRawProperty("XAxisOrdinate", "IfcReal", georeference.XAxisOrdinate),
                         NewRawProperty("Scale", "IfcReal", scale),
                     };
-                    DefineBy(project, NewPropertySet(new PropertySet(MapConversionSet), project, conversion));
+                    // Replacement detaches the old georeference sets. Their seeded IDs may
+                    // still be reserved or shared by another object; use new identities (#19).
+                    DefineBy(project, NewPropertySet(new PropertySet(MapConversionSet), project, conversion, replacement ? GlobalIds.New() : null));
                     var crs = new List<IPersistEntity> { NewRawProperty("Name", "IfcLabel", georeference.CrsName), NewRawProperty("MapUnit", "IfcLabel", "METRE") };
                     foreach (var (name, value) in new[] { ("Description", georeference.CrsDescription), ("GeodeticDatum", georeference.GeodeticDatum),
                         ("VerticalDatum", georeference.VerticalDatum), ("MapProjection", georeference.MapProjection), ("MapZone", georeference.MapZone) })
                         if (value != null) crs.Add(NewRawProperty(name, "IfcLabel", value));
-                    DefineBy(project, NewPropertySet(new PropertySet(ProjectedCrsSet), project, crs));
+                    DefineBy(project, NewPropertySet(new PropertySet(ProjectedCrsSet), project, crs, replacement ? GlobalIds.New() : null));
                     return;
                 }
 

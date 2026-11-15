@@ -622,7 +622,18 @@ namespace IfcHopper.Core.Backends.Xbim
 
             if (!(entity.ObjectPlacement is IIfcLocalPlacement local))
                 throw new NotSupportedException($"'{obj.Name}' has no local placement and cannot be moved in place.");
+            if (local == parent.Frame.Ifc)
+            {
+                // A child may reuse its parent's placement entity. Reparenting that
+                // shared entity to itself would create a cycle; give the child its own.
+                entity.ObjectPlacement = Builder.NewPlacement(parent.Frame, target);
+                return ChildScope(obj, entity, baseline.Placement ?? parent.OldWorld, target, parent);
+            }
             // Keep the placement entity: children placements refer to it.
+            // The new relative coordinates below use the containment/aggregation parent.
+            // A source product may instead have been placed relative to world or another
+            // spatial object; update that reference too or XY translation is applied twice.
+            local.PlacementRelTo = parent.Frame.Ifc;
             local.RelativePlacement = Builder.NewAxis(target.RelativeTo(parent.NewWorld));
             return ChildScope(obj, entity, baseline.Placement ?? parent.OldWorld, target, parent);
         }
@@ -702,7 +713,7 @@ namespace IfcHopper.Core.Backends.Xbim
 
             var context = contexts.FirstOrDefault(c => c.CoordinateSpaceDimension == 3)
                 ?? throw new InvalidOperationException("The file has no 3D context to georeference.");
-            Builder.AddGeoreference(project.Georeference, entity, context, project.Units ?? new Units());
+            Builder.AddGeoreference(project.Georeference, entity, context, project.Units ?? new Units(), replacement: true);
         }
 
         /// <summary>
