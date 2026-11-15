@@ -21,7 +21,7 @@ namespace SampleBuilder.Samples
             var pick = c.Ifc("Find Objects", Canvas.RightOf(read), y0);
             c.Wire(read, pick, "Model");
             Canvas.Set(pick, "Classes", "IfcWall");
-            Canvas.Set(pick, "Name", "South*");
+            Canvas.Set(pick, "Name", "^South");
             var storey = c.Ifc("Find Objects", Canvas.RightOf(read), Canvas.Below(pick));
             c.Wire(read, storey, "Model");
             Canvas.Set(storey, "Classes", "IfcBuildingStorey");

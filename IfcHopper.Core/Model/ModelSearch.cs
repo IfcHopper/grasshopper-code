@@ -11,12 +11,18 @@ namespace IfcHopper.Core.Model
     /// <summary>What <see cref="ModelSearch.Find"/> looks for; empty criteria match everything. All given criteria must match.</summary>
     public sealed class ObjectQuery
     {
-        /// <summary>IFC classes, e.g. IfcWall or IfcBuiltElement; an object matches one of them. Subclasses match unless <see cref="ExactClass"/>.</summary>
+        /// <summary>IFC classes to include, e.g. IfcWall or IfcBuiltElement; prefix ! to exclude a class, e.g. !IfcWall.</summary>
+        /// <remarks>An object must match an inclusion when any are supplied and must not match any exclusion. Exclusion-only lists start
+        /// from all objects. Subclasses match both inclusion and exclusion unless <see cref="ExactClass"/> is true.
+        /// Blank entries are ignored; surrounding whitespace is trimmed. Excluding a parent does not exclude its descendants.</remarks>
         public List<string> Classes { get; } = new List<string>();
 
         public bool ExactClass { get; set; }
 
-        /// <summary>Name pattern with * and ? wildcards, ignoring case; null matches every name.</summary>
+        /// <summary>Case-insensitive .NET regular expression on the object name; null/blank matches every name.</summary>
+        /// <remarks>Matching searches anywhere in the name; use ^ and $ for a whole-name match. Pattern whitespace is significant.
+        /// Null names are treated as empty strings. Negative lookaheads can exclude names, e.g. ^(?!.*temporary).*wall.
+        /// This replaces the beta wildcard syntax: use .* instead of * and . instead of ?.</remarks>
         public string Name { get; set; }
 
         /// <summary>GlobalIds (22 characters or GUIDs); an object matches one of them.</summary>
@@ -140,22 +146,55 @@ namespace IfcHopper.Core.Model
     {
         /// <summary>
         /// The objects matching <paramref name="query"/> in <paramref name="root"/> and below, depth first in child order: spatial objects,
-        /// elements, element parts and openings. Throws ArgumentException for class names the schema does not know.
+        /// elements, element parts and openings.
         /// </summary>
+        /// <param name="root">Search root; included in the results when it matches. Descendants of non-matching objects are still searched.</param>
+        /// <param name="query">All supplied criteria must match; name expressions use culture-independent, case-insensitive matching.</param>
+        /// <returns>Lazy results in tree order, preserving object references, source links and ancestor paths.</returns>
+        /// <exception cref="ArgumentException">A class, GlobalId or name expression is invalid.</exception>
+        /// <exception cref="RegexMatchTimeoutException">A name match exceeds 100 ms during enumeration.</exception>
+        /// <remarks>Reading objects and property filters can load data from the source file. Geometry is not loaded by the search.
+        /// Name matching has a 100 ms limit per object, following Microsoft's guidance to bound regex matching:
+        /// https://learn.microsoft.com/dotnet/standard/base-types/best-practices-regex#use-time-out-values .</remarks>
         public static IEnumerable<SearchResult> Find(ModelObject root, ObjectQuery query)
         {
-            var classes = query.Classes.Where(c => !string.IsNullOrWhiteSpace(c))
-                .Select(c => IfcBackend.Schema.FindClass(c) ?? throw new ArgumentException($"'{c.Trim()}' is not an IFC class.")).ToList();
+            var classes = query.Classes.Where(c => !string.IsNullOrWhiteSpace(c)).Select(c =>
+            {
+                var text = c.Trim();
+                bool exclude = text.StartsWith("!", StringComparison.Ordinal);
+                var className = (exclude ? text.Substring(1) : text).Trim();
+                if (className.Length == 0)
+                    throw new ArgumentException("Classes exclusion needs an IFC class after !, e.g. !IfcWall.");
+                var resolved = IfcBackend.Schema.FindClass(className)
+                    ?? throw new ArgumentException($"'{className}' is not an IFC class. Use a class name, optionally prefixed with ! to exclude it.");
+                return (Name: resolved, Exclude: exclude);
+            }).ToArray();
+            var includedClasses = classes.Where(c => !c.Exclude).Select(c => c.Name).ToArray();
+            var excludedClasses = classes.Where(c => c.Exclude).Select(c => c.Name).ToArray();
             var ids = new HashSet<string>(query.GlobalIds.Where(i => !string.IsNullOrWhiteSpace(i)).Select(i =>
                 Model.GlobalIds.TryParse(i, out var id) ? id : throw new ArgumentException($"'{i.Trim()}' is not a valid GlobalId (22 IFC characters or a GUID).")));
-            var name = string.IsNullOrWhiteSpace(query.Name) ? null
-                : new Regex("^" + Regex.Escape(query.Name.Trim()).Replace(@"\*", ".*").Replace(@"\?", ".") + "$", RegexOptions.IgnoreCase);
+            Regex name = null;
+            if (!string.IsNullOrWhiteSpace(query.Name))
+            {
+                try
+                {
+                    name = new Regex(query.Name, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant, TimeSpan.FromMilliseconds(100));
+                }
+                catch (ArgumentException ex)
+                {
+                    throw new ArgumentException("Name is not a valid .NET regular expression. Check grouping, brackets and escapes. " + ex.Message,
+                        nameof(query), ex);
+                }
+            }
 
             bool Matches(ModelObject obj)
             {
                 var ifcClass = SpatialRules.IfcClassOf(obj);
-                if (classes.Count > 0 && !classes.Any(c => query.ExactClass ? string.Equals(ifcClass, c, StringComparison.OrdinalIgnoreCase) : IfcBackend.Schema.IsClassOf(ifcClass, c)))
+                bool IsClass(string wanted) => query.ExactClass ? string.Equals(ifcClass, wanted, StringComparison.OrdinalIgnoreCase)
+                    : IfcBackend.Schema.IsClassOf(ifcClass, wanted);
+                if (includedClasses.Length > 0 && !includedClasses.Any(IsClass))
                     return false;
+                if (excludedClasses.Any(IsClass)) return false;
                 if (ids.Count > 0 && (obj.GlobalId == null || !ids.Contains(obj.GlobalId))) return false;
                 if (name != null && !name.IsMatch(obj.Name ?? "")) return false;
                 return query.Properties.All(p => p.Matches(obj, query.NumberToSi));
