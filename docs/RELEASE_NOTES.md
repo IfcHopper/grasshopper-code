@@ -1,6 +1,26 @@
 # Release notes
 
-## Rhino 9 / Grasshopper 1 support (unreleased)
+## 1.0.0-beta.3
+
+Prepared 2026-11-15. Local release candidate; publication and clean-install validation remain pending.
+
+### Beta.3 candidate validation (2026-11-15)
+
+- Built Release ZIP and Yak with SDK 10.0.401 from source commit `f648a8a1ace2edaa68b2d1d387c3e4eff6cd2401` plus the local beta.3 version/documentation changes. Packaging built both runtime targets successfully; NuGet vulnerability auditing reported NU1900 network warnings.
+- All 239 Core tests passed on .NET 8 and again on .NET 10 (478 executions, no skips). The initial sandbox run failed the profile-dependent default-path test on .NET 8; the full rerun outside the sandbox passed.
+- Inspected both archives: net8.0/net10.0 plugin payloads present, host SDK assemblies and PDBs excluded. Yak produced `rh8_20-any`. Generated all 62 component documentation pages from the extracted Release ZIP's net8.0 payload. Runtime-message host regressions passed against that payload in headless Rhino 8.37 on Windows x64.
+- Documentation production build passed; browser/baseline metadata was stale. The previously recorded documentation dependency audit finding remains unresolved; no new audit or dependency upgrade was performed.
+- Refreshed the documentation sample download from all 17 committed examples; all 36 archive files were hash-checked against source. Historical feature checks below describe earlier builds; they do not establish clean installation of this candidate.
+- Clean ZIP/Yak installation, automatic framework selection, update/uninstall, minimum Rhino 8.20, macOS and interactive viewport checks remain unverified. No publication was performed.
+
+| Artifact | SHA-256 |
+| --- | --- |
+| IfcHopper-1.0.0-beta.3.zip | `C969E6BC743D2698A01D9475FAE09D9C5957CA4ADB702CDAB8270FD1DE0C8391` |
+| ifchopper-1.0.0-beta.3-rh8_20-any.yak | `04175A573C107F66928097A98924EB351D8CA3794BA8224253A0B88828C2EB70` |
+
+### Changes and recorded feature validation
+
+#### Rhino 9 / Grasshopper 1 support
 
 - Add net10.0 alongside net8.0 for GH1 in Rhino 9 and Rhino 8.20+ respectively. Keep the pinned Grasshopper/RhinoCommon 8.20 API baseline and unchanged component identities/contracts. Core remains net8.0.
 - Package both framework folders with their dependencies in the ZIP and Yak; preserve both when installing. Yak retains rh8_20-any because the shared SDK baseline is unchanged. Add the Rhino 9 debug profile and matching SampleBuilder target/host/output selection.
@@ -10,14 +30,14 @@ Validation (2026-11-15): solution and SampleBuilder builds passed with SDK 10.0.
 
 The maintainer also confirmed loading GH1 in Rhino 9 through Visual Studio after pinning each launch profile to its framework-specific output folder.
 
-Limits: Rhino 8.20, macOS, interactive viewport behavior and clean Package Manager/manual install, framework auto-selection, update/uninstall remain unverified. Host checks explicitly load the matching payload. Existing published beta.2 is unchanged; increment the release version before publication. No publication was performed.
+Limits: Rhino 8.20, macOS, interactive viewport behavior and clean Package Manager/manual install, framework auto-selection, update/uninstall remain unverified. Host checks explicitly load the matching payload. Existing published beta.2 is unchanged; beta.3 carries these changes. No publication was performed.
 
 
 - Fix [#20](https://github.com/IfcHopper/grasshopper-code/issues/20): components that produce valid output for some inputs report failed inputs as warnings, including Grasshopper typed-input conversion failures (for example, Project/Site mixed with elements on Deconstruct Object). Operations with no valid output retain errors. Write IFC counts a requested write as successful only after the writer completes; its Path output alone does not downgrade write failures. Diagnostic text and output data are preserved; each solve determines severity afresh.
 
 Validation for #20 (2026-11-15): solution build and all 220 Core tests passed without skips. Dedicated headless Rhino checks cover valid, mixed, entirely invalid and recovered inputs for Deconstruct Object conversions and Material solve iterations, plus an IFC write blocked by a file at the destination directory, on Windows x64, Rhino 8.37 and .NET 8.0.21 (SDK 10.0.401 targeting .NET 8). The initial sandbox run failed one user-profile-dependent path test; the full suite passed outside the sandbox. NuGet vulnerability auditing reported network warnings. Minimum Rhino 8.20, macOS and interactive canvas display remain unverified.
 
-## 1.0.0-beta.3 (in progress)
+#### Rhino 8.20 baseline and beta.3 features
 
 - Align the build with the intended Rhino 8.20+ baseline: pin plugin and SampleBuilder to McNeel's `Grasshopper 8.20.25147.11001-rc` SDK (which pins RhinoCommon to the same version), retaining `net8.0`. This unlisted package is the last published 8.20 SDK; the `-rc` label is the SDK package version, not a new plugin prerelease requirement. No newer Rhino API dependencies were found by compilation. Release assemblies reference Grasshopper/GH_IO/RhinoCommon 8.20, and Yak assembly inspection generates `rh8_20-any` directly. Packaging rejects mismatches between the pinned SDK and generated tag. The already published beta.2 package remains unchanged; new local builds use the lower baseline.
 

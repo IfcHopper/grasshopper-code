@@ -38,7 +38,7 @@ The icon is copied from the existing generated PNG; edit its SVG source and foll
 [icon instructions](../../docs/ICONS.md) to change it.
 
 Yak 0.15.5 reports assembly version `1.0.0.0` against package version
-`1.0.0-beta.1`: the assembly's numeric version cannot contain a prerelease suffix.
+`1.0.0-beta.3`: the assembly's numeric version cannot contain a prerelease suffix.
 The builder explicitly passes the project version, preserving the beta label in
 the final manifest and filename. Yak may also append an inferred GUID keyword;
 the manifest explicitly preserves the plugin's `GH_AssemblyInfo.Id` for discovery.
