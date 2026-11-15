@@ -7,7 +7,7 @@ using IfcHopper.Types;
 
 namespace IfcHopper.Components
 {
-    public class UnitsComponent : GH_Component
+    public class UnitsComponent : IfcComponent
     {
         public UnitsComponent()
           : base("Units", "Units",

@@ -6,7 +6,7 @@ using IfcHopper.Types;
 
 namespace IfcHopper.Components
 {
-    public class MoveModelComponent : GH_Component
+    public class MoveModelComponent : IfcComponent
     {
         public MoveModelComponent() : base("Move Model", "MoveModel",
             "Translates all objects of a supported IfcHopper model in world X/Y, including parts, openings and fills. " +

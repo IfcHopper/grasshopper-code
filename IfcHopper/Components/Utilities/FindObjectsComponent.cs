@@ -9,7 +9,7 @@ using IfcHopper.Types;
 
 namespace IfcHopper.Components
 {
-    public class FindObjectsComponent : GH_Component
+    public class FindObjectsComponent : IfcComponent
     {
         public FindObjectsComponent()
           : base("Find Objects", "Find",

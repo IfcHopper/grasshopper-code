@@ -39,6 +39,8 @@ dotnet run --project tools/SampleBuilder -- --find Block   # Grasshopper compone
 dotnet run --project tools/SampleBuilder -- --check-inputs # compact input layout, persistence and undo regressions
 dotnet run --project tools/SampleBuilder -- --check-large-coordinates # synthetic survey IFCs, definitions and precision checks
 dotnet run --project tools/SampleBuilder -- --check-custom-preview # native material override, plain geometry and bake-style regressions
+
+dotnet run --project tools/SampleBuilder -- --check-runtime-messages # partial-success warnings, total failures and repeated solves
 ```
 
 Regenerate after changing component inputs or outputs. `IfcHopper.Tests/SampleDefinitionTests` reads the IFC files in `ifc/` back. The builder needs a licensed Rhino 8 in `C:\Program Files\Rhino 8`, or in `RHINO_SYSTEM_DIR`.

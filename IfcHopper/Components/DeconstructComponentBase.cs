@@ -4,7 +4,7 @@ using IfcHopper.Core.Model;
 namespace IfcHopper.Components
 {
     /// <summary>Base for deconstruct components: Name, Description and GlobalId outputs at indices 0-2.</summary>
-    public abstract class DeconstructComponentBase : GH_Component
+    public abstract class DeconstructComponentBase : IfcComponent
     {
         protected DeconstructComponentBase(string name, string nickname, string description, string subCategory)
           : base(name, nickname, description, ComponentCategory.Tab, subCategory)

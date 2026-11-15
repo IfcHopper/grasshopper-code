@@ -9,7 +9,7 @@ using Rhino.Geometry;
 
 namespace IfcHopper.Components
 {
-    public class DeconstructPsetComponent : GH_Component
+    public class DeconstructPsetComponent : IfcComponent
     {
         public DeconstructPsetComponent()
           : base("Deconstruct Pset", "DePset",

@@ -5,7 +5,7 @@ using IfcHopper.Types;
 
 namespace IfcHopper.Components
 {
-    public class DeconstructClassificationComponent : GH_Component
+    public class DeconstructClassificationComponent : IfcComponent
     {
         public DeconstructClassificationComponent()
           : base("Deconstruct Classification", "DeClass",

@@ -8,7 +8,7 @@ using Rhino.Geometry;
 
 namespace IfcHopper.Components
 {
-    public class ContextComponent : GH_Component
+    public class ContextComponent : IfcComponent
     {
         public ContextComponent()
           : base("Context", "Context",

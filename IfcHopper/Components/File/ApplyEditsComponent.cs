@@ -9,7 +9,7 @@ using IfcHopper.Types;
 
 namespace IfcHopper.Components
 {
-    public class ApplyEditsComponent : GH_Component
+    public class ApplyEditsComponent : IfcComponent
     {
         public ApplyEditsComponent()
           : base("Apply Edits", "Apply",

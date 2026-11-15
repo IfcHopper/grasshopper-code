@@ -1,5 +1,9 @@
 # Release notes
 
+- Fix [#20](https://github.com/IfcHopper/grasshopper-code/issues/20): components that produce valid output for some inputs report failed inputs as warnings, including Grasshopper typed-input conversion failures (for example, Project/Site mixed with elements on Deconstruct Object). Operations with no valid output retain errors. Write IFC counts a requested write as successful only after the writer completes; its Path output alone does not downgrade write failures. Diagnostic text and output data are preserved; each solve determines severity afresh.
+
+Validation for #20 (2026-11-15): solution build and all 220 Core tests passed without skips. Dedicated headless Rhino checks cover valid, mixed, entirely invalid and recovered inputs for Deconstruct Object conversions and Material solve iterations, plus an IFC write blocked by a file at the destination directory, on Windows x64, Rhino 8.37 and .NET 8.0.21 (SDK 10.0.401 targeting .NET 8). The initial sandbox run failed one user-profile-dependent path test; the full suite passed outside the sandbox. NuGet vulnerability auditing reported network warnings. Minimum Rhino 8.20, macOS and interactive canvas display remain unverified.
+
 ## 1.0.0-beta.3 (in progress)
 
 - Fix [#18](https://github.com/IfcHopper/grasshopper-code/issues/18): default preview now uses standard Grasshopper shading. IFC surface/material colours remain data and are applied explicitly with native Custom Preview. Object mesh casts and deconstructed object/type geometry have no vertex colours, so the requested shader controls colour and transparency. IFC materials can feed Custom Preview directly; unstyled materials do not invent a shader. IFC export and element baking retain stored colours. **Beta behavior change:** definitions relying on automatic IFC-coloured meshes need explicit preview wiring. Sample 08 demonstrates it; see [explicit colour preview](PREVIEW.md).

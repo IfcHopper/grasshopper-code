@@ -6,7 +6,7 @@ using IfcHopper.Types;
 
 namespace IfcHopper.Components
 {
-    public class ModifyMaterialComponent : GH_Component
+    public class ModifyMaterialComponent : IfcComponent
     {
         public ModifyMaterialComponent()
           : base("Modify Material", "ModMaterial",
