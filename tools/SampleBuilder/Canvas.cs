@@ -55,7 +55,7 @@ namespace SampleBuilder
                 using (var menu = new ContextMenuStrip())
                 {
                     component.AppendMenuItems(menu);
-                    var advanced = menu.Items.OfType<ToolStripMenuItem>().FirstOrDefault(item => item.Text == "Show advanced inputs");
+                    var advanced = menu.Items.OfType<ToolStripMenuItem>().FirstOrDefault(item => item.Text == "Show advanced inputs" || item.Text == "Show advanced parameters");
                     if (advanced != null && !advanced.Checked) advanced.PerformClick();
                 }
             }

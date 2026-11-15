@@ -6,7 +6,7 @@ using Rhino.Geometry;
 
 namespace IfcHopper.Components
 {
-    public class DeconstructGeoreferenceComponent : IfcComponent
+    public class DeconstructGeoreferenceComponent : CollapsibleComponent
     {
         public DeconstructGeoreferenceComponent()
           : base("Deconstruct Georeference", "DeGeoref",

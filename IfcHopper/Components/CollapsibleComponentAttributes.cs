@@ -10,7 +10,7 @@ using Grasshopper.Kernel.Attributes;
 
 namespace IfcHopper.Components
 {
-    /// <summary>Compacts unused inputs and draws native-position expand/collapse controls without altering the parameter server.</summary>
+    /// <summary>Compacts unused metadata parameters and draws expand/collapse controls without altering the parameter server.</summary>
     internal sealed class CollapsibleComponentAttributes : GH_ComponentAttributes
     {
         private readonly CollapsibleComponent _component;
@@ -33,27 +33,31 @@ namespace IfcHopper.Components
         {
             base.Layout();
             _button = RectangleF.Empty;
-            if (!_component.HasAdvancedInputs) return;
+            if (!_component.HasAdvancedParameters) return;
             var inputs = Owner.Params.Input.Where(_component.IsInputVisible).ToList();
-            _compact = inputs.Count < Owner.Params.Input.Count;
+            var outputs = Owner.Params.Output.Where(_component.IsOutputVisible).ToList();
+            _compact = inputs.Count < Owner.Params.Input.Count || outputs.Count < Owner.Params.Output.Count;
             if (_compact)
             {
                 // Derive row spacing from the native layout instead of imposing a model-unit tolerance
                 // or a second font scale. The icon sets the same minimum body height as a normal component.
-                var rowHeight = Owner.Params.Input[0].Attributes.Bounds.Height;
-                if (rowHeight <= 0) rowHeight = GH_FontServer.Standard.Height + 4;
-                var rows = Math.Max(inputs.Count, Owner.Params.Output.Count);
+                // A lone input spans a tall output column on deconstruct components. Use the
+                // smallest native row from either side, rather than that stretched input row.
+                var rowHeight = Owner.Params.Input.Concat(Owner.Params.Output).Select(p => p.Attributes.Bounds.Height)
+                    .Where(height => height > 0).DefaultIfEmpty(GH_FontServer.Standard.Height + 4).Min();
+                var rows = Math.Max(inputs.Count, outputs.Count);
                 var nativeRows = Math.Max(Owner.Params.Input.Count, Owner.Params.Output.Count);
                 m_innerBounds.Height = Math.Max(32, m_innerBounds.Height - (nativeRows - rows) * rowHeight);
                 LayoutRows(inputs, rowHeight, true);
-                LayoutRows(Owner.Params.Output.ToList(), rowHeight, false);
-                foreach (var hidden in Owner.Params.Input.Where(p => !_component.IsInputVisible(p)))
+                LayoutRows(outputs, rowHeight, false);
+                foreach (var hidden in Owner.Params.Input.Where(p => !_component.IsInputVisible(p))
+                    .Concat(Owner.Params.Output.Where(p => !_component.IsOutputVisible(p))))
                 {
                     hidden.Attributes.Bounds = RectangleF.Empty;
                     hidden.Attributes.Pivot = PointF.Empty;
                 }
                 Bounds = m_innerBounds;
-                foreach (var parameter in inputs.Concat(Owner.Params.Output))
+                foreach (var parameter in inputs.Concat(outputs))
                     Bounds = RectangleF.Union(Bounds, parameter.Attributes.Bounds);
                 // Match GH_ComponentAttributes.LayoutBounds' native capsule padding, while
                 // excluding hidden zero-sized rows from the union.
@@ -96,7 +100,8 @@ namespace IfcHopper.Components
                 // The native label renderer skips zero-width rows, preserving justification, font,
                 // state tags, theme and zoom fading exactly. Only grips need filtering separately.
                 RenderComponentCapsule(canvas, graphics, true, true, true, false, true, true);
-                foreach (var parameter in Owner.Params.Input.Where(_component.IsInputVisible).Concat(Owner.Params.Output))
+                foreach (var parameter in Owner.Params.Input.Where(_component.IsInputVisible)
+                    .Concat(Owner.Params.Output.Where(_component.IsOutputVisible)))
                 {
                     if (parameter.Kind == GH_ParamKind.input) GH_CapsuleRenderEngine.RenderInputGrip(graphics, canvas.Viewport.Zoom, parameter.Attributes.InputGrip, false);
                     else GH_CapsuleRenderEngine.RenderOutputGrip(graphics, canvas.Viewport.Zoom, parameter.Attributes.OutputGrip, false);
@@ -134,9 +139,9 @@ namespace IfcHopper.Components
         {
             if (!_button.IsEmpty && Distance(ButtonCenter, point) <= 3)
             {
-                e.Title = _component.Expanded ? "Hide advanced inputs" : "Show advanced inputs";
-                e.Text = _component.Expanded ? "Collapse unused metadata inputs." : "Show all available inputs.";
-                e.Description = "Connected and configured inputs remain visible.";
+                e.Title = _component.Expanded ? "Hide advanced parameters" : _component.AdvancedMenuText;
+                e.Text = _component.Expanded ? "Collapse unused metadata parameters." : "Show all available parameters.";
+                e.Description = "Connected parameters and configured inputs remain visible.";
                 return;
             }
             base.SetupTooltip(point, e);

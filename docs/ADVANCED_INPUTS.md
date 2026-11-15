@@ -1,8 +1,8 @@
-# Compact component inputs
+# Compact component parameters
 
-New creation and Modify components start compact. Click the arrow at the bottom
-to show advanced inputs, then the arrow at the top to collapse unused ones. The context
-menu's **Show advanced inputs** option performs the same action. The control uses
+New creation, Modify and Deconstruct components with secondary metadata start compact. Click the arrow at the bottom
+to show advanced parameters, then the arrow at the top to collapse unused ones. The context
+menu's **Show advanced inputs** option (**Show advanced parameters** when outputs can collapse) performs the same action. The control uses
 a small circular chevron centred two canvas units above the content-box bottom to
 expand and on its top edge to collapse, matching the annotation control placement.
 Input labels remain right-aligned and output labels left-aligned when toggling.
@@ -33,9 +33,18 @@ The input groups are explicit, not inferred from optionality alone:
 
 This applies to Object, Opening, Element Type, Material, Project, Site, facilities,
 facility parts, Storey, Space, Georeference and their Modify components. Components
-without these advanced inputs retain their standard layout. Outputs are unchanged.
+without secondary metadata retain their standard layout. Modify Material uses the same input controls as the other Modify components.
 
-Connected inputs remain visible, including connections carrying empty data. Inputs
+Deconstruct components collapse unconnected secondary outputs: Description, GlobalId,
+Tag, Attribute Names/Values, Classifications, Property Sets, Contexts, Units and Georeference;
+model-header Author/Organization/Source; context Identifiers/Target Views; georeference
+datums and Map Zone; property/quantity From Type, Method and Formulas. Main outputs
+such as Name, Class, Type, Geometry, Colour, Material, Placement, children, property
+Names/Values/Types/Kinds and unit values stay visible. Deconstruct Units has no
+secondary metadata and keeps its standard layout. Wired outputs stay visible even
+when they carry no data. Hidden output data is still computed normally.
+
+Connected parameters remain visible, including connections carrying empty data. Inputs
 with persistent values or configured flatten/graft, reverse or simplify settings
 also remain visible. To set an advanced value, expand the component first. Clearing
 that value makes its unused row eligible to collapse again.
@@ -57,8 +66,8 @@ With the Debug plugin built and licensed Rhino available, run:
 dotnet run --project tools/SampleBuilder -- --check-inputs
 ```
 
-The host checks exercise actual arrow clicks and menus, heights, visibility,
-parameter identities and access modes, wires, persistent data, legacy missing-option
+The host checks exercise actual arrow clicks and menus, heights, input/output visibility,
+parameter identities and access modes, input/output wires, persistent data, legacy missing-option
 defaults, GH_IO roundtrips, repeated solves and undo/redo. They also check every
 affected component family. Test definitions and offscreen captures go under ignored
 `artifacts/input-checks/`. Native Grasshopper text/icon caches are not reliably

@@ -9,7 +9,7 @@ using Grasshopper.Kernel.Undo;
 
 namespace IfcHopper.Components
 {
-    /// <summary>Component with a presentation-only advanced-input toggle; registered parameters and their data remain unchanged.</summary>
+    /// <summary>Component with a presentation-only advanced-parameter toggle; registered parameters and their data remain unchanged.</summary>
     public abstract class CollapsibleComponent : IfcComponent
     {
         // These optional metadata inputs have no persistent defaults. Main task inputs (including
@@ -20,16 +20,30 @@ namespace IfcHopper.Components
             "Classifications", "Property Sets", "Contexts", "Units", "Georeference"
         };
 
+        private static readonly HashSet<string> AdvancedOutputNames = new HashSet<string>(AdvancedNames, StringComparer.Ordinal)
+        {
+            "Author", "Organization", "Source", "Geodetic Datum", "Vertical Datum", "Map Zone",
+            "Identifiers", "Target Views", "From Type", "Method", "Formulas"
+        };
+
         private bool _expanded;
 
         protected CollapsibleComponent(string name, string nickname, string description, string category, string subcategory)
-            : base(name, nickname, description + " Use the bottom arrow to show advanced inputs and the top arrow to collapse them; connected or configured inputs stay visible.", category, subcategory) { }
+            : base(name, nickname, description + " Use the bottom arrow to show advanced parameters and the top arrow to collapse them; connected parameters and configured inputs stay visible.", category, subcategory) { }
 
         internal bool Expanded => _expanded;
-        internal bool HasAdvancedInputs => Params.Input.Any(IsAdvancedInput);
+        internal bool HasAdvancedOutputs => Params.Output.Any(IsAdvancedOutput);
+        internal bool HasAdvancedParameters => Params.Input.Any(IsAdvancedInput) || HasAdvancedOutputs;
+        internal string AdvancedMenuText => HasAdvancedOutputs ? "Show advanced parameters" : "Show advanced inputs";
 
         /// <summary>Identifies optional metadata inputs eligible to collapse when unused; overrides can add component-specific metadata.</summary>
         protected virtual bool IsAdvancedInput(IGH_Param parameter) => parameter.Optional && AdvancedNames.Contains(parameter.Name);
+
+        /// <summary>Identifies secondary metadata outputs eligible to collapse when they have no recipients.</summary>
+        protected virtual bool IsAdvancedOutput(IGH_Param parameter) => AdvancedOutputNames.Contains(parameter.Name);
+
+        internal bool IsOutputVisible(IGH_Param parameter) =>
+            _expanded || !IsAdvancedOutput(parameter) || parameter.Recipients.Count > 0;
 
         internal bool IsInputVisible(IGH_Param parameter)
         {
@@ -43,7 +57,7 @@ namespace IfcHopper.Components
 
         internal void ToggleAdvancedInputs()
         {
-            RecordUndoEvent(_expanded ? "Collapse advanced inputs" : "Expand advanced inputs", new AdvancedInputsUndoAction(InstanceGuid, _expanded));
+            RecordUndoEvent(_expanded ? "Collapse advanced parameters" : "Expand advanced parameters", new AdvancedInputsUndoAction(InstanceGuid, _expanded));
             SetExpanded(!_expanded);
         }
 
@@ -137,9 +151,9 @@ namespace IfcHopper.Components
         protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu)
         {
             base.AppendAdditionalComponentMenuItems(menu);
-            if (!HasAdvancedInputs) return;
-            Menu_AppendItem(menu, "Show advanced inputs", (sender, args) => ToggleAdvancedInputs(), true, _expanded)
-                .ToolTipText = "Show optional metadata inputs. Connected and configured inputs stay visible when collapsed. Expand with the bottom arrow and collapse with the top arrow.";
+            if (!HasAdvancedParameters) return;
+            Menu_AppendItem(menu, AdvancedMenuText, (sender, args) => ToggleAdvancedInputs(), true, _expanded)
+                .ToolTipText = "Show secondary metadata parameters. Connected parameters and configured inputs stay visible when collapsed. Expand with the bottom arrow and collapse with the top arrow.";
         }
 
         public override bool Write(GH_IWriter writer)

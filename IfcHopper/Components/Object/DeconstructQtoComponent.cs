@@ -7,7 +7,7 @@ using IfcHopper.Types;
 
 namespace IfcHopper.Components
 {
-    public class DeconstructQtoComponent : IfcComponent
+    public class DeconstructQtoComponent : CollapsibleComponent
     {
         public DeconstructQtoComponent()
           : base("Deconstruct Qto", "DeQto",

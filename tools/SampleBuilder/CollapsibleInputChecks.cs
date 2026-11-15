@@ -129,12 +129,13 @@ namespace SampleBuilder
                     using (var menu = new ContextMenuStrip())
                     {
                         component.AppendMenuItems(menu);
-                        if (!menu.Items.OfType<ToolStripMenuItem>().Any(item => item.Text == "Show advanced inputs")) continue;
+                        if (!menu.Items.OfType<ToolStripMenuItem>().Any(IsAdvancedMenu)) continue;
                     }
                     var ids = component.Params.Input.Select(p => p.InstanceGuid).ToArray();
                     ClickArrow(component);
                     component.Attributes.PerformLayout();
                     Require(component.Params.Input.All(p => !p.Attributes.Bounds.IsEmpty), $"{component.Name}: expanded inputs must have bounds.");
+                    Require(component.Params.Output.All(p => !p.Attributes.Bounds.IsEmpty), $"{component.Name}: expanded outputs must have bounds.");
                     var inputAnchors = component.Params.Input.ToDictionary(p => p.InstanceGuid, p => p.Attributes.Bounds.Right);
                     var outputAnchors = component.Params.Output.ToDictionary(p => p.InstanceGuid, p => p.Attributes.Bounds.Left);
                     ClickArrow(component);
@@ -145,13 +146,87 @@ namespace SampleBuilder
                         Require(component.Attributes.Bounds.Contains(parameter.Attributes.Bounds), $"{component.Name}: input is outside component bounds.");
                         Require(parameter.Attributes.Bounds.Right == inputAnchors[parameter.InstanceGuid], $"{component.Name}: input label anchor moved.");
                     }
-                    foreach (var parameter in component.Params.Output)
+                    foreach (var parameter in component.Params.Output.Where(p => !p.Attributes.Bounds.IsEmpty))
                         Require(parameter.Attributes.Bounds.Left == outputAnchors[parameter.InstanceGuid], $"{component.Name}: output label anchor moved.");
                 }
             }
             CheckCanvasHover();
+            CheckDeconstructOutputs(output);
             Console.WriteLine("All affected component families: arrow toggles, registered input identities and compact bounds passed.");
             return 0;
+        }
+
+        private static void CheckDeconstructOutputs(string output)
+        {
+            var canvas = new Canvas(expandAdvancedInputs: false);
+            using (canvas.Document)
+            {
+                var source = canvas.Ifc("Object", 0, 0);
+                var component = (GH_Component)canvas.Ifc("Deconstruct Object", 300, 0);
+                canvas.Wire(source, component, "Object");
+                var ids = component.Params.Output.Select(p => (p.InstanceGuid, p.Name, p.Access, Type: p.GetType())).ToArray();
+                var compactHeight = component.Attributes.Bounds.Height;
+                Require(Canvas.Output(component, "Description").Attributes.Bounds.IsEmpty, "Deconstruct metadata must start collapsed.");
+                Require(!Canvas.Output(component, "Geometry").Attributes.Bounds.IsEmpty, "Deconstruct geometry must remain visible.");
+                canvas.Document.Enabled = true;
+                canvas.Document.NewSolution(true, GH_SolutionMode.Silent);
+                var name = Canvas.Output(component, "Name").VolatileData.AllData(true).Single();
+                ClickArrow(component);
+                component.Attributes.PerformLayout();
+                Require(component.Attributes.Bounds.Height > compactHeight, $"Deconstruct expansion must increase height (compact {compactHeight}, expanded {component.Attributes.Bounds.Height}, metadata {Canvas.Output(component, "Description").Attributes.Bounds}).");
+                var recipient = canvas.Panel(600, 0, 150, 30);
+                canvas.Wire(component, recipient, null, "Description");
+                var solves = 0;
+                canvas.Document.SolutionEnd += (sender, args) => solves++;
+                ClickArrow(component);
+                component.Attributes.PerformLayout();
+                Require(!Canvas.Output(component, "Description").Attributes.Bounds.IsEmpty, "Wired empty metadata output must remain visible.");
+                Require(Canvas.Output(component, "GlobalId").Attributes.Bounds.IsEmpty, "Unwired metadata output must collapse.");
+                Require(Canvas.Output(component, "GlobalId").VolatileDataCount == 1, "Hidden metadata must still be computed.");
+                Require(solves == 0, "Output visibility must not solve the document.");
+                canvas.Document.UndoServer.PerformUndo();
+                Require(Expanded(component), "Output layout undo must expand.");
+                canvas.Document.UndoServer.PerformRedo();
+                Require(!Expanded(component), "Output layout redo must collapse.");
+                Require(ReferenceEquals(name, Canvas.Output(component, "Name").VolatileData.AllData(true).Single()), "Output layout undo must retain computed data.");
+                Require(ids.SequenceEqual(component.Params.Output.Select(p => (p.InstanceGuid, p.Name, p.Access, Type: p.GetType()))), "Output identities or contracts changed.");
+                var file = Path.Combine(output, "deconstruct-collapsed.gh");
+                Require(new GH_DocumentIO(canvas.Document).SaveQuiet(file), "Could not save compact deconstruct definition.");
+                var io = new GH_DocumentIO();
+                Require(io.Open(file), "Could not reopen compact deconstruct definition.");
+                using (io.Document)
+                {
+                    var read = (GH_Component)io.Document.Objects.Single(o => o.InstanceGuid == component.InstanceGuid);
+                    Require(!Expanded(read), "Deconstruct compact state must survive save/reopen.");
+                    Require(ids.SequenceEqual(read.Params.Output.Select(p => (p.InstanceGuid, p.Name, p.Access, Type: p.GetType()))), "Saved output identities changed.");
+                    Require(Canvas.Output(read, "Description").Recipients.Count == 1, "Output wire must survive save/reopen.");
+                    read.Attributes.PerformLayout();
+                    Require(!Canvas.Output(read, "Description").Attributes.Bounds.IsEmpty, "Reopened connected output must remain visible.");
+                    for (int solve = 0; solve < 2; solve++)
+                    {
+                        io.Document.Enabled = true;
+                        io.Document.NewSolution(true, GH_SolutionMode.Silent);
+                        Require(Canvas.Output(read, "Name").VolatileDataCount == 1, "Reopened deconstruct must solve.");
+                    }
+                }
+                var legacy = new GH_LooseChunk("Component");
+                Require(component.Write(legacy), "Could not serialize deconstruct options.");
+                legacy.RemoveItem("AdvancedInputsExpanded");
+                var old = (GH_Component)canvas.Ifc("Deconstruct Object", 300, 300);
+                Require(old.Read(legacy) && Expanded(old), "Legacy deconstruct definitions must open expanded.");
+                var modify = (GH_Component)canvas.Ifc("Modify Material", 0, 300);
+                Require(Canvas.Input(modify, "Description").Attributes.Bounds.IsEmpty, "Modify Material must start compact.");
+                ClickArrow(modify);
+                modify.Attributes.PerformLayout();
+                Require(!Canvas.Input(modify, "Description").Attributes.Bounds.IsEmpty, "Modify Material metadata must expand.");
+                // Creating an export canvas can service pending solutions from wire edits.
+                // Capture only after assertions about layout-only actions and computed data.
+                Capture(canvas.Document, Path.Combine(output, "deconstruct-collapsed.png"));
+                ClickArrow(component);
+                component.Attributes.PerformLayout();
+                Capture(canvas.Document, Path.Combine(output, "deconstruct-expanded.png"));
+            }
+            Console.WriteLine("Deconstruct outputs and Modify Material: compact layout, wired visibility, identities, undo, persistence and legacy defaults passed.");
         }
 
         private static void CheckCanvasHover()
@@ -278,9 +353,12 @@ namespace SampleBuilder
             using (var menu = new ContextMenuStrip())
             {
                 component.AppendMenuItems(menu);
-                return menu.Items.OfType<ToolStripMenuItem>().Single(item => item.Text == "Show advanced inputs").Checked;
+                return menu.Items.OfType<ToolStripMenuItem>().Single(IsAdvancedMenu).Checked;
             }
         }
+
+        private static bool IsAdvancedMenu(ToolStripMenuItem item) =>
+            item.Text == "Show advanced inputs" || item.Text == "Show advanced parameters";
 
         private static void Require(bool condition, string message)
         {
