@@ -69,6 +69,12 @@ namespace SampleBuilder
                 if (args.Contains("--check-large-coordinates"))
                     return LargeCoordinateChecks.Run(Path.Combine(root, "artifacts", "large-coordinate-checks"));
 
+                if (args.Contains("--check-custom-preview"))
+                {
+                    CustomPreviewChecks.Run();
+                    return 0;
+                }
+
                 Verbose = args.Contains("--verbose");
                 var filters = args.Where(a => !a.StartsWith("--")).ToList();
                 var selected = Samples.Where(s => filters.Count == 0 || filters.Any(f => s.Number.ToString() == f.TrimStart('0') || s.Title.IndexOf(f, StringComparison.OrdinalIgnoreCase) >= 0)).ToList();

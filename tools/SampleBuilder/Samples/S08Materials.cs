@@ -12,7 +12,7 @@ namespace SampleBuilder.Samples
         public override string Title => "Materials";
         public override string Summary =>
             "Materials (IfcMaterial) have a category, a colour shown on geometry without its own, and property sets. Layer sets stack materials with thicknesses\n" +
-            "(walls, slabs), constituent sets split an element into parts (frame, glazing). An object without a material shows its type's.";
+            "(walls, slabs), constituent sets split an element into parts (frame, glazing). Preview is standard Grasshopper colour; use Custom Preview to apply styles explicitly.";
 
         protected override void BuildBody(Canvas c)
         {
@@ -56,6 +56,7 @@ namespace SampleBuilder.Samples
             c.BeforeSave.Add(() =>
             {
                 MaterialPreviewChecks.Run();
+                CustomPreviewChecks.Run();
                 MaterialPreviewChecks.CheckColour(wall, Color.FromArgb(255, 170, 85, 60));
                 MaterialPreviewChecks.CheckColour(slab, Color.FromArgb(255, 185, 185, 180));
                 MaterialPreviewChecks.CheckColour(window, Color.FromArgb(255, 200, 200, 205));
@@ -74,6 +75,15 @@ namespace SampleBuilder.Samples
 
             var project = House(c, Canvas.RightOf(wall, 80), Top, "Materials", wall, slab, window, beam);
             WriteFile(c, Canvas.RightOf(project, 80), Top, project, IfcName);
+
+            var deSlab = c.Ifc("Deconstruct Object", x2, System.Math.Max(Canvas.Below(beam, 100), Canvas.Below(deBeam, 100)));
+            c.Wire(slab, deSlab, "Object");
+            var preview = c.Native("Custom Preview", Canvas.RightOf(deSlab, 80), deSlab.Attributes.Bounds.Y);
+            c.Wire(deSlab, preview, "Geometry", "Geometry");
+            c.Wire(concrete, preview, "Material");
+            ((IGH_PreviewObject)slab).Hidden = true;
+            ((IGH_PreviewObject)deSlab).Hidden = true;
+            c.Group("5. Explicit colour: plain slab Geometry + IFC concrete Material into native Custom Preview", Canvas.Colours.Geometry, deSlab, preview);
         }
 
         private static IGH_DocumentObject Material(Canvas c, float x, float y, string name, string category, Color colour)

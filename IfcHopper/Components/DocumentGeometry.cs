@@ -33,8 +33,8 @@ namespace IfcHopper.Components
             return new MeshGeometry(vertices, faces, mesh.IsClosed);
         }
 
-        /// <summary>Rhino mesh (document units) of a Core mesh. Polygons with more than 4 vertices are triangulated; creases above 30° are unwelded for flat shading.</summary>
-        public static Mesh ToRhino(MeshGeometry geometry) => Finish(Welded(geometry), geometry.Colour);
+        /// <summary>Colour-free Rhino mesh in document units, unless explicitly including IFC colours for baking. Polygons above 4 vertices are triangulated; creases above 30° are unwelded.</summary>
+        public static Mesh ToRhino(MeshGeometry geometry, bool includeIfcColours = false) => Finish(Welded(geometry), includeIfcColours ? geometry.Colour : null);
 
         /// <summary>Welded Rhino mesh (document units) of a Core mesh, e.g. for mesh booleans; <see cref="Finish"/> prepares it for display.</summary>
         public static Mesh Welded(MeshGeometry geometry)
@@ -73,6 +73,7 @@ namespace IfcHopper.Components
                 mesh.Compact();
             });
             if (colour != null) mesh.VertexColors.CreateMonotoneMesh(ToColor(colour));
+            else mesh.VertexColors.Clear();
             return mesh;
         }
 

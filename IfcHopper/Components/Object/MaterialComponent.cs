@@ -22,7 +22,7 @@ namespace IfcHopper.Components
             pManager.AddTextParameter("Description", "D", "Material description (IFC4 and later).", GH_ParamAccess.item);
             pManager.AddTextParameter("Category", "Cat", "Material category, e.g. concrete, steel, aluminium, block, brick, stone, wood, glass, gypsum, plastic, earth (IFC4 and later).", GH_ParamAccess.item);
             pManager.AddColourParameter(ComponentGeometry.ColourName, ComponentGeometry.ColourNickName,
-                "Surface colour of the material (IfcMaterialDefinitionRepresentation), shown on geometry without a colour of its own; alpha sets the transparency.", GH_ParamAccess.item);
+                "Surface colour data of the material (IfcMaterialDefinitionRepresentation); alpha sets transparency. Used for IFC export/bake and explicit Custom Preview styling, not automatic preview colouring.", GH_ParamAccess.item);
             pManager.AddParameter(new PropertySetParam(), ComponentPropertySets.Name, ComponentPropertySets.NickName, ComponentPropertySets.MaterialDescription, GH_ParamAccess.list);
             for (int i = 1; i < 5; i++) pManager[i].Optional = true;
         }

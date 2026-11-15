@@ -38,13 +38,14 @@ dotnet run --project tools/SampleBuilder -- --docs ../grasshopper-documentation 
 dotnet run --project tools/SampleBuilder -- --find Block   # Grasshopper components by name
 dotnet run --project tools/SampleBuilder -- --check-inputs # compact input layout, persistence and undo regressions
 dotnet run --project tools/SampleBuilder -- --check-large-coordinates # synthetic survey IFCs, definitions and precision checks
+dotnet run --project tools/SampleBuilder -- --check-custom-preview # native material override, plain geometry and bake-style regressions
 ```
 
 Regenerate after changing component inputs or outputs. `IfcHopper.Tests/SampleDefinitionTests` reads the IFC files in `ifc/` back. The builder needs a licensed Rhino 8 in `C:\Program Files\Rhino 8`, or in `RHINO_SYSTEM_DIR`.
 
 The builder verifies that the loaded IfcHopper module matches the current Debug build, including when Grasshopper loads assemblies into memory. If another installed copy is selected, it stops rather than validating the wrong plugin. When headless package discovery omits the development folder, it uses a signature-checked Grasshopper 8 loader fallback.
 
-Sample 08 also checks that Object and Modify Object draw only their outputs, and tests material colour fallback, type inheritance, explicit surface-colour precedence and updates across repeated solves. The runner binds the current Debug plugin before installed packages and uses the plugin's existing drawing dependency to avoid host-version binding conflicts. To inspect material colours manually, deselect the objects and hide previews of upstream geometry or earlier object versions; an explicit Object Colour overrides its material colour.
+Sample 08 checks that Object and Modify Object draw only their outputs, preserves IFC style fallback/type inheritance/surface precedence, and tests native Custom Preview across repeated solves. Default shading uses standard Grasshopper colours; the slab branch explicitly wires Geometry and IFC concrete Material to Custom Preview, hiding upstream previews. Implicit/deconstructed meshes have no vertex colours. Stored IFC styles and element baking are unchanged. See [explicit colour preview](../docs/PREVIEW.md). The runner binds the current Debug plugin before installed packages and uses the plugin's existing drawing dependency to avoid host-version binding conflicts.
 
 Sample 11 hides its construction volumes and opening previews so they do not cover the cut wall. Enable their Preview switches to inspect them. Building sample 11 also checks Object and Modify Object preview drawing, hidden/disabled visibility and clipping bounds, and the cut wall volume through Deconstruct Object and the object mesh cast. These checks require Rhino; the Core test suite does not exercise viewport drawing.
 

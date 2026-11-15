@@ -28,7 +28,7 @@ namespace IfcHopper.Components
             RegisterCommonOutputs(pManager);
             pManager.AddTextParameter("Class", "C", "IFC class, e.g. IfcWallType.", GH_ParamAccess.item);
             pManager.AddTextParameter("Type", "T", "Predefined type, or the element type when user defined.", GH_ParamAccess.item);
-            pManager.AddMeshParameter("Geometry", "G", "Body geometry of the representation maps as meshes in type coordinates. Read solids are faceted.", GH_ParamAccess.list);
+            pManager.AddMeshParameter("Geometry", "G", "Body geometry of the representation maps as colour-free meshes in type coordinates. Read solids are faceted. Use Custom Preview with Colour or Material for explicit styling.", GH_ParamAccess.list);
             pManager.AddColourParameter("Colour", "Col", "Surface colour of each mesh: its own style (IfcStyledItem), else the colour of the type's material; empty when neither is styled. Alpha holds the transparency.", GH_ParamAccess.list);
             pManager.AddParameter(new MaterialParam(), "Material", "Mat", "Material of the type (IfcRelAssociatesMaterial).", GH_ParamAccess.item);
             pManager.AddParameter(new PropertySetParam(), ComponentPropertySets.Name, ComponentPropertySets.NickName, ComponentPropertySets.OutputDescription, GH_ParamAccess.list);
@@ -45,7 +45,7 @@ namespace IfcHopper.Components
             SetCommonOutputs(DA, type);
             DA.SetData(3, type.IfcClass);
             DA.SetData(4, type.HasPredefinedType ? TypeOf(type) : type.ObjectType);
-            DA.SetDataList(5, type.Geometry.Select(m => DocumentGeometry.ToRhino(m.WithColour(type.DisplayColour(m)))));
+            DA.SetDataList(5, type.Geometry.Select(m => DocumentGeometry.ToRhino(m)));
             DA.SetDataList(6, type.Geometry.Select(type.DisplayColour).Select(c => c == null ? null : new GH_Colour(DocumentGeometry.ToColor(c))));
             if (type.Material != null) DA.SetData(7, new MaterialGoo(type.Material));
             ComponentPropertySets.SetOutput(DA, 8, type);

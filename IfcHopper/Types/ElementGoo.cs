@@ -6,7 +6,6 @@ using Grasshopper.Kernel.Types;
 using IfcHopper.Components;
 using IfcHopper.Core.Model;
 using Rhino;
-using Rhino.Display;
 using Rhino.DocObjects;
 using Rhino.Geometry;
 
@@ -46,6 +45,8 @@ namespace IfcHopper.Types
                     var body = Value == null ? new List<(Mesh Mesh, Colour Colour)>() : WithParts(Value).SelectMany(e => DocumentOpenings.CutBody(e, out _)).ToList();
                     _colours = body.Select(b => b.Colour).ToArray();
                     _meshes = body.Select(b => b.Mesh).ToArray();
+                    // Display meshes are colour-free; IFC styles remain data until a user
+                    // explicitly previews them, or we restore them on a baked copy (#18).
                 }
                 catch (Exception)
                 {
@@ -58,12 +59,21 @@ namespace IfcHopper.Types
 
         private static IEnumerable<Element> WithParts(Element element) => new[] { element }.Concat(element.Parts.SelectMany(WithParts));
 
-        /// <summary>All body meshes joined, or null without geometry.</summary>
-        private Mesh JoinedMesh()
+        /// <summary>All body meshes joined into an owned mesh; optionally restore IFC colours for baking. Null without geometry.</summary>
+        private Mesh JoinedMesh(bool includeIfcColours = false)
         {
             if (Meshes.Length == 0) return null;
             var joined = new Mesh();
-            joined.Append(Meshes);
+            for (int i = 0; i < Meshes.Length; i++)
+            {
+                if (!includeIfcColours || _colours[i] == null) joined.Append(Meshes[i]);
+                else
+                {
+                    using var coloured = Meshes[i].DuplicateMesh();
+                    coloured.VertexColors.CreateMonotoneMesh(DocumentGeometry.ToColor(_colours[i]));
+                    joined.Append(coloured);
+                }
+            }
             return joined;
         }
 
@@ -92,19 +102,6 @@ namespace IfcHopper.Types
         public void DrawViewportMeshes(GH_PreviewMeshArgs args)
         {
             foreach (var mesh in Meshes) args.Pipeline.DrawMeshShaded(mesh, args.Material);
-        }
-
-        private DisplayMaterial[] _materials;
-
-        /// <summary>Draws each mesh in its IFC colour when <paramref name="useColours"/>, otherwise (and for uncoloured meshes) with <paramref name="material"/>.</summary>
-        internal void DrawShaded(DisplayPipeline pipeline, DisplayMaterial material, bool useColours)
-        {
-            var meshes = Meshes;
-            if (meshes.Length == 0) return;
-            _materials = _materials ?? _colours.Select(c => c == null ? null
-                : new DisplayMaterial(DocumentGeometry.ToColor(c), c.Transparency)).ToArray();
-            for (int i = 0; i < meshes.Length; i++)
-                pipeline.DrawMeshShaded(meshes[i], useColours && i < _materials.Length ? _materials[i] ?? material : material);
         }
 
         public void DrawViewportWires(GH_PreviewWireArgs args)
@@ -139,7 +136,7 @@ namespace IfcHopper.Types
                 }
             }
 
-            var mesh = JoinedMesh();
+            using var mesh = JoinedMesh(includeIfcColours: true);
             if (mesh == null) return false;
             SetColour(attributes, _colours.FirstOrDefault(c => c != null));
             obj_guid = doc.Objects.AddMesh(mesh, attributes);

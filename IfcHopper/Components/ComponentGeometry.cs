@@ -16,7 +16,7 @@ namespace IfcHopper.Components
 
         public const string ColourName = "Colour";
         public const string ColourNickName = "Col";
-        public const string ColourDescription = "Surface colour of the geometry (IfcStyledItem); alpha sets the transparency.";
+        public const string ColourDescription = "Surface colour data of the geometry (IfcStyledItem); alpha sets transparency. Stored for IFC export/bake; use Custom Preview to display colours explicitly.";
 
         /// <summary>The colour at <paramref name="index"/>, or null when the input is empty.</summary>
         public static Colour ReadColour(IGH_DataAccess DA, int index)

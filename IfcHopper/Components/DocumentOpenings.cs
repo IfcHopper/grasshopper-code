@@ -12,7 +12,7 @@ namespace IfcHopper.Components
     internal static class DocumentOpenings
     {
         /// <summary>
-        /// Body meshes of the element (document units) with its openings subtracted, each in its display colour. <paramref name="failed"/> is
+        /// Colour-free body meshes of the element (document units) with openings subtracted, paired with their IFC colour data. <paramref name="failed"/> is
         /// true when a boolean failed; that mesh is kept uncut.
         /// </summary>
         public static List<(Mesh Mesh, Colour Colour)> CutBody(Element element, out bool failed)
@@ -31,12 +31,12 @@ namespace IfcHopper.Components
                     var cut = Mesh.CreateBooleanDifference(new[] { mesh }, hits);
                     if (cut != null && cut.Length > 0)
                     {
-                        result.AddRange(cut.Select(piece => (DocumentGeometry.Finish(piece, colour), colour)));
+                        result.AddRange(cut.Select(piece => (DocumentGeometry.Finish(piece, null), colour)));
                         continue;
                     }
                     failed = true;
                 }
-                result.Add((DocumentGeometry.Finish(mesh, colour), colour));
+                result.Add((DocumentGeometry.Finish(mesh, null), colour));
             }
             return result;
         }

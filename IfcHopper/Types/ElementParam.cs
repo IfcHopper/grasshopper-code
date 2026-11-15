@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using GH_IO.Serialization;
 using Grasshopper.Kernel;
@@ -16,7 +15,7 @@ namespace IfcHopper.Types
     public class ElementParam : GH_Param<ElementGoo>, IGH_PreviewObject, IGH_BakeAwareObject
     {
         public ElementParam()
-          : base("Element", "E", "IfcHopper element.", ComponentCategory.Tab, ComponentCategory.Params, GH_ParamAccess.item)
+          : base("Element", "E", "IfcHopper element. Standard Grasshopper preview; use Custom Preview with geometry and Colour or Material to apply styles explicitly.", ComponentCategory.Tab, ComponentCategory.Params, GH_ParamAccess.item)
         {
         }
 
@@ -28,13 +27,8 @@ namespace IfcHopper.Types
 
         public BoundingBox ClippingBox => Preview_ComputeClippingBox();
 
-        /// <summary>Unselected elements are drawn in their IFC colours; selected ones in the Grasshopper selection colour.</summary>
-        public void DrawViewportMeshes(IGH_PreviewArgs args)
-        {
-            var selected = Attributes.GetTopLevel.Selected;
-            var material = selected ? args.ShadeMaterial_Selected : args.ShadeMaterial;
-            foreach (var goo in m_data.AllData(true).OfType<ElementGoo>()) goo.DrawShaded(args.Display, material, !selected);
-        }
+        /// <summary>Use Grasshopper's standard preview and selection materials. IFC styles are applied only by an explicit preview workflow.</summary>
+        public void DrawViewportMeshes(IGH_PreviewArgs args) => Preview_DrawMeshes(args);
 
         public void DrawViewportWires(IGH_PreviewArgs args) => Preview_DrawWires(args);
 
