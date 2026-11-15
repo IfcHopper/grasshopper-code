@@ -20,6 +20,7 @@ Grasshopper definitions, one per workflow. Open them in Rhino 8 with IfcHopper i
 | 14 Schema export | One model written as IFC4X3_ADD2, IFC4 and IFC2X3, with the downgrade warnings. |
 | 15 Find and summarise | Model Info (classes, counts, tree) and Find Objects by class, name regex (including exclusion), openings and property filters. |
 | 16 Move model near origin | Translate a synthetic survey model by X/Y while adjusting its georeference to preserve projected map positions; inspect and write the result. |
+| 17 Class colours | Native Custom Preview with stable colours by class, a partial wall override and `*` for all other classes. Writes no IFC. |
 
 Samples that write a file write it to `ifc/` next to the definition. The Write toggle is saved off, so set it to true to write. The files in `ifc/` are the samples' own output, committed so that samples 02, 13 and 15 have a file to read. Relative paths in Read IFC, Read IFC Header and the Directory of Write IFC are taken from the folder of the saved definition.
 
@@ -41,6 +42,8 @@ dotnet run --project tools/SampleBuilder -- --check-large-coordinates # syntheti
 dotnet run --project tools/SampleBuilder -- --check-custom-preview # native material override, plain geometry and bake-style regressions
 
 dotnet run --project tools/SampleBuilder -- --check-runtime-messages # partial-success warnings, total failures and repeated solves
+
+dotnet run --project tools/SampleBuilder -- --check-class-colours # colour/tree correspondence, overrides, fallback and repeated solves
 ```
 
 Regenerate after changing component inputs or outputs. `IfcHopper.Tests/SampleDefinitionTests` reads the IFC files in `ifc/` back. The builder needs a licensed Rhino 8 in `C:\Program Files\Rhino 8`, or in `RHINO_SYSTEM_DIR`.

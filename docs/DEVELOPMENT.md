@@ -29,7 +29,7 @@ Planned components per panel (not all implemented yet). In each panel, create co
 | 3 - Facility | Building, Bridge, Road, Railway, Marine Facility, Facility | Deconstruct Facility | Modify Facility | |
 | 4 - Facility Part | Storey, Bridge Part, Road Part, Railway Part, Marine Part, Facility Part, Space | Deconstruct Storey, Deconstruct Facility Part, Deconstruct Space | Modify Storey, Modify Facility Part, Modify Space | |
 | 5 - Object | Object, Opening, Element Type, Material, Layer Set, Constituent Set, Pset, Qto, Classification | Deconstruct Object, Deconstruct Element Type, Deconstruct Material, Deconstruct Pset, Deconstruct Qto, Deconstruct Classification | Modify Object, Modify Element Type, Modify Material | |
-| 6 - Utilities | Find Objects, Model Info | | | |
+| 6 - Utilities | Find Objects, Model Info, Move Model, Class Colours | | | |
 | 7 - Params | Model, Project, Site, Facility, Facility Part, Storey, Space | Context, Units, Georeference, Placement (internalisable), Element, Element Type, Material, Property Set, Classification | | |
 
 ### Roadmap: IFC backends
