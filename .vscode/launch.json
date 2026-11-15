@@ -1,0 +1,53 @@
+{
+    "version":  "0.2.0",
+    "configurations":  [
+                           {
+                               "name":  "Rhino 8 - GH1",
+                               "type":  "coreclr",
+                               "request":  "launch",
+                               "preLaunchTask":  "build Rhino 8",
+                               "program":  "",
+                               "osx":  {
+                                           "args":  [
+                                                        "-runscript=_Grasshopper"
+                                                    ],
+                                           "program":  "/Applications/Rhino 8.app/Contents/MacOS/Rhinoceros"
+                                       },
+                               "windows":  {
+                                               "args":  "/netcore /runscript=\"_Grasshopper\"",
+                                               "program":  "C:\\Program Files\\Rhino 8\\System\\Rhino.exe",
+                                               "targetArchitecture":  "x86_64"
+                                           },
+                               "env":  {
+                                           "RHINO_PACKAGE_DIRS":  "${workspaceFolder}/IfcHopper/bin/Debug/net8.0"
+                                       },
+                               "cwd":  "${workspaceFolder}",
+                               "stopAtEntry":  false,
+                               "console":  "internalConsole"
+                           },
+                           {
+                               "name":  "Rhino 9 - GH1",
+                               "type":  "coreclr",
+                               "request":  "launch",
+                               "preLaunchTask":  "build Rhino 9",
+                               "program":  "",
+                               "osx":  {
+                                           "args":  [
+                                                        "-runscript=_Grasshopper"
+                                                    ],
+                                           "program":  "/Applications/Rhino 9.app/Contents/MacOS/Rhinoceros"
+                                       },
+                               "windows":  {
+                                               "args":  "/netcore /runscript=\"_Grasshopper\"",
+                                               "program":  "C:\\Program Files\\Rhino 9\\System\\Rhino.exe",
+                                               "targetArchitecture":  "x86_64"
+                                           },
+                               "env":  {
+                                           "RHINO_PACKAGE_DIRS":  "${workspaceFolder}/IfcHopper/bin/Debug/net10.0"
+                                       },
+                               "cwd":  "${workspaceFolder}",
+                               "stopAtEntry":  false,
+                               "console":  "internalConsole"
+                           }
+                       ]
+}

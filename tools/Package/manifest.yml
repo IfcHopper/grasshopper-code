@@ -5,7 +5,7 @@ authors:
   - Luca Florio
 description: >
   Create, read, update and delete native IFC data in Grasshopper.
-  Supports IFC2X3, IFC4 and IFC4X3. Requires Rhino 8 with .NET 8.
+  Supports IFC2X3, IFC4 and IFC4X3. Requires GH1 in Rhino 8.20+ (.NET 8) or Rhino 9 (.NET 10).
 url: https://ifchopper.github.io/grasshopper-documentation/
 icon: icon.png
 keywords:

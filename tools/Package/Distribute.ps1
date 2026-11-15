@@ -1,10 +1,10 @@
 # Creates local food4Rhino ZIP and Windows/macOS Yak packages; never authenticates or publishes.
 param(
-    [string]$YakPath = 'C:\Program Files\Rhino 8\System\Yak.exe',
+    [string]$YakPath = 'C:\Program Files\Rhino 9\System\Yak.exe',
     [ValidateSet('Debug', 'Release')][string]$Configuration = 'Release'
 )
 $ErrorActionPreference = 'Stop'
-if (-not (Test-Path -LiteralPath $YakPath -PathType Leaf)) { throw 'Set -YakPath to the Rhino 8 Yak executable.' }
+if (-not (Test-Path -LiteralPath $YakPath -PathType Leaf)) { throw 'Set -YakPath to the Rhino 9 Yak executable.' }
 $root = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
 $project = Join-Path $root 'IfcHopper/IfcHopper.csproj'
 $version = ([xml](Get-Content -LiteralPath $project)).Project.PropertyGroup.Version | Where-Object { $_ } | Select-Object -First 1

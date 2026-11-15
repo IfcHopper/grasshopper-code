@@ -8,20 +8,23 @@ using System.Runtime.Loader;
 namespace SampleBuilder
 {
     /// <summary>
-    /// Builds the sample definitions with Rhino 8 running inside this process (Rhino.Inside): Grasshopper runs headless and loads IfcHopper
+    /// Builds the sample definitions with Rhino 8 or 9 running inside this process (Rhino.Inside): Grasshopper runs headless and loads IfcHopper
     /// from its build output, each sample is built in code, solved (errors and warnings are reported) and saved as .gh.
     /// Usage: SampleBuilder [--list] [sample number or name filter ...]
     /// </summary>
     internal static class Program
     {
-        internal static readonly string RhinoSystem = Environment.GetEnvironmentVariable("RHINO_SYSTEM_DIR") ?? @"C:\Program Files\Rhino 8\System";
+        internal static readonly string PluginFramework = Environment.Version.Major >= 10 ? "net10.0" : "net8.0";
+        internal static readonly string RhinoSystem = Environment.GetEnvironmentVariable("RHINO_SYSTEM_DIR")
+            ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+                Environment.Version.Major >= 10 ? "Rhino 9" : "Rhino 8", "System");
 
         [STAThread]
         private static int Main(string[] args)
         {
             if (!File.Exists(Path.Combine(RhinoSystem, "Rhino.exe")))
             {
-                Console.Error.WriteLine($"Rhino 8 not found in '{RhinoSystem}'; set RHINO_SYSTEM_DIR.");
+                Console.Error.WriteLine($"Rhino not found in '{RhinoSystem}'; set RHINO_SYSTEM_DIR.");
                 return 2;
             }
             Environment.SetEnvironmentVariable("PATH", RhinoSystem + ";" + Environment.GetEnvironmentVariable("PATH"));

@@ -1,6 +1,6 @@
 # Distribution packages
 
-Build locally from the repository root on Windows with Rhino 8 installed:
+Build locally from the repository root on Windows with Rhino 9 installed:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File tools/Package/Distribute.ps1
@@ -45,24 +45,20 @@ the manifest explicitly preserves the plugin's `GH_AssemblyInfo.Id` for discover
 
 ## Compatibility and release checks
 
-The supported project target remains Rhino 8.20+, .NET 8, Windows/macOS. These local
-packages are release candidates, not evidence of host compatibility. Yak infers its
-minimum Rhino tag from the referenced SDK (now pinned to `8.20.25147.11001-rc`),
-so new builds produce `rh8_20-any`. The builder rejects a tag that disagrees with
-the pinned SDK baseline. This replaces the old 8.27 SDK reference; it is not a
-filename-only relabel. The published beta.2 package is unchanged. If Windows Application Control
-blocks Yak's inspection and it emits an unrestricted `any-any` tag, the builder
-uses the referenced Grasshopper SDK version for the Rhino tag and prints a warning;
-this does not verify loading or alter Windows policy. The maintainer reports that the
-release works on macOS on Apple Silicon. The Yak build therefore uses `any` so
-Package Manager can offer the same managed payload on Windows and macOS. The
-exact tested Rhino/macOS versions, Intel Mac coverage and clean installation of
-the newly generated Yak archive have not been recorded. WindowsDesktop/System.Drawing
-dependencies remain platform-sensitive; this report does not establish coverage
-of every runtime path. The platform tag itself does not establish portability.
+The GH1 plugin targets Rhino 8.20+ on .NET 8 and Rhino 9 on .NET 10.
+Both builds retain the pinned Grasshopper 8.20 SDK API baseline. ZIP and Yak
+payloads contain separate net8.0/ and net10.0/ folders with their dependencies;
+the manifest, notices and installation instructions stay at the package root.
+Rhino selects the appropriate framework folder. The shared SDK baseline means
+Yak still infers rh8_20-any. Use the Rhino 9 Yak CLI for multi-target inspection.
 
+For manual installation, preserve both framework folders under IfcHopper.
+When validating an extracted archive through SampleBuilder, select the matching
+framework subfolder with IFCHOPPER_PLUGIN_DIR. Do not load both builds in one session.
+Windows/macOS remains the intended platform scope; see the release notes for
+actual coverage. Framework folders and platform tags do not establish portability.
 Before publishing, run `dotnet build IfcHopper.sln` and `dotnet test IfcHopper.sln`
-with .NET 8. Inspect archive contents and notices; record source commit, any local
+with the .NET 10 SDK. Inspect archive contents and notices; record source commit, any local
 changes, version, SHA-256 hashes, SDK, OS/architecture and tested Rhino service release.
 Compare with the GitHub release before reusing its version: a rebuild from a newer
 commit is not necessarily the same binary. Never replace an already published

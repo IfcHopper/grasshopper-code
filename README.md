@@ -1,6 +1,6 @@
 # IfcHopper
 
-**IfcHopper** (formerly **IfcHopperShell**) is a Grasshopper plugin for Rhino 8 for openBIM: it creates, reads, updates and deletes (CRUD) data directly in native IFC files, without converting them to another format.
+**IfcHopper** (formerly **IfcHopperShell**) is a Grasshopper 1 plugin for Rhino 8 and 9 for openBIM: it creates, reads, updates and deletes (CRUD) data directly in native IFC files, without converting them to another format.
 
 > **Status: 1.0.0-beta.2.** IfcHopper 1.0 is in public testing. Feedback is welcome (see [Contributing](#contributing)); component inputs and outputs may still change until 1.0.
 
@@ -27,7 +27,7 @@ The IFC library sits behind IfcHopper's own interfaces, so other backends ([IfcO
 
 ## Installation
 
-Target: Rhino 8.20+ running .NET 8 on Windows/macOS. Current source builds against the 8.20 Grasshopper/RhinoCommon SDK and produces `rh8_20` Yak packages. The published beta.2 Yak still requires Rhino 8.27+. Host checks used Windows x64 with Rhino 8.37; loading on Rhino 8.20 and macOS remains unverified. See [testing limits](docs/RELEASE_NOTES.md).
+Targets: GH1 in Rhino 8.20+ (.NET 8) and Rhino 9 (.NET 10), Windows/macOS. Keep both framework folders together when installing. Rhino 9 host checks are recorded in the release notes. Current source builds against the 8.20 Grasshopper/RhinoCommon SDK and produces `rh8_20` Yak packages. The published beta.2 Yak still requires Rhino 8.27+. Host checks used Windows x64 with Rhino 8.37; loading on Rhino 8.20 and macOS remains unverified. See [testing limits](docs/RELEASE_NOTES.md).
 
 1. Download the latest zip from [Releases](https://github.com/IfcHopper/grasshopper-code/releases).
 2. On Windows, unblock the zip (right-click > Properties > Unblock).

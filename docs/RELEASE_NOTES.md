@@ -1,5 +1,18 @@
 # Release notes
 
+## Rhino 9 / Grasshopper 1 support (unreleased)
+
+- Add net10.0 alongside net8.0 for GH1 in Rhino 9 and Rhino 8.20+ respectively. Keep the pinned Grasshopper/RhinoCommon 8.20 API baseline and unchanged component identities/contracts. Core remains net8.0.
+- Package both framework folders with their dependencies in the ZIP and Yak; preserve both when installing. Yak retains rh8_20-any because the shared SDK baseline is unchanged. Add the Rhino 9 debug profile and matching SampleBuilder target/host/output selection.
+- Core tests execute on both .NET 8 and .NET 10. Building now requires the .NET 10 SDK.
+
+Validation (2026-11-15): solution and SampleBuilder builds passed with SDK 10.0.401. All 239 Core tests passed on each runtime, no skips (478 executions). GH1 host checks passed on Windows x64, Rhino 9.0.26300.09401 / .NET 10: runtime diagnostics, compact inputs/outputs, individual controls, persistence/undo and native Custom Preview. Class Colours passed against the staged dual-runtime package's net10.0 payload; Rhino 9 compat reported no issues for the GHA. Rhino 8.37 runtime-diagnostic regression passed. Rhino 9 Yak 0.19.0 produced rh8_20-any with both framework folders and no host SDK assemblies. NuGet vulnerability auditing reported network warnings; sandbox profile/output restrictions required running the checks outside the sandbox.
+
+The maintainer also confirmed loading GH1 in Rhino 9 through Visual Studio after pinning each launch profile to its framework-specific output folder.
+
+Limits: Rhino 8.20, macOS, interactive viewport behavior and clean Package Manager/manual install, framework auto-selection, update/uninstall remain unverified. Host checks explicitly load the matching payload. Existing published beta.2 is unchanged; increment the release version before publication. No publication was performed.
+
+
 - Fix [#20](https://github.com/IfcHopper/grasshopper-code/issues/20): components that produce valid output for some inputs report failed inputs as warnings, including Grasshopper typed-input conversion failures (for example, Project/Site mixed with elements on Deconstruct Object). Operations with no valid output retain errors. Write IFC counts a requested write as successful only after the writer completes; its Path output alone does not downgrade write failures. Diagnostic text and output data are preserved; each solve determines severity afresh.
 
 Validation for #20 (2026-11-15): solution build and all 220 Core tests passed without skips. Dedicated headless Rhino checks cover valid, mixed, entirely invalid and recovered inputs for Deconstruct Object conversions and Material solve iterations, plus an IFC write blocked by a file at the destination directory, on Windows x64, Rhino 8.37 and .NET 8.0.21 (SDK 10.0.401 targeting .NET 8). The initial sandbox run failed one user-profile-dependent path test; the full suite passed outside the sandbox. NuGet vulnerability auditing reported network warnings. Minimum Rhino 8.20, macOS and interactive canvas display remain unverified.
