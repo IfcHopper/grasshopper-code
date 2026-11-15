@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using IfcHopper.Core.Model;
@@ -23,9 +24,13 @@ namespace IfcHopper.Components
         {
             pManager.AddGenericParameter("Model", "M", ComponentObjects.RootDescription, GH_ParamAccess.item);
             pManager.AddTextParameter("Classes", "C",
-                "IFC classes, e.g. IfcWall, IfcDoor, or IfcBuiltElement for all built elements; an object matches one of them. Empty: any class.", GH_ParamAccess.list);
-            pManager.AddBooleanParameter("Exact Class", "EC", "True: only the classes given, not their subclasses.", GH_ParamAccess.item, false);
-            pManager.AddTextParameter("Name", "N", "Name pattern with * and ? wildcards, ignoring case, e.g. *wall*. Empty: any name.", GH_ParamAccess.item);
+                "IFC classes to include, e.g. IfcBuiltElement. Prefix ! to exclude a class, e.g. !IfcWall. Match any inclusion and no exclusion; " +
+                "exclusion-only lists start from all classes. Subclasses count unless Exact Class is true. Empty: any class. Class names are not regex.", GH_ParamAccess.list);
+            pManager.AddBooleanParameter("Exact Class", "EC", "True: include/exclude only the classes given, not their subclasses.", GH_ParamAccess.item, false);
+            pManager.AddTextParameter("Name", "N",
+                "Case-insensitive .NET regular expression. wall matches anywhere; ^(Wall|Slab) matches either prefix; ^(?!.*temporary).*wall excludes temporary walls. " +
+                "Use ^ and $ to match the whole name. Empty/blank: any name. Whitespace is significant. Matching stops after 100 ms per name. " +
+                "Replaces beta wildcards: use .* for * and . for ?.", GH_ParamAccess.item);
             pManager.AddTextParameter("GlobalIds", "Id", "GlobalIds (22 characters) or GUIDs; an object matches one of them. Empty: any.", GH_ParamAccess.list);
             pManager.AddTextParameter("Properties", "P",
                 "Property and quantity filters, all of which must match: Set.Property (it exists) or Set.Property op value with op =, !=, <, <=, >, >=, " +
@@ -71,6 +76,11 @@ namespace IfcHopper.Components
             {
                 query.Properties.AddRange(filters.Where(f => !string.IsNullOrWhiteSpace(f)).Select(PropertyFilter.Parse));
                 found = ModelSearch.Find(root, query).ToList();
+            }
+            catch (RegexMatchTimeoutException)
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Name regular expression exceeded 100 ms for an object. Simplify the expression or narrow Classes/GlobalIds, then retry. No results returned for this search.");
+                return;
             }
             catch (ArgumentException ex)
             {

@@ -1,5 +1,7 @@
 using System;
 using System.Linq;
+using System.Globalization;
+using System.Text.RegularExpressions;
 using IfcHopper.Core.IO;
 using IfcHopper.Core.Model;
 using Xunit;
@@ -24,16 +26,144 @@ namespace IfcHopper.Tests
         }
 
         [Fact]
+        public void Classes_ExcludeWithInheritanceAndExclusionPrecedence()
+        {
+            var project = SampleProject();
+            Assert.Equal(new[] { "Slab", "Door" }, Names(project, q => q.Classes.AddRange(new[] { "IfcBuiltElement", " ! ifcwall " })));
+            Assert.Equal(new[] { "Hole" }, Names(project, q => q.Classes.AddRange(new[] { "IfcElement", "!IfcBuiltElement" })));
+            Assert.Empty(Names(project, q => q.Classes.AddRange(new[] { "IfcWall", "!IfcWall", "IfcWall" })));
+            Assert.Equal(Names(project, _ => { }).Where(n => n != "Wall"), Names(project, q => q.Classes.Add("!IfcWall")));
+            Assert.Equal(new[] { "Wall", "Slab", "Door" }, Names(project, q =>
+            {
+                q.Classes.AddRange(new[] { "IfcWall", "IfcSlab", "IfcDoor", "!IfcBuiltElement" });
+                q.ExactClass = true;
+            }));
+            Assert.DoesNotContain("Site", Names(project, q => q.Classes.Add("!IfcSpatialElement")));
+            Assert.Contains("Wall", Names(project, q => q.Classes.Add("!IfcSpatialElement")));
+        }
+
+        [Fact]
+        public void ClassExclusions_PreserveDescendantsAndCombineWithOtherFilters()
+        {
+            var project = SampleProject();
+            var opening = ModelSearch.Find(project, Query(q =>
+            {
+                q.Classes.AddRange(new[] { "IfcElement", "!IfcWall" });
+                q.Name = "^Hole$";
+            })).Single();
+            Assert.Equal("Wall", opening.Parent.Name);
+            Assert.Equal("Project / Site / House / Ground floor / Wall", opening.Path);
+            Assert.Empty(Names(project, q =>
+            {
+                q.Classes.Add("!IfcDoor");
+                q.GlobalIds.Add(DoorGuid.ToString());
+            }));
+            Assert.Equal(new[] { "Slab" }, Names(project, q =>
+            {
+                q.Classes.Add("!IfcWall");
+                q.Properties.Add(PropertyFilter.Parse("Pset_WallCommon.IsExternal = true"));
+            }));
+        }
+
+        [Theory]
+        [InlineData("!")]
+        [InlineData(" ! ")]
+        [InlineData("!IfcNotAClass")]
+        [InlineData("!!IfcWall")]
+        public void InvalidClassExclusions_ReportAnError(string text)
+        {
+            Assert.Throws<ArgumentException>(() => Names(SampleProject(), q => q.Classes.Add(text)));
+        }
+
+        [Fact]
         public void NamesAndGlobalIds_Match()
         {
             var project = SampleProject();
-            Assert.Equal(new[] { "Wall" }, Names(project, q => q.Name = "*WALL"));
-            Assert.Equal(new[] { "Slab" }, Names(project, q => { q.Name = "s*"; q.Classes.Add("IfcElement"); }));
-            Assert.Equal(new[] { "Door" }, Names(project, q => q.Name = "?oor"));
+            Assert.Equal(new[] { "Wall" }, Names(project, q => q.Name = "WALL"));
+            Assert.Equal(new[] { "Slab" }, Names(project, q => { q.Name = "^s"; q.Classes.Add("IfcElement"); }));
+            Assert.Equal(new[] { "Door" }, Names(project, q => q.Name = "^.oor$"));
 
             Assert.Equal(new[] { "Door" }, Names(project, q => q.GlobalIds.Add(DoorGuid.ToString())));
             Assert.Equal(new[] { "Door" }, Names(project, q => q.GlobalIds.Add(GlobalIds.FromGuid(DoorGuid))));
             Assert.Throws<ArgumentException>(() => Names(project, q => q.GlobalIds.Add("not an id")));
+        }
+
+        [Fact]
+        public void Regex_SupportsAlternationExclusionsAndOtherFilters()
+        {
+            var project = SampleProject();
+            Assert.Equal(new[] { "Wall", "Slab" }, Names(project, q => q.Name = "^(Wall|Slab)$"));
+            Assert.Equal(new[] { "Wall", "Slab" }, Names(project, q =>
+            {
+                q.Classes.Add("IfcBuiltElement");
+                q.Name = "^(?!Door$).*";
+            }));
+            Assert.Equal(new[] { "Wall" }, Names(project, q =>
+            {
+                q.Name = "^(?!Slab$).*";
+                q.Properties.Add(PropertyFilter.Parse("Pset_WallCommon.IsExternal = true"));
+            }));
+            Assert.Empty(Names(project, q =>
+            {
+                q.Name = "^(?!Door$).*";
+                q.GlobalIds.Add(DoorGuid.ToString());
+            }));
+            var opening = ModelSearch.Find(project, Query(q =>
+            {
+                q.Name = "^(?!Wall$)Hole$";
+                q.Classes.Add("IfcOpeningElement");
+            })).Single();
+            Assert.Equal("Wall", opening.Parent.Name);
+            Assert.Equal("Project / Site / House / Ground floor / Wall", opening.Path);
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("  ")]
+        public void Regex_BlankMatchesEveryName(string pattern)
+        {
+            var project = SampleProject();
+            Assert.Equal(Names(project, _ => { }), Names(project, q => q.Name = pattern));
+        }
+
+        [Fact]
+        public void Regex_PreservesWhitespaceEscapesAndNullNames()
+        {
+            var root = new Element(" Wall[1]. ");
+            var unnamed = new Element { Name = null };
+            root.Parts.Add(unnamed);
+            Assert.Equal(new[] { " Wall[1]. " }, Names(root, q => q.Name = @"^ Wall\[1\]\. $"));
+            Assert.Empty(Names(root, q => q.Name = @"^Wall\[1\]\.$"));
+            Assert.Equal(new string[] { null }, Names(root, q => q.Name = "^$"));
+        }
+
+        [Fact]
+        public void Regex_IsIndependentOfCurrentCulture()
+        {
+            var previous = CultureInfo.CurrentCulture;
+            try
+            {
+                CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("tr-TR");
+                Assert.Equal(new[] { "Site" }, Names(SampleProject(), q => q.Name = "^SITE$"));
+            }
+            finally { CultureInfo.CurrentCulture = previous; }
+        }
+
+        [Theory]
+        [InlineData("[")]
+        [InlineData("*wall*")]
+        public void Regex_InvalidSyntaxHasActionableError(string pattern)
+        {
+            var error = Assert.Throws<ArgumentException>(() => Names(SampleProject(), q => q.Name = pattern));
+            Assert.Contains("Name is not a valid .NET regular expression", error.Message);
+        }
+
+        [Fact]
+        public void Regex_StopsPathologicalBacktracking()
+        {
+            var root = new Element(new string('a', 20000) + "!");
+            Assert.Throws<RegexMatchTimeoutException>(() => Names(root, q => q.Name = "^(a+)+$"));
         }
 
         [Fact]
@@ -84,6 +214,11 @@ namespace IfcHopper.Tests
             Assert.Equal("Wall", wall.Object.Name);
             Assert.NotNull(wall.Object.Source);
             Assert.Equal("Ground floor", wall.Parent.Name);
+            var excluded = ModelSearch.Find(project, Query(q => q.Name = "^(?!Wall$).*")).ToArray();
+            Assert.DoesNotContain(excluded, r => r.Object.Name == "Wall");
+            var opening = Assert.Single(excluded.Where(r => r.Object is Opening));
+            Assert.Equal("Wall", opening.Parent.Name);
+            Assert.NotNull(opening.Object.Source);
         }
 
         private static readonly Guid DoorGuid = new Guid("6f9619ff-8b86-d011-b42d-00c04fc964ff");

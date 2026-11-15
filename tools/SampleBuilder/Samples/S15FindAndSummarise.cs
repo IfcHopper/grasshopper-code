@@ -1,4 +1,7 @@
+using System;
+using System.Linq;
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 
 namespace SampleBuilder.Samples
 {
@@ -9,7 +12,7 @@ namespace SampleBuilder.Samples
         public override string Title => "Find and summarise";
         public override string Summary =>
             "Model Info gives the schema, the number of objects per class and the spatial tree. Find Objects searches by IFC class (subclasses included),\n" +
-            "name wildcards, GlobalIds and property filters such as Pset_WallCommon.FireRating = REI 60; its objects go on to Deconstruct or Modify components.";
+            "name regular expressions (including exclusions), GlobalIds and property filters such as Pset_WallCommon.FireRating = REI 60; its objects go on to Deconstruct or Modify components.";
 
         protected override void BuildBody(Canvas c)
         {
@@ -27,7 +30,37 @@ namespace SampleBuilder.Samples
             var x = Canvas.RightOf(tree, 100);
             var built = Find(c, x, Top, read, "Built elements (walls, doors, windows; subclasses of IfcBuiltElement)", "IfcBuiltElement", null, null);
             var openings = Find(c, x, Canvas.Below(built.Find, 60), read, "Openings, with the element each one voids as parent", "IfcOpeningElement", null, null);
-            var named = Find(c, x, Canvas.Below(openings.Find, 60), read, "Any object whose name starts with W", null, "w*", null);
+            var named = Find(c, x, Canvas.Below(openings.Find, 60), read, "Any object whose name starts with W (regex ^w)", null, "^w", null);
+            var excluded = Find(c, x, Canvas.Below(named.Find, 60), read,
+                "Built elements excluding Door and Window (regex negative lookahead)", "IfcBuiltElement", "^(?!(Door|Window)$).*", null);
+            var excludedClasses = Find(c, x, Canvas.Below(excluded.Find, 60), read,
+                "Built elements except walls and doors (Classes: IfcBuiltElement, !IfcWall, !IfcDoor)", "IfcBuiltElement", null, null);
+            Canvas.Set(excludedClasses.Find, "Classes", "IfcBuiltElement", "!IfcWall", "!IfcDoor");
+            c.BeforeSave.Add(() =>
+            {
+                for (int solve = 0; solve < 2; solve++)
+                {
+                    if (solve > 0) c.Document.NewSolution(true, GH_SolutionMode.Silent);
+                    var classesFound = Canvas.Output(excluded.Find, "Classes").VolatileData.AllData(true).OfType<GH_String>().Select(g => g.Value).ToArray();
+                    if (!classesFound.SequenceEqual(new[] { "IfcWall" })
+                        || new[] { "Objects", "Elements", "Parents", "Paths" }.Any(output => Canvas.Output(excluded.Find, output).VolatileDataCount != 1))
+                        throw new InvalidOperationException("Regex exclusion must retain only the wall and its corresponding outputs across solves.");
+                    var classSelection = Canvas.Output(excludedClasses.Find, "Classes").VolatileData.AllData(true).OfType<GH_String>().Select(g => g.Value);
+                    if (!classSelection.SequenceEqual(new[] { "IfcWindow" }))
+                        throw new InvalidOperationException("Class exclusions must retain only the window across solves.");
+                }
+                Canvas.Set(excluded.Find, "Name", "[");
+                c.Document.NewSolution(true, GH_SolutionMode.Silent);
+                var component = (IGH_Component)excluded.Find;
+                if (!component.RuntimeMessages(GH_RuntimeMessageLevel.Error).Any(message => message.Contains("Name is not a valid"))
+                    || component.Params.Output.Any(p => p.VolatileData.AllData(true).Any(item => item != null && item.IsValid)))
+                    throw new InvalidOperationException("Invalid regex must report a Name error and clear previous search results.");
+                Canvas.Set(excluded.Find, "Name", "^(?!(Door|Window)$).*");
+                c.Document.NewSolution(true, GH_SolutionMode.Silent);
+                if (component.RuntimeMessages(GH_RuntimeMessageLevel.Error).Count > 0
+                    || !Canvas.Output(excluded.Find, "Classes").VolatileData.AllData(true).OfType<GH_String>().Select(g => g.Value).SequenceEqual(new[] { "IfcWall" }))
+                    throw new InvalidOperationException("Find Objects must recover after correcting the regex.");
+            });
 
             var psetPath = c.Panel(0, Canvas.Below(classes, 120), 260, 30, "ifc/09 Property and quantity sets.ifc");
             var readSets = c.Ifc("Read IFC", 0, Canvas.Below(psetPath, 40));

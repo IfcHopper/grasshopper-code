@@ -18,7 +18,7 @@ Grasshopper definitions, one per workflow. Open them in Rhino 8 with IfcHopper i
 | 12 Tags and attributes | Tags and class attributes of doors, windows and a window type. |
 | 13 Edit in place | Read sample 01's file, find a wall and the storey, modify them, apply the edits and write: only the edits change. |
 | 14 Schema export | One model written as IFC4X3_ADD2, IFC4 and IFC2X3, with the downgrade warnings. |
-| 15 Find and summarise | Model Info (classes, counts, tree) and Find Objects by class, name, openings and property filters. |
+| 15 Find and summarise | Model Info (classes, counts, tree) and Find Objects by class, name regex (including exclusion), openings and property filters. |
 | 16 Move model near origin | Translate a synthetic survey model by X/Y while adjusting its georeference to preserve projected map positions; inspect and write the result. |
 
 Samples that write a file write it to `ifc/` next to the definition. The Write toggle is saved off, so set it to true to write. The files in `ifc/` are the samples' own output, committed so that samples 02, 13 and 15 have a file to read. Relative paths in Read IFC, Read IFC Header and the Directory of Write IFC are taken from the folder of the saved definition.
