@@ -22,7 +22,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Grasshopper" Version="8.27.26019.16021" ExcludeAssets="runtime" />
+    <!-- McNeel's last published 8.20 SDK is labelled -rc; pin it to enforce the 8.20 API baseline. -->
+    <PackageReference Include="Grasshopper" Version="8.20.25147.11001-rc" ExcludeAssets="runtime" />
     <PackageReference Include="System.Drawing.Common" Version="10.0.12" />
     <PackageReference Include="System.Resources.Extensions" Version="10.0.12" />
   </ItemGroup>

@@ -8,6 +8,12 @@ if (-not (Test-Path -LiteralPath $YakPath -PathType Leaf)) { throw 'Set -YakPath
 $root = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
 $project = Join-Path $root 'IfcHopper/IfcHopper.csproj'
 $version = ([xml](Get-Content -LiteralPath $project)).Project.PropertyGroup.Version | Where-Object { $_ } | Select-Object -First 1
+$sdk = @(([xml](Get-Content -LiteralPath $project)).Project.ItemGroup.PackageReference |
+    Where-Object { $_.Include -eq 'Grasshopper' })
+if ($sdk.Count -ne 1 -or $sdk[0].Version -notmatch '^(\d+)\.(\d+)\.') {
+    throw 'Cannot determine the Rhino target from the pinned Grasshopper SDK version.'
+}
+$rhinoTag = "rh$($Matches[1])_$($Matches[2])"
 & (Join-Path $PSScriptRoot 'Package.ps1') -Configuration $Configuration
 $artifacts = Join-Path $root 'artifacts'
 if ($Configuration -eq 'Debug') { $artifacts = Join-Path $artifacts 'debug' }
@@ -33,16 +39,14 @@ if ($packages[0].Name -like '*-any-any.yak') {
     # In that case use the referenced SDK's minimum host tag, as normal inspection would, rather
     # than offering an unrestricted package. Keep this fallback until Yak reports inspection failure
     # with a failing exit code. This does not establish runtime compatibility or bypass assembly policy.
-    $sdk = @(([xml](Get-Content -LiteralPath $project)).Project.ItemGroup.PackageReference |
-        Where-Object { $_.Include -eq 'Grasshopper' })
-    if ($sdk.Count -ne 1 -or $sdk[0].Version -notmatch '^(\d+)\.(\d+)\.') {
-        throw 'Cannot determine a conservative Rhino tag from the Grasshopper SDK version.'
-    }
-    $taggedName = $packages[0].Name -replace '-any-any\.yak$', "-rh$($Matches[1])_$($Matches[2])-any.yak"
+    $taggedName = $packages[0].Name -replace '-any-any\.yak$', "-$rhinoTag-any.yak"
     $taggedPath = Join-Path $content $taggedName
     Move-Item -LiteralPath $packages[0].FullName -Destination $taggedPath
     Write-Warning "Yak could not infer a Rhino version; tagged from the referenced SDK: $taggedName. Host loading remains unverified."
     $packages = @(Get-Item -LiteralPath $taggedPath)
+}
+if (-not $packages[0].Name.EndsWith("-$rhinoTag-any.yak", [StringComparison]::OrdinalIgnoreCase)) {
+    throw "Yak tag differs from the pinned SDK target ($rhinoTag): $($packages[0].Name). Inspect the build references before distributing."
 }
 Copy-Item -LiteralPath $packages[0].FullName -Destination $artifacts
 # Keep staging for inspection; it is ignored with artifacts/.

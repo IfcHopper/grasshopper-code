@@ -14,7 +14,7 @@
     <ProjectReference Include="../../IfcHopper.Core/IfcHopper.Core.csproj" />
     <Compile Include="../../IfcHopper.Tests/SyntheticLargeCoordinates.cs" Link="SyntheticLargeCoordinates.cs" />
     <!-- Compile only: RhinoCommon and Grasshopper are loaded from the Rhino 8 installation at run time. -->
-    <PackageReference Include="Grasshopper" Version="8.27.26019.16021" ExcludeAssets="runtime" />
+    <PackageReference Include="Grasshopper" Version="8.20.25147.11001-rc" ExcludeAssets="runtime" />
     <!-- Match the plugin's existing dependency so the runner does not bind the framework's older copy before loading it. -->
     <PackageReference Include="System.Drawing.Common" Version="10.0.12" />
   </ItemGroup>

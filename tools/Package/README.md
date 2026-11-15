@@ -47,8 +47,10 @@ the manifest explicitly preserves the plugin's `GH_AssemblyInfo.Id` for discover
 
 The supported project target remains Rhino 8.20+, .NET 8, Windows/macOS. These local
 packages are release candidates, not evidence of host compatibility. Yak infers its
-minimum Rhino tag from the referenced SDK (currently 8.27); do not rename it to
-8.20 without testing against the minimum host. If Windows Application Control
+minimum Rhino tag from the referenced SDK (now pinned to `8.20.25147.11001-rc`),
+so new builds produce `rh8_20-any`. The builder rejects a tag that disagrees with
+the pinned SDK baseline. This replaces the old 8.27 SDK reference; it is not a
+filename-only relabel. The published beta.2 package is unchanged. If Windows Application Control
 blocks Yak's inspection and it emits an unrestricted `any-any` tag, the builder
 uses the referenced Grasshopper SDK version for the Rhino tag and prints a warning;
 this does not verify loading or alter Windows policy. The maintainer reports that the
