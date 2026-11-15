@@ -57,8 +57,27 @@ launchSettings profiles do not replace VS Code's separate launch.json profiles.
 
 ### Visual Studio launch profiles
 
-Use "Rhino 9 - netcore" with the net10.0 target selected (or Rhino 8 with net8.0).
-Each profile now explicitly sets RHINO_PACKAGE_DIRS to its framework folder under
-bin/<Configuration>. It does not use OutputPath, which can follow the selected
-framework or an outer multi-target build. Stop debugging and restart Rhino after
-changing profiles; reload the project if Visual Studio retains the old settings.
+Use "Rhino 8 - netcore" or "Rhino 9 - netcore" and build both target frameworks.
+Both profiles set RHINO_PACKAGE_DIRS to bin/<Configuration>, the parent of the
+net8.0 and net10.0 folders. Rhino selects the folder matching its active runtime.
+Rhino 8.36+ uses .NET 10 by default, so a Rhino 8 profile restricted to net8.0 can
+build successfully yet leave IfcHopper undiscovered. Earlier supported Rhino 8
+versions use the net8.0 build. See McNeel's [runtime guide](https://developer.rhino3d.com/guides/rhinocommon/moving-to-dotnet-core/)
+and [multi-target package layout](https://developer.rhino3d.com/guides/yak/creating-a-multi-targeted-rhino-plugin-package/).
+Select the matching framework in Visual Studio for debugging (.NET 10 for current
+Rhino 8 and Rhino 9). Stop debugging and restart Rhino after changing profiles;
+reload the project if Visual Studio retains the old settings.
+
+Before building or switching profiles, close Rhino instances that loaded the
+development output. Grasshopper keeps the plugin and its dependencies loaded until
+Rhino exits, so rebuilding can fail with MSB3021/MSB3027 or "file is being used by
+another process". Building the solution builds both frameworks: an open Rhino 9
+can therefore block a build started for the Rhino 8 launch profile too. Stop the
+debugging session and check that Rhino has exited before rebuilding.
+
+To compile just one host target from a terminal, use:
+
+```sh
+dotnet build IfcHopper/IfcHopper.csproj -f net8.0
+dotnet build IfcHopper/IfcHopper.csproj -f net10.0
+```

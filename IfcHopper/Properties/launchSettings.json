@@ -5,7 +5,7 @@
       "executablePath": "C:\\Program Files\\Rhino 8\\System\\Rhino.exe",
       "commandLineArgs": "/netcore /runscript=\"_Grasshopper\"",
       "environmentVariables": {
-        "RHINO_PACKAGE_DIRS": "$(ProjectDir)bin\\$(Configuration)\\net8.0\\"
+        "RHINO_PACKAGE_DIRS": "$(ProjectDir)bin\\$(Configuration)\\"
       }
     },
     "Rhino 9 - netcore": {
@@ -13,7 +13,7 @@
       "executablePath": "C:\\Program Files\\Rhino 9\\System\\Rhino.exe",
       "commandLineArgs": "/netcore /runscript=\"_Grasshopper\"",
       "environmentVariables": {
-        "RHINO_PACKAGE_DIRS": "$(ProjectDir)bin\\$(Configuration)\\net10.0\\"
+        "RHINO_PACKAGE_DIRS": "$(ProjectDir)bin\\$(Configuration)\\"
       }
     }
   }
