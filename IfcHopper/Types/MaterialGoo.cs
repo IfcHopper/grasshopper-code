@@ -1,6 +1,7 @@
 using System.Linq;
 using Grasshopper.Kernel.Types;
 using IfcHopper.Core.Model;
+using IfcHopper.Components;
 
 namespace IfcHopper.Types
 {
@@ -16,6 +17,19 @@ namespace IfcHopper.Types
         public override string TypeDescription => "IfcHopper material (IfcMaterial or a material set).";
 
         public override IGH_Goo Duplicate() => new MaterialGoo(Value);
+
+        /// <summary>Exposes a material's display colour/alpha to native Custom Preview; unstyled materials do not invent a shader.</summary>
+        public override bool CastTo<Q>(ref Q target)
+        {
+            if (typeof(Q) == typeof(GH_Material))
+            {
+                var colour = Value?.DisplayColour;
+                if (colour == null) return false;
+                target = (Q)(object)new GH_Material(DocumentGeometry.ToColor(colour));
+                return true;
+            }
+            return base.CastTo(ref target);
+        }
 
         public override string ToString()
         {

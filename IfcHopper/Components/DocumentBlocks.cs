@@ -40,7 +40,7 @@ namespace IfcHopper.Components
                     attribute.ObjectColor = DocumentGeometry.ToColor(mesh.Colour);
                     attribute.ColorSource = ObjectColorSource.ColorFromObject;
                 }
-                geometry.Add(DocumentGeometry.ToRhino(mesh));
+                geometry.Add(DocumentGeometry.ToRhino(mesh, includeIfcColours: true));
                 attributes.Add(attribute);
             }
 

@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Linq;
+using IfcHopper.Core.Model;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
@@ -66,7 +67,7 @@ namespace SampleBuilder
                     CheckColour(modified, second);
                     CheckColour(modifiedStyle, surface);
                 }
-                Console.WriteLine("  Material preview: unstyled fallback, assigned/type colours, surface precedence, material replacement and repeated solves passed.");
+                Console.WriteLine("  IFC style data: assigned/type colours, surface precedence and replacement preserved; implicit preview meshes remain colour-free across repeated solves.");
             }
         }
 
@@ -84,11 +85,22 @@ namespace SampleBuilder
                 throw new InvalidOperationException("The material preview must contain a mesh.");
             using (mesh.Value)
             {
-                var colours = mesh.Value.VertexColors;
-                var matches = expected == null ? colours.Count == 0
-                    : colours.Count == mesh.Value.Vertices.Count && colours.All(c => c.ToArgb() == expected.Value.ToArgb());
-                if (!matches)
-                    throw new InvalidOperationException($"Unexpected preview mesh colour for {component.Name}.");
+                if (mesh.Value.VertexColors.Count != 0)
+                    throw new InvalidOperationException("Implicit mesh casts must allow downstream preview materials to control colour.");
+            }
+            // Inspect source style data independently of the colour-free display mesh.
+            // The runner loads the selected GHA at runtime, so unwrap its public typed Value.
+            var element = (Element)goo.GetType().GetProperty("Value").GetValue(goo);
+            foreach (var body in element.Geometry)
+            {
+                var colour = element.DisplayColour(body);
+                if (expected.HasValue ? colour == null
+                    || Math.Abs(colour.Red - expected.Value.R / 255.0) > 1e-8
+                    || Math.Abs(colour.Green - expected.Value.G / 255.0) > 1e-8
+                    || Math.Abs(colour.Blue - expected.Value.B / 255.0) > 1e-8
+                    || Math.Abs(colour.Transparency - (1 - expected.Value.A / 255.0)) > 1e-8
+                    : colour != null)
+                    throw new InvalidOperationException($"IFC style data changed for {component.Name}.");
             }
         }
     }

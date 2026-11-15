@@ -30,7 +30,7 @@ namespace IfcHopper.Components
             pManager.AddTextParameter("Class", "C", "IFC class, e.g. IfcWall.", GH_ParamAccess.item);
             pManager.AddTextParameter("Type", "T", "Predefined type, or the object type when user defined.", GH_ParamAccess.item);
             pManager.AddMeshParameter("Geometry", "G",
-                "Body geometry as meshes in world coordinates, with the openings subtracted (the body stored in the file is uncut). Read solids are faceted.", GH_ParamAccess.list);
+                "Body geometry as colour-free meshes in world coordinates, with the openings subtracted (the body stored in the file is uncut). Read solids are faceted. Use Custom Preview with Colour or Material for explicit styling.", GH_ParamAccess.list);
             pManager.AddColourParameter("Colour", "Col", "Surface colour of each mesh: its own style (IfcStyledItem), else the colour of the element's material; empty when neither is styled. Alpha holds the transparency.", GH_ParamAccess.list);
             pManager.AddParameter(new ElementParam(), "Parts", "P", "Elements this object is made of (IfcRelAggregates).", GH_ParamAccess.list);
             pManager.AddParameter(new ElementParam(), "Openings", "Op", "Openings and recesses voiding the element (IfcRelVoidsElement); deconstruct them as objects.", GH_ParamAccess.list);
