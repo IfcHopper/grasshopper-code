@@ -63,6 +63,12 @@ namespace SampleBuilder
                         throw new InvalidOperationException("SampleBuilder loaded a different IfcHopper build; remove other installed copies from this session.");
                 }
 
+                if (args.Contains("--check-class-colours"))
+                {
+                    ClassColourChecks.Run();
+                    return 0;
+                }
+
                 if (args.Contains("--check-runtime-messages"))
                 {
                     RuntimeMessageChecks.Run();

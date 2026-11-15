@@ -1544,5 +1544,14 @@ namespace IfcHopper.Properties {
                 return ResourceManager.GetString("ModelInfo_svg", resourceCulture);
             }
         }
+        /// <summary>Class Colours component icon.</summary>
+        internal static System.Drawing.Bitmap ClassColours {
+            get { return ((System.Drawing.Bitmap)(ResourceManager.GetObject("ClassColours", resourceCulture))); }
+        }
+
+        /// <summary>Class Colours SVG icon source.</summary>
+        internal static string ClassColours_svg {
+            get { return ResourceManager.GetString("ClassColours_svg", resourceCulture); }
+        }
     }
 }

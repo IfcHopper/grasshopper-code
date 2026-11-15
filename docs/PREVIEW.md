@@ -13,7 +13,7 @@ Custom Preview's supplied material wins, including its transparency. This is why
 
 Baking an IFC element still preserves its stored IFC colours, including mesh parts and type/block styling. IFC export is unchanged. Baking Custom Preview itself uses that component's native behavior and is distinct from baking the IFC element.
 
-Sample **08 Materials** includes a colour-free slab Geometry plus IFC concrete Material wired to native Custom Preview. The source/deconstruct previews are hidden for that branch. No additional IfcHopper preview component is needed for this workflow. Class/attribute palettes and wireframe styling are possible future extensions, not part of #18.
+Sample **08 Materials** includes a colour-free slab Geometry plus IFC concrete Material wired to native Custom Preview. The source/deconstruct previews are hidden for that branch. No additional IfcHopper preview component is needed for this workflow. For explicit class-based display colours, use [Class Colours](CLASS_COLOURS.md), demonstrated in sample **17 Class colours**. Attribute palettes and wireframe styling remain future extensions.
 
 ## Compatibility and checks
 

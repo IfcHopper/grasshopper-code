@@ -44,6 +44,7 @@ Target: Rhino 8.20+ and .NET 8 on Windows/macOS. Beta.2 was checked on Windows x
 - [Compact parameters](docs/ADVANCED_INPUTS.md): use the bottom arrow to show advanced inputs and Deconstruct outputs.
 - [Large coordinates](docs/LARGE_COORDINATES.md): precision protection, coordinate warnings and synthetic test files.
 - [Explicit colour preview](docs/PREVIEW.md): standard shading by default; use native Custom Preview with geometry and materials for colour.
+- [Class Colours](docs/CLASS_COLOURS.md): stable colours by IFC class, exact overrides and `*` for all other classes.
 - [Find Objects expressions](docs/FIND_OBJECTS.md): regex inclusion/exclusion and migration from beta wildcards.
 - [Packaging and publishing](tools/Package/README.md): local food4Rhino ZIP and Yak builds, release checks, and the two publishing routes. Generated packages remain ignored; building does not publish them.
 
