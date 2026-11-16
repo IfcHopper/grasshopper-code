@@ -54,6 +54,29 @@ namespace SampleBuilder
                         throw new InvalidOperationException("Failed IFC write must retain its error despite its Path output.");
                 }
                 finally { File.Delete(blockedDirectory); }
+
+                var clean = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".ifc");
+                var invalid = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".ifc");
+                try
+                {
+                    IfcHopper.Core.IO.IfcBackend.Writer.Write(
+                        new IfcHopper.Core.Model.IfcHopperModel(new IfcHopper.Core.Model.Project()), clean);
+                    var text = File.ReadAllText(clean);
+                    File.WriteAllText(invalid, text.Insert(text.LastIndexOf("ENDSEC;", StringComparison.Ordinal),
+                        "#900001=IFCSTRUCTURALMEMBER('0000000000000000000001',$,'Invalid',$,$,$,$);\n"));
+                    var read = (GH_Component)canvas.Ifc("Read IFC", 0, 0);
+                    for (int pass = 0; pass < 3; pass++)
+                    {
+                        Canvas.Set(read, "Path", pass < 2 ? invalid : clean);
+                        canvas.Document.NewSolution(true, GH_SolutionMode.Silent);
+                        var warnings = read.RuntimeMessages(GH_RuntimeMessageLevel.Warning);
+                        if (!read.Params.Output[0].VolatileData.AllData(true).Any(v => v != null && v.IsValid)
+                            || (pass < 2 ? !warnings.Any(w => w.Contains("IfcStructuralMember: 1")) : warnings.Count != 0)
+                            || read.RuntimeMessages(GH_RuntimeMessageLevel.Error).Count != 0)
+                            throw new InvalidOperationException($"Read IFC omission warning or recovery failed on pass {pass}.");
+                    }
+                }
+                finally { File.Delete(clean); File.Delete(invalid); }
             }
             Console.WriteLine("Runtime message checks passed: valid/mixed/invalid/recovered input conversions and solve iterations.");
         }
