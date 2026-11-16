@@ -32,6 +32,8 @@ Planned components per panel (not all implemented yet). In each panel, create co
 | 6 - Utilities | Find Objects, Model Info, Move Model, Class Colours | | | |
 | 7 - Params | Model, Project, Site, Facility, Facility Part, Storey, Space | Context, Units, Georeference, Placement (internalisable), Element, Element Type, Material, Property Set, Classification | | |
 
+Read IFC reports products omitted from the supported project tree by IFC class and count without loading Core children or geometry. This includes unsupported classes and supported products outside the mapped hierarchy. A streaming STEP declaration check also reports invalid abstract product instances that xBIM discards during parsing, using the source schema metadata. This is diagnostic screening, not full IFC validation or automatic reclassification. Valid structural analysis objects remain unsupported; their import is deferred to a later release.
+
 ### Roadmap: IFC backends
 
 xBIM is the first and, for now, only IFC backend because it runs natively in .NET. Support for [IfcOpenShell](https://ifcopenshell.org/) and [ifc-lite](https://github.com/louistrue/ifc-lite) is a planned goal; both are not C# native, so they are deferred. Keep backend-specific code isolated in `Core` behind backend-neutral abstractions so additional backends can be plugged in later without changing components or types.

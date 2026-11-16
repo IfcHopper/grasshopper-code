@@ -39,7 +39,8 @@ namespace IfcHopper.Core.Backends.Xbim
             return new IfcHopperModel(new XbimModelLoader(model).LoadProject(project))
             {
                 SourcePath = Path.GetFullPath(path),
-                ReadWarnings = XbimCoordinateChecks.Warnings(model),
+                ReadWarnings = XbimCoordinateChecks.Warnings(model).Concat(ProductWarnings(project))
+                    .Concat(XbimAbstractProductChecks.Warnings(model, path)).ToArray(),
                 Author = fileName.AuthorName.FirstOrDefault(a => !string.IsNullOrWhiteSpace(a)),
                 Organization = fileName.Organization.FirstOrDefault(o => !string.IsNullOrWhiteSpace(o)),
             };
@@ -112,5 +113,29 @@ namespace IfcHopper.Core.Backends.Xbim
             (entity as IIfcElement)?.ContainedInStructure.FirstOrDefault()?.RelatingStructure;
 
         private static IIfcProject FindProject(IModel model) => model.Instances.FirstOrDefault<IIfcProject>();
+
+        // Inspect backend relationships only: do not materialize the lazy Core tree or geometry.
+        private static IEnumerable<string> ProductWarnings(IIfcProject project)
+        {
+            var reached = new HashSet<IIfcObjectDefinition>();
+            var pending = new Stack<IIfcObjectDefinition>();
+            pending.Push(project);
+            while (pending.Count > 0)
+            {
+                var entity = pending.Pop();
+                if (!reached.Add(entity)) continue;
+                foreach (var child in XbimModelLoader.MappedChildren(entity)) pending.Push(child);
+                if (entity is IIfcElement element)
+                    foreach (var relation in element.HasOpenings)
+                        if (relation.RelatedOpeningElement != null) pending.Push(relation.RelatedOpeningElement);
+            }
+
+            foreach (var group in project.Model.Instances.OfType<IIfcProduct>().Where(p => !reached.Contains(p))
+                .GroupBy(p => p.ExpressType.Name).OrderBy(g => g.Key, System.StringComparer.Ordinal))
+                yield return $"{group.Key}: {group.Count()} product(s) omitted from the IfcHopper model " +
+                    "because their class or position in the project hierarchy is unsupported. " +
+                    "Check the IFC classification and project relationships in the authoring application and re-export. " +
+                    "These products are unavailable for preview, search and schema rebuild export.";
+        }
     }
 }
