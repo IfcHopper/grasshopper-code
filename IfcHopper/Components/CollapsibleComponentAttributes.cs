@@ -208,10 +208,26 @@ namespace IfcHopper.Components
                 if (palette == GH_Palette.Normal && !Owner.IsPreviewCapable) palette = GH_Palette.Hidden;
                 using (var capsule = GH_Capsule.CreateCapsule(Bounds, palette))
                 {
-                    capsule.SetJaggedEdges(Owner.Params.Input.Count == 0, Owner.Params.Output.Count == 0);
-                    var style = GH_CapsuleRenderEngine.GetImpliedStyle(palette, Selected, Owner.Locked, Owner.Hidden);
-                    graphics.SmoothingMode = SmoothingMode.AntiAlias;
-                    capsule.RenderEngine.RenderOutlines(graphics, canvas.Viewport.Zoom, style);
+                    // This late pass must not restore a rear capsule's outline over another
+                    // object (issue #33). Native object painting already owns overlapping edges;
+                    // restore only exposed edges here, regardless of document paint order.
+                    var outlineState = graphics.Save();
+                    try
+                    {
+                        foreach (var other in canvas.Document.Objects)
+                        {
+                            if (ReferenceEquals(other, Owner) || other.Attributes == null) continue;
+                            var otherBounds = other.Attributes.Bounds;
+                            if (!otherBounds.IntersectsWith(Bounds)) continue;
+                            using var occlusion = new Region(otherBounds);
+                            graphics.ExcludeClip(occlusion);
+                        }
+                        capsule.SetJaggedEdges(Owner.Params.Input.Count == 0, Owner.Params.Output.Count == 0);
+                        var style = GH_CapsuleRenderEngine.GetImpliedStyle(palette, Selected, Owner.Locked, Owner.Hidden);
+                        graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                        capsule.RenderEngine.RenderOutlines(graphics, canvas.Viewport.Zoom, style);
+                    }
+                    finally { graphics.Restore(outlineState); }
                 }
                 RenderControls(canvas, graphics, true);
             }
