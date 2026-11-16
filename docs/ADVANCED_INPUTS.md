@@ -39,7 +39,9 @@ interactive canvas controls and are omitted from export drawings.
 Interactive arrows and plus/minus controls are painted after object decorations,
 so high-zoom detail panels (including Sunglasses rich capsules) do not cover them.
 The capsule outline is restored with Grasshopper's native outline renderer to keep
-its rounded corners, theme and zoom-dependent border treatment. This drawing pass
+its rounded corners, theme and zoom-dependent border treatment. Outline restoration
+excludes other canvas objects' bounds so a rear component's border cannot be drawn
+over a component in front. This drawing pass
 uses the same canvas subscription lifetime as hover tracking and does not run for
 exports.
 

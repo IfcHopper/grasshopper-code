@@ -154,6 +154,7 @@ namespace SampleBuilder
             }
             CheckCanvasHover();
             CheckZoomRendering(output);
+            CheckOverlappingBorders();
             CheckStateTags(output);
             CheckInputControlCollapse();
             CheckDeconstructOutputs(output);
@@ -736,6 +737,53 @@ namespace SampleBuilder
                 }
             }
             Console.WriteLine($"Zoom controls: input/output plus/minus survive post-object decoration at 100–2000% ({(richCapsules == null ? "synthetic overlay; Sunglasses unavailable" : "installed Sunglasses")}).");
+        }
+
+        private static void CheckOverlappingBorders()
+        {
+            var definition = new Canvas(expandAdvancedInputs: false);
+            using (definition.Document)
+            {
+                var rear = (GH_Component)definition.Ifc("Deconstruct Object", 180, 100);
+                var front = (GH_Component)definition.Ifc("Deconstruct Facility", 180, 100);
+                foreach (var expanded in new[] { false, true })
+                {
+                    if (expanded) { ClickArrow(rear); ClickArrow(front); }
+                    rear.Attributes.PerformLayout();
+                    front.Attributes.PerformLayout();
+                    // Cover the rear's right edge with a foreground object, as in issue #33.
+                    var bounds = rear.Attributes.Bounds;
+                    var frontBounds = front.Attributes.Bounds;
+                    front.Attributes.Pivot = new PointF(front.Attributes.Pivot.X + bounds.Right - frontBounds.Left - 8,
+                        front.Attributes.Pivot.Y + bounds.Top - frontBounds.Top);
+                    front.Attributes.ExpireLayout();
+                    front.Attributes.PerformLayout();
+                    using (var canvas = new HoverProbeCanvas { Size = new Size(1000, 700), Document = definition.Document })
+                    {
+                        canvas.CreateControl();
+                        foreach (var zoom in new[] { 1f, 4f, 10f })
+                        {
+                            var probe = new PointF(bounds.Right, bounds.Top + 8);
+                            Require(front.Attributes.Bounds.Contains(probe), "Foreground must cover the rear border probe.");
+                            canvas.Viewport.Zoom = zoom;
+                            canvas.Viewport.Focus(new PointF(probe.X * zoom, probe.Y * zoom));
+                            // A solid foreground decoration makes occlusion independent of native
+                            // text caches, selection palette and optional Sunglasses installation.
+                            canvas.CanvasPostPaintObjects += PaintForeground;
+                            using (var capture = canvas.GetCanvasScreenBuffer(GH_CanvasMode.Control))
+                            {
+                                var pixel = canvas.Viewport.ProjectPoint(probe);
+                                Require(capture.GetPixel((int)Math.Round(pixel.X), (int)Math.Round(pixel.Y)).ToArgb() == Color.Magenta.ToArgb(),
+                                    $"Rear border repainted over foreground: expanded={expanded}, zoom={zoom}.");
+                            }
+                            canvas.CanvasPostPaintObjects -= PaintForeground;
+                        }
+                        canvas.Document = null;
+                    }
+                }
+                void PaintForeground(GH_Canvas canvas) => canvas.Graphics.FillRectangle(Brushes.Magenta, front.Attributes.Bounds);
+            }
+            Console.WriteLine("Overlapping borders: foreground occlusion survives late outlines in compact/expanded layouts at 100–1000%.");
         }
 
         private sealed class HoverProbeCanvas : GH_Canvas
