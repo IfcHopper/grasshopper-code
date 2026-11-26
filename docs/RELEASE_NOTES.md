@@ -1,5 +1,28 @@
 # Release notes
 
+## 1.0.0-beta.4
+
+- Fix overlapping component borders in Grasshopper when using compact parameter controls. [PR #34](https://github.com/IfcHopper/grasshopper-code/pull/34)
+- Warn in **Read IFC** when IFC products are omitted during import. [PR #36](https://github.com/IfcHopper/grasshopper-code/pull/36)
+- Make the default export path test work when the test process has no user profile. Export behavior is unchanged.
+
+Requires Grasshopper 1 in Rhino 8.20+ or Rhino 9 in modern .NET mode. Keep both runtime folders together when installing from the ZIP. Report issues with the Rhino service release, operating system, runtime and a minimal shareable example.
+
+### Validation
+
+- Built with SDK 10.0.401 from local `main` at `18cbd5c` plus the candidate version and test changes. All 250 tests passed on .NET 8 and again on .NET 10, with zero skips. The five public IFC fixtures matched their pinned checksums. NuGet could not retrieve vulnerability data in this environment.
+- Verified both embedded plugin versions and matched all 46 ZIP files to the Yak payload. Both Yak distributions contain identical bytes. Host SDK assemblies and PDBs are excluded.
+- The extracted payload passed compact-parameter and overlap rendering checks and IFC import runtime-message checks in headless Rhino 8.37.26307.15001 / .NET 8 and Rhino 9.0.26300.09401 / .NET 10 on Windows x64.
+- The Docusaurus production build passed with the installed dependencies. All 36 entries in the existing sample ZIP match the source samples.
+- The maintainer confirmed that the beta.4 Yak packages worked in local testing.
+- Fresh-cache build, sample regeneration, clean installation, update and uninstall, minimum Rhino 8.20, and macOS validation remain pending.
+
+| Candidate artifact | SHA-256 |
+| --- | --- |
+| IfcHopper-1.0.0-beta.4.zip | `483670EE3921BBF82893A78BD74E229CD268336E238862513CE47D54BD5C5F9A` |
+| ifchopper-1.0.0-beta.4-rh8_20-any.yak | `53A2B9E940D70C0F3254258E01D7BC05BA9F3E92054EB21A9C04DE3ADF1C0038` |
+| ifchopper-1.0.0-beta.4-rh9_0-any.yak | `53A2B9E940D70C0F3254258E01D7BC05BA9F3E92054EB21A9C04DE3ADF1C0038` |
+
 ## 1.0.0-beta.3
 
 Refreshed and published to Rhino Package Manager on 2026-11-15 after the compact-parameter fixes. Beta.3 is available as a prerelease for Rhino 8 and Rhino 9 GH1. The GitHub release files include the manual ZIP, both Yak distributions, samples and checksums. GUI clean-install validation remains pending.
@@ -93,7 +116,7 @@ Validation for #19 (2026-11-15): solution build and all 203 Core tests passed wi
 
 Individual input plus/minus controls ([#15](https://github.com/IfcHopper/grasshopper-code/issues/15)) are a follow-up enhancement and are not included in beta.2; this release provides the overall expand/collapse arrows.
 
-### Candidate validation and testing limits (2026-11-13)
+### Validation and testing limits (2026-11-13)
 
 - Release solution build passed with SDK 10.0.401 targeting .NET 8. All 195 tests passed, with zero failures or skips, using hash-verified public fixtures at revision `50e6c5c63a3586badc5dc857f5f4736675135525`.
 - All 15 samples regenerated and solved in headless Rhino 8.37.26307.15001 on Windows x64. Compact input, persistence, undo/redo, legacy definition and hover lifecycle checks passed. Component docs were regenerated from the same candidate source.

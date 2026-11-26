@@ -2,7 +2,7 @@
 
 **IfcHopper** (formerly **IfcHopperShell**) is a Grasshopper 1 plugin for Rhino 8 and 9 for openBIM: it creates, reads, updates and deletes (CRUD) data directly in native IFC files, without converting them to another format.
 
-> **Status: 1.0.0-beta.3.** IfcHopper 1.0 is in public testing. Feedback is welcome (see [Contributing](#contributing)); component inputs and outputs may still change until 1.0.
+> **Status: 1.0.0-beta.4.** IfcHopper 1.0 is in public testing. Feedback is welcome (see [Contributing](#contributing)); component inputs and outputs may still change until 1.0.
 
 ## Features
 
@@ -40,7 +40,7 @@ Targets: GH1 in Rhino 8.20+ (.NET 8 or .NET 10, depending on the host runtime) a
 
 - User documentation: https://ifchopper.github.io/grasshopper-documentation/
 - [Samples](samples/README.md): one Grasshopper definition per workflow, with the IFC files they write.
-- [Release notes](docs/RELEASE_NOTES.md): changes and testing limits for beta.3.
+- [Release notes](docs/RELEASE_NOTES.md): beta.4 changes and testing limits.
 - [Compact parameters](docs/ADVANCED_INPUTS.md): use the bottom arrow to show advanced inputs and Deconstruct outputs.
 - [Large coordinates](docs/LARGE_COORDINATES.md): precision protection, coordinate warnings and synthetic test files.
 - [Explicit colour preview](docs/PREVIEW.md): standard shading by default; use native Custom Preview with geometry and materials for colour.

@@ -13,7 +13,9 @@ namespace IfcHopper.Tests
         public void FilePath_UsesDefaults()
         {
             var path = IfcFilePath.Resolve(null, null);
-            Assert.Equal(Path.Combine(IfcFilePath.DefaultDirectory, IfcFilePath.DefaultFileName), path);
+            // The default directory can be relative when the process has no user profile.
+            var expected = Path.GetFullPath(Path.Combine(IfcFilePath.DefaultDirectory, IfcFilePath.DefaultFileName));
+            Assert.Equal(expected, path);
         }
 
         [Theory]
